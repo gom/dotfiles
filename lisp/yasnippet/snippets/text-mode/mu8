@@ -1,0 +1,3 @@
+#name : (UTF-8 magic comment)
+# --
+-*- coding: utf-8 -*-

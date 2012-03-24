@@ -1,0 +1,10 @@
+--- 
+:benchmark: false
+:backtrace: false
+:update_sources: true
+:verbose: true
+:bulk_threshold: 1000
+rdoc: --inline-source --line-numbers --format=shtml
+:sources: 
+- http://rubygems.org
+- http://gems.rubyforge.org/

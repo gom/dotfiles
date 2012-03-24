@@ -1,0 +1,66 @@
+[user]
+  name = gom
+  email = gomgom68@gmail.com
+[core]
+  pager = less -FRSX
+[push]
+  default = tracking
+[color]
+  ui = auto
+  grep = auto
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+
+;  status = auto
+;  branch = auto
+;  diff = auto
+;  interactive = auto
+[github]
+  user = gom
+  token = b9fecde5490e10677a13fcd45ca962a9
+[alias]
+  co = checkout
+  ci = commit
+  st = status
+  up = pull --rebase
+  a = add 
+  b = branch
+  c = commit
+  d = diff
+  aa = add .
+  dc = diff --cached
+  g = grep --color -n
+  sb = submodule
+  r = reset
+  m = merge
+  s = stash
+
+  #log
+  lg = log
+  ls = log --stat
+  lp = log -p
+  la = log --pretty=\"format:%ad %h (%an): %s\" --date=short
+  llog = log --data=local
+  logp = log --pretty=oneline
+  logps = log --pretty=oneline --stat
+  graph = log --graph --date=short --pretty=\"%x09%Cgreen%h %Creset%cd %Cblue%cn%x09%Creset%s%Cred%d\"
+  wc = whatchanged
+  ranking = shortlog -s -n --no-merges
+
+  #branch
+  ba = branch -a
+  bm = branch --merged
+  bn = branch --no-merged
+
+  
