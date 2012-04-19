@@ -97,7 +97,7 @@ setopt complete_aliases
 alias ll='ls -l'
 alias la='ls -la'
 alias grep='grep --color=auto'
-alias ec='emacsclient -n -c'
+alias ec='emacsclient .'
 alias em='emacs -nw -fs'
 
 alias cp='cp -i'
@@ -107,6 +107,8 @@ alias rm='rm -i'
 alias pd='pushd'
 alias po='popd'
 alias gd='dirs -v; echo -n "select number: "; read newdir; cd +"$newdir"'
+alias lss='less -MN'
+
 alias sc='screen'
 alias sd='screen -D'
 alias t='tmux'

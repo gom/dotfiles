@@ -809,7 +809,7 @@ the directory containing file becomes the initial working directory and source-f
 
 ;; php-mode
 (require 'php-mode)
-
+(add-to-list 'auto-mode-alist (cons "\\.\\(php\\|php5\\)\\'" 'php-mode))
 ;; php-completion
 (add-hook  'php-mode-hook
            (lambda ()

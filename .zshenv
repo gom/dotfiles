@@ -58,6 +58,10 @@ fi
 ## editor
 HOME_BIN=~/bin
 
+## Pager
+export LESSCHARSET=utf-8
+export LV='-la -Ou8'
+
 PATH=$HOME_BIN:$PATH
 EDITOR=/usr/bin/vim
 export PATH MANPATH EDITOR
