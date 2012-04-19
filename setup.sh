@@ -10,6 +10,7 @@ ln -s $PWD_DIR/.gitconfig ~
 ln -s $PWD_DIR/.screenrc ~
 ln -s $PWD_DIR/.vimrc ~
 ln -s $PWD_DIR/.vim ~
+ln -s $PWD_DIR/.tmux.conf ~
 
 # git complition files
 cp $PWD_DIR/.git-complition.sh ~

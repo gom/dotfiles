@@ -109,6 +109,9 @@ alias po='popd'
 alias gd='dirs -v; echo -n "select number: "; read newdir; cd +"$newdir"'
 alias sc='screen'
 alias sd='screen -D'
+alias t='tmux'
+alias ta='tmux attach'
+alias td='tmux detach'
 alias g='git'
 
 alias re='ruby -e'
@@ -129,10 +132,11 @@ alias sjis='export LANG=ja_JP.SJIS; export LANGUAGE=ja_JP.SJIS; export LC_ALL=ja
 
 ## others
 umask 022
-screen -r
+if [[ -s `which screen` ]]; then screen -r; fi
+if [[ -s `which tmux` ]]; then tmux attach; fi
 
 ## rbenv settings
-if [[ -s /usr/local/bin/rbenv ]] ; then eval "$(rbenv init -)" ; fi
+if [[ -s `which rbenv` ]] ; then eval "$(rbenv init -)" ; fi
 
 ## RVM settings
 if [[ -s $HOME/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
