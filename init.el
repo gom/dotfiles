@@ -119,8 +119,9 @@
 
 ;; start emacs server
 (require 'server)
-(unless (server-running-p)
-  (server-start))
+(if (fboundp 'server-running-p)
+    (unless (server-running-p)
+      (server-start)))
 
 
 ;; Cocoa Emacs23  Setting
