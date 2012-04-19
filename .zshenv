@@ -49,6 +49,12 @@ then
   PATH=/usr/lib/ccache:$PATH
 fi
 
+# rbenv
+if [[ -s ~/.rbenv ]]
+then
+  PATH=$HOME/.rbenv/bin:$PATH
+fi
+
 ## editor
 HOME_BIN=~/bin
 
