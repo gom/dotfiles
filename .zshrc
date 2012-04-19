@@ -20,6 +20,9 @@ RPROMPT+="[%~]"
 zstyle :compinstall filename '~/.zshrc'
 autoload -Uz compinit
 compinit
+autoload bashcompinit
+bashcompinit
+if [ -f ~/.gitcompletion.sh ]; then source ~/.gitcompletion.sh; fi
 zstyle ':completion:*:default' menu select=1        #use emacs keybind
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' # ignore case
 

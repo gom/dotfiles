@@ -11,6 +11,9 @@ ln -s $PWD_DIR/.screenrc ~
 ln -s $PWD_DIR/.vimrc ~
 ln -s $PWD_DIR/.vim ~
 
+# git complition files
+cp $PWD_DIR/.git-complition.sh ~
+
 # shell configs
 echo 'source $HOME/.dotfiles/.zshrc' >> $HOME/.zshrc
 echo 'source $HOME/.dotfiles/.zshenv' >> $HOME/.zshenv
