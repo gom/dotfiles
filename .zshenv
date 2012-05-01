@@ -19,19 +19,19 @@ if [ `uname` = "Darwin" ]
 then
     ## add path (for Mac) 
 	GAEJ_SDK=$HOME/lib/appengine-java-sdk/bin
-	PORT_PATH=/opt/local/bin:/opt/local/sbin
-	PYTHONPATH=$HOME/lib/python2.6/site-packages
-        PATH=$PORT_PATH:$GAEJ_SDK:$PATH
+	#PORT_PATH=/opt/local/bin:/opt/local/sbin
+	#PYTHONPATH=$HOME/lib/python2.6/site-packages
+        PATH=$GAEJ_SDK:$PATH
 
     ## add manual path
-	PORT_MAN=/opt/local/man
-	MANPATH=$PORT_MAN:$MANPATH
+	#PORT_MAN=/opt/local/man
+	#MANPATH=$PORT_MAN:$MANPATH
 		
     ## user path
 	export _JAVA_OPTIONS="-Dfile.encoding=UTF-8"
 	export SCALA_DOC_HOME="~/Documents/man/scala-devel-docs"
 	export PYTHONSTARTUP=$HOME/.pyrc.py
-	export CLOJURE_EXT=~/.clojure
+	#export CLOJURE_EXT=~/.clojure
 fi
 
 # colors
@@ -49,8 +49,7 @@ then
   PATH=/usr/lib/ccache:$PATH
 fi
 
-# rbenv
-if [[ -s ~/.rbenv ]]
+if [ -e $HOME/.rbenv/bin ]
 then
   PATH=$HOME/.rbenv/bin:$PATH
 fi
@@ -64,4 +63,4 @@ export LV='-la -Ou8'
 
 PATH=$HOME_BIN:$PATH
 EDITOR=/usr/bin/vim
-export PATH MANPATH EDITOR
+export PATH EDITOR
