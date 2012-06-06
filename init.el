@@ -526,6 +526,7 @@ the directory containing file becomes the initial working directory and source-f
 
 	     (define-key js2-mode-map "\C-m" nil)
        (setq tab-width 2)
+       (setq js2-basic-offset 2)
        (setq javascript-indent-level 2)
        (setq javascript-basic-offset tab-width)
        )))
@@ -1002,6 +1003,8 @@ the directory containing file becomes the initial working directory and source-f
           (lambda ()
             (gtags-mode 1)
             (gtags-make-complete-list)
+            (setq tab-width 4)
+            (setq c-basic-offset 4)
             (setq gtags-libpath `((,(expand-file-name "~/.gtags/php") . "/usr/local/lib/php")))
             ))
 
