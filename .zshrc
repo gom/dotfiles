@@ -143,6 +143,9 @@ if [[ -s `which rbenv` ]] ; then eval "$(rbenv init -)" ; fi
 ## RVM settings
 if [[ -s $HOME/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
 
+## ssh-agent
+[ -e $HOME/.ssh/agent-env ] && source $HOME/.ssh/agent-env
+
 ## for Emacs Shell
 [[ $EMACS = t ]] && unsetopt zle
 ## for tramp

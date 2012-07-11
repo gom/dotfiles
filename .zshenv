@@ -59,6 +59,7 @@ HOME_BIN=~/bin
 
 ## Pager
 export LESSCHARSET=utf-8
+export LESS=-R
 export LV='-la -Ou8'
 
 PATH=$HOME_BIN:$PATH
