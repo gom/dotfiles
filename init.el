@@ -6,6 +6,7 @@
 (defun add-to-load-path (added-path)
   (add-to-list 'load-path (concat site-lisp-root "/" added-path)))
 
+(add-to-load-path "init")
 (add-to-load-path "anything")
 (add-to-load-path "ruby")
 
@@ -75,6 +76,9 @@
 ;;; display time
 (setq display-time-24hr-format t)
 (display-time)
+
+;;; hl-line-mode
+(global-hl-line-mode)
 
 ;;; Highlight parent brackets
 (show-paren-mode t)
@@ -1073,3 +1077,12 @@ the directory containing file becomes the initial working directory and source-f
 (let ((elem (assq 'encoded-kbd-mode minor-mode-alist)))
   (when elem
     (setcar (cdr elem) "")))
+
+;; view-mode
+(require 'view-support)
+
+;; key-chord.el
+(require 'key-chord)
+(setq key-chord-two-keys-delay 0.04)
+(key-chord-mode 1)
+(key-chord-define-global "jk" 'view-mode)
