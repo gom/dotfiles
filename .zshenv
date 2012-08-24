@@ -29,7 +29,6 @@ then
 		
     ## user path
 	export _JAVA_OPTIONS="-Dfile.encoding=UTF-8"
-	export SCALA_DOC_HOME="~/Documents/man/scala-devel-docs"
 	export PYTHONSTARTUP=$HOME/.pyrc.py
 	#export CLOJURE_EXT=~/.clojure
 fi
@@ -44,24 +43,22 @@ ANDROIDNDK_PATH=$HOME/lib/android-ndk
 PATH=$ANDROIDSDK_PATH:$ANDROIDNDK_PATH:$ANDROIDSDK_TOOLS_PATH:$PATH
 
 # ccache
-if [ -e /usr/lib/ccache ]
-then
-  PATH=/usr/lib/ccache:$PATH
-fi
+[ -e /usr/lib/ccache ] && PATH=/usr/lib/ccache:$PATH
+# rbenv
+[ -e $HOME/.rbenv/bin ] && PATH=$HOME/.rbenv/bin:$PATH
+# mysql
+[ -e /usr/local/mysql/bin ] && PATH=/usr/local/mysql/bin:$PATH
+# nvm
+[ -e $HOME/src/nvm ] && source $HOME/src/nvm/nvm.sh
 
-if [ -e $HOME/.rbenv/bin ]
-then
-  PATH=$HOME/.rbenv/bin:$PATH
-fi
-
-## editor
 HOME_BIN=~/bin
+PATH=$HOME_BIN:$PATH
 
 ## Pager
 export LESSCHARSET=utf-8
 export LESS=-R
 export LV='-la -Ou8'
 
-PATH=$HOME_BIN:$PATH
+## editor
 EDITOR=/usr/bin/vim
 export PATH EDITOR
