@@ -101,10 +101,6 @@
 ;; "yes or no" => "y or n"
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; display buffers in mini buffer with C-x b
-(iswitchb-mode t)
-(iswitchb-default-keybindings)
-
 ;; delete beep
 (defun my-bell-function ()
   (unless (memq this-command
