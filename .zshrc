@@ -22,7 +22,7 @@ autoload -Uz compinit
 compinit
 autoload bashcompinit
 bashcompinit
-if [ -f ~/.gitcompletion.sh ]; then source ~/.gitcompletion.sh; fi
+[ -f ~/.gitcompletion.sh ] && source ~/.gitcompletion.sh
 zstyle ':completion:*:default' menu select=1        #use emacs keybind
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' # ignore case
 
@@ -42,8 +42,8 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([%0-9]#)*=0=01;31
 
 ## history
 HISTFILE=~/.histfile
-HISTSIZE=1000
-SAVEHIST=1000
+HISTSIZE=10000
+SAVEHIST=10000
 function history-all { history -E 1 } # output all histories
 
 autoload history-search-end
@@ -134,14 +134,14 @@ alias sjis='export LANG=ja_JP.SJIS; export LANGUAGE=ja_JP.SJIS; export LC_ALL=ja
 
 ## others
 umask 022
-if [[ -s `which screen` ]]; then screen -r; fi
-if [[ -s `which tmux` ]]; then tmux attach; fi
+[ -s "`which screen`" ] && screen -r
+[ -s "`which tmux`" ] && tmux attach
 
 ## rbenv settings
-if [[ -s `which rbenv` ]] ; then eval "$(rbenv init -)" ; fi
+[ -s "`which rbenv`" ] && eval "$(rbenv init -)"
 
 ## RVM settings
-if [[ -s $HOME/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
+[ -s "$HOME/.rvm/scripts/rvm" ] && source $HOME/.rvm/scripts/rvm
 
 ## ssh-agent
 [ -e $HOME/.ssh/agent-env ] && source $HOME/.ssh/agent-env

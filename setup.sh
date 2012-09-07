@@ -1,9 +1,11 @@
 #!/bin/sh
-PWD_DIR=$HOME/.dotfiles
+PWD_DIR=`dirname $0`
 
 # emacs
-ln -s $PWD_DIR/init.el ~/.emacs.d/
-ln -s $PWD_DIR/lisp ~/.emacs.d/elisp
+EMACS_DIR=$HOME/.emacs.d
+[ ! -e $EMACS_DIR ] && $EMACS_DIR
+ln -s $PWD_DIR/init.el $EMACS_DIR
+ln -s $PWD_DIR/lisp $EMACS_DIR/elisp
 
 # other config files
 ln -s $PWD_DIR/.gitconfig ~
@@ -13,7 +15,7 @@ ln -s $PWD_DIR/.vim ~
 ln -s $PWD_DIR/.tmux.conf ~
 
 # git complition files
-cp $PWD_DIR/.git-complition.sh ~
+cp $PWD_DIR/.git-completion.sh ~
 
 # shell configs
 echo 'source $HOME/.dotfiles/.zshrc' >> $HOME/.zshrc
