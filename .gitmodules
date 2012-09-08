@@ -10,3 +10,6 @@
 [submodule "lisp/js2-mode"]
 	path = lisp/js2-mode
 	url = https://github.com/mooz/js2-mode.git
+[submodule ".vim/bundle/neobundle.vim"]
+	path = .vim/bundle/neobundle.vim
+	url = git://github.com/Shougo/neobundle.vim.git
