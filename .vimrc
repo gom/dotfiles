@@ -254,11 +254,11 @@ let g:ref_source_webdict_sites = {
 let g:ref_source_webdict_sites.default = 'alc'
 
 " <Plugins:unite>
-noremap <silent> ;ub :Unite buffer<CR>
+noremap <silent> ub :Unite buffer<CR>
 noremap <silent> uf :UniteWithBufferDir -buffer-name=files file<CR>
 noremap <silent> ur :Unite -buffer-name=register register<CR>
 noremap <silent> um :Unite fime_mru<CR>
-noremap <silent> uu :Unite buffer file_mru<CR>
+noremap <silent> ui :Unite buffer file_mru<CR>
 nnoremap <silent> ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
 
 " split window
