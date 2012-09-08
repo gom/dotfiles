@@ -142,7 +142,7 @@ NeoBundle 'Shougo/echodoc'
 NeoBundle 'teramako/jscomplete-vim'
 
 NeoBundle 'gtags.vim'
-NeoBundle 'taglist.vim'
+"NeoBundle 'taglist.vim'
 NeoBundle 'Gist.vim'
 
 filetype plugin indent on
