@@ -97,7 +97,7 @@ setopt complete_aliases
 alias ll='ls -l'
 alias la='ls -la'
 alias grep='grep --color=auto'
-alias ec='emacsclient .'
+alias ec='emacsclient -c -t'
 alias em='emacs -nw -fs'
 
 alias cp='cp -i'

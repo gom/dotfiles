@@ -29,9 +29,7 @@ set hid " enable switch buffer to keep editing current file
 
 set nocompatible "vi compatible
 syntax on
-filetype on
-filetype indent on
-filetype plugin on
+filetype indent plugin on
 
 " <display>
 set number "show line numbers
@@ -40,6 +38,8 @@ set ruler "show line number & char number
 set notitle "display title
 set showcmd "display command at status line
 set nolist "show tab and CR/LF
+set cursorline
+"highlight CursorLine cterm=none ctermbg=blue ctermfg=black
 
 " <search>
 set ignorecase " ignore case for search
@@ -103,6 +103,10 @@ nmap sk <C-W>k<C-w>_
 nmap sh <C-w>h<C-w>_
 nmap sl <C-w>l<C-w>_
 
+" <emacs keybinds>
+nnoremap <C-n> gj
+nnoremap <C-p> gk
+
 " <MacVim>
 if has('mac')
  source $VIMRUNTIME/delmenu.vim
@@ -145,6 +149,9 @@ NeoBundle 'gtags.vim'
 "NeoBundle 'taglist.vim'
 NeoBundle 'Gist.vim'
 
+NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'tomasr/molokai'
+
 filetype plugin indent on
 "
 " Brief help
@@ -160,13 +167,19 @@ if neobundle#exists_not_installed_bundles()
   "finish
 endif
 
+" <Plugins:colors-soralized>
+"let g:molokai_original = 1
+"set background=dark
+"let g:solarized_termcolors=256
+"colorscheme solarized
+"colorscheme molokai
 
 " <Plugins:Gtags>
 map <C-g> :Gtags 
 map <C-i> :Gtags -f %<CR>
 map <C-j> :GtagsCursor<CR>
-map <C-n> :cn<CR>
-map <C-p> :cp<CR>
+"map <C-n> :cn<CR>
+"map <C-p> :cp<CR>
 
 
 " <Plugins:neocomplcache>
@@ -257,7 +270,7 @@ let g:ref_source_webdict_sites.default = 'alc'
 noremap <silent> ub :Unite buffer<CR>
 noremap <silent> uf :UniteWithBufferDir -buffer-name=files file<CR>
 noremap <silent> ur :Unite -buffer-name=register register<CR>
-noremap <silent> um :Unite fime_mru<CR>
+noremap <silent> um :Unite file_mru<CR>
 noremap <silent> ui :Unite buffer file_mru<CR>
 nnoremap <silent> ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
 
@@ -272,6 +285,8 @@ au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
 
 " new tab
 nnoremap <silent> tb :<C-u>tabnew<CR>:tabmove<CR>:Unite buffer<CR>
-nnoremap <silent> tf :<C-u>tabnew<CR>:tabmove<CR>:UniteWithBufferDir --buffer-name=files file<CR>
+nnoremap <silent> tf :<C-u>tabnew<CR>:tabmove<CR>:UniteWithBufferDir -buffer-name=files file<CR>
 nnoremap <silent> tm :<C-u>tabnew<CR>:tabmove<CR>:Unite file_mru<CR>
+nnoremap <silent> ti :<C-u>tabnew<CR>:tabmove<CR>:Unite buffer file_mru<CR>
+nnoremap <silent> ta :<C-u>tabnew<CR>:tabmove<CR>:UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
 
