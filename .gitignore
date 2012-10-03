@@ -1,4 +1,34 @@
+# general
 .DS_Store
 */.DS_Store
+*.exe
+
+# backup
+*~
+*.bak
+
+# editor
 *.elc
+*.swp
+*.swo
+
+# vcs
 .svn
+
+# gnu global
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+
+# c/c++
+a.out
+*.o
+*.a
+
+# java
+*.class
+
+#python
+*.pyc
+

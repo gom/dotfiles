@@ -39,7 +39,7 @@ set notitle "display title
 set showcmd "display command at status line
 set nolist "show tab and CR/LF
 set cursorline
-"highlight CursorLine cterm=none ctermbg=blue ctermfg=black
+highlight CursorLine cterm=none ctermbg=blue ctermfg=black
 
 " <search>
 set ignorecase " ignore case for search
@@ -151,6 +151,7 @@ NeoBundle 'Gist.vim'
 
 NeoBundle 'altercation/vim-colors-solarized'
 NeoBundle 'tomasr/molokai'
+NeoBundle 'Lokaltog/vim-powerline'
 
 filetype plugin indent on
 "
@@ -282,6 +283,8 @@ au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vspli
 " finish with ESC * 2
 au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
 au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
+au FileType unite nnoremap <silent> <buffer> <expr> <C-k> unite#do_action('delete')
+au FileType unite inoremap <silent> <buffer> <expr> <C-k> unite#do_action('delete')
 
 " new tab
 nnoremap <silent> tb :<C-u>tabnew<CR>:tabmove<CR>:Unite buffer<CR>

@@ -60,5 +60,5 @@ export LESS=-R
 export LV='-la -Ou8'
 
 ## editor
-EDITOR=/usr/bin/vim
+EDITOR=/usr/local/bin/vim
 export PATH EDITOR

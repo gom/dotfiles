@@ -3,6 +3,8 @@
   email = gomgom68@gmail.com
 [core]
   pager = less -FRSX
+  editor=/usr/local/bin/vim
+  excludesfile=~/.gitignore
 [push]
   default = tracking
 [color]
@@ -40,7 +42,7 @@
   d = diff
   aa = add .
   dc = diff --cached
-  g = grep --color -n
+  g = grep --color -nH
   sb = submodule
   r = reset
   m = merge
