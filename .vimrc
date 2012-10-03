@@ -174,6 +174,7 @@ colorscheme desert
 highlight CursorLine cterm=none ctermbg=black
 
 " <Plugins:Gtags>
+nnoremap <C-q> <C-w><C-w><C-w>q
 map <C-g> :Gtags 
 map <C-i> :Gtags -f %<CR>
 map <C-j> :GtagsCursor<CR>

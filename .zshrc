@@ -143,6 +143,9 @@ umask 022
 ## RVM settings
 [ -s "$HOME/.rvm/scripts/rvm" ] && source $HOME/.rvm/scripts/rvm
 
+## pythonbrew
+[[ -s "$HOME/.pythonbrew/etc/bashrc" ]] && source "$HOME/.pythonbrew/etc/bashrc"
+
 ## ssh-agent
 [ -e $HOME/.ssh/agent-env ] && source $HOME/.ssh/agent-env
 
