@@ -39,7 +39,6 @@ set notitle "display title
 set showcmd "display command at status line
 set nolist "show tab and CR/LF
 set cursorline
-highlight CursorLine cterm=none ctermbg=blue ctermfg=black
 
 " <search>
 set ignorecase " ignore case for search
@@ -148,10 +147,11 @@ NeoBundle 'teramako/jscomplete-vim'
 NeoBundle 'gtags.vim'
 "NeoBundle 'taglist.vim'
 NeoBundle 'Gist.vim'
-
-NeoBundle 'altercation/vim-colors-solarized'
-NeoBundle 'tomasr/molokai'
 NeoBundle 'Lokaltog/vim-powerline'
+
+" colorschemes
+NeoBundle 'Zenburn'
+NeoBundle 'Wombat'
 
 filetype plugin indent on
 "
@@ -169,11 +169,9 @@ if neobundle#exists_not_installed_bundles()
 endif
 
 " <Plugins:colors-soralized>
-"let g:molokai_original = 1
 "set background=dark
-"let g:solarized_termcolors=256
-"colorscheme solarized
-"colorscheme molokai
+colorscheme desert
+highlight CursorLine cterm=none ctermbg=black
 
 " <Plugins:Gtags>
 map <C-g> :Gtags 
