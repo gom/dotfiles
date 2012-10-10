@@ -268,11 +268,18 @@ let g:ref_source_webdict_sites.default = 'alc'
 
 " <Plugins:unite>
 noremap <silent> ub :Unite buffer<CR>
-noremap <silent> uf :UniteWithBufferDir -buffer-name=files file<CR>
+noremap <silent> uf :UniteWithBufferDir -buffer-name=files file file/new<CR>
 noremap <silent> ur :Unite -buffer-name=register register<CR>
 noremap <silent> um :Unite file_mru<CR>
 noremap <silent> ui :Unite buffer file_mru<CR>
-nnoremap <silent> ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
+nnoremap <silent> ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file file/new<CR>
+
+" new tab
+nnoremap <silent> tb :<C-u>tabnew<CR>:tabmove<CR>:Unite buffer<CR>
+nnoremap <silent> tf :<C-u>tabnew<CR>:tabmove<CR>:UniteWithBufferDir -buffer-name=files file file/new<CR>
+nnoremap <silent> tm :<C-u>tabnew<CR>:tabmove<CR>:Unite file_mru<CR>
+nnoremap <silent> ti :<C-u>tabnew<CR>:tabmove<CR>:Unite buffer file_mru<CR>
+nnoremap <silent> ta :<C-u>tabnew<CR>:tabmove<CR>:UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file file/new<CR>
 
 " split window
 au FileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
@@ -284,11 +291,4 @@ au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
 au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
 au FileType unite nnoremap <silent> <buffer> <expr> <C-k> unite#do_action('delete')
 au FileType unite inoremap <silent> <buffer> <expr> <C-k> unite#do_action('delete')
-
-" new tab
-nnoremap <silent> tb :<C-u>tabnew<CR>:tabmove<CR>:Unite buffer<CR>
-nnoremap <silent> tf :<C-u>tabnew<CR>:tabmove<CR>:UniteWithBufferDir -buffer-name=files file<CR>
-nnoremap <silent> tm :<C-u>tabnew<CR>:tabmove<CR>:Unite file_mru<CR>
-nnoremap <silent> ti :<C-u>tabnew<CR>:tabmove<CR>:Unite buffer file_mru<CR>
-nnoremap <silent> ta :<C-u>tabnew<CR>:tabmove<CR>:UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
 
