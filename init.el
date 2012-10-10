@@ -145,7 +145,7 @@
   (setq default-frame-alist
         (append (list
                  '(width . 162)
-                 '(height . 50)
+                 '(height . 46)
                  '(foreground-color . "floral white")
                  '(background-color . "black")
                  '(cursor-color . "LightSeaGreen")
@@ -194,29 +194,30 @@
 (when (eq system-type 'darwin)
   ;; Font
   (when (>= emacs-major-version 23)
-    (set-face-attribute 'default nil
-                        :family "menlo"
-                        :height 130)
-    (set-fontset-font
-     (frame-parameter nil 'font)
-     'japanese-jisx0208
-     '("Hiragino Maru Gothic Pro" . "iso10646-1"))
-    (set-fontset-font
-     (frame-parameter nil 'font)
-     'japanese-jisx0212
-     '("Hiragino Maru Gothic Pro" . "iso10646-1"))
-    (set-fontset-font
-     (frame-parameter nil 'font)
-     'mule-unicode-0100-24ff
-     '("menlo" . "iso10646-1"))
-    (setq face-font-rescale-alist
-          '(("^-apple-hiragino.*" . 1.2)
-            (".*osaka-bold.*" . 1.2)
-            (".*osaka-medium.*" . 1.2)
-            (".*courier-bold-.*-mac-roman" . 1.0)
-            (".*monaco cy-bold-.*-mac-cyrillic" . 0.9)
-            (".*monaco-bold-.*-mac-roman" . 0.9)
-            ("-cdac$" . 1.3))))
+    (when window-system
+      (set-face-attribute 'default nil
+                          :family "menlo"
+                          :height 130)
+      (set-fontset-font
+       (frame-parameter nil 'font)
+       'japanese-jisx0208
+       '("Hiragino Maru Gothic Pro" . "iso10646-1"))
+      (set-fontset-font
+       (frame-parameter nil 'font)
+       'japanese-jisx0212
+       '("Hiragino Maru Gothic Pro" . "iso10646-1"))
+      (set-fontset-font
+       (frame-parameter nil 'font)
+       'mule-unicode-0100-24ff
+       '("menlo" . "iso10646-1"))
+      (setq face-font-rescale-alist
+            '(("^-apple-hiragino.*" . 1.2)
+              (".*osaka-bold.*" . 1.2)
+              (".*osaka-medium.*" . 1.2)
+              (".*courier-bold-.*-mac-roman" . 1.0)
+              (".*monaco cy-bold-.*-mac-cyrillic" . 0.9)
+              (".*monaco-bold-.*-mac-roman" . 0.9)
+              ("-cdac$" . 1.3)))))
 
   (when (= emacs-major-version 22)
     (require 'carbon-font)
@@ -237,7 +238,7 @@
 
 
 ;; drill-instructor.el
-(load "drill-instructor")
+(autoload 'drill-instructor "drill-instructor" "" t)
 (drill-instructor t)
 
 ;; ruby-mode.el
@@ -259,7 +260,6 @@
 (autoload 'rubydb "rubydb3x"
   "run rubydb on program file in buffer *gud-file*.
 the directory containing file becomes the initial working directory and source-file directory for your debugger." t)
-(require 'inf-ruby)
 
 ;; ruby-block.el
 (require 'ruby-block)
@@ -991,7 +991,7 @@ the directory containing file becomes the initial working directory and source-f
 ;; gtags-mode
 (when (locate-library "gtags")
   (require 'gtags))
-;;(autoload 'gtags-mode "gtags" "" t)
+(autoload 'gtags-mode "gtags" "" t)
 (global-set-key "\M-," 'gtags-find-tag)
 (global-set-key "\M-r" 'gtags-find-rtag)
 (global-set-key "\M-s" 'gtags-find-symbol)
@@ -1031,7 +1031,7 @@ the directory containing file becomes the initial working directory and source-f
 (add-to-load-path "cedet/srecode")
 
 (setq semantic-load-turn-useful-things-on t)
-(load "cedet")
+(autoload 'cedit "cedet" "" t)
 ;;(semantic-load-enable-code-helpers)
 
 ;; jde-mode-config
