@@ -1,17 +1,16 @@
 #!/bin/sh
-PWD_DIR=`dirname $0`
+PWD_DIR=$(cd $(dirname $0);pwd)
 
 # emacs
 EMACS_DIR=$HOME/.emacs.d
-[ ! -e $EMACS_DIR ] && $EMACS_DIR
-ln -s $PWD_DIR/init.el $EMACS_DIR
-ln -s $PWD_DIR/lisp $EMACS_DIR/elisp
+[ ! -e $EMACS_DIR ] && mkdir $EMACS_DIR
+[ ! -e $EMACS_DIR/init.el ] && ln -s $PWD_DIR/init.el $EMACS_DIR
+[ ! -e $EMACS_DIR/elisp ] && ln -s $PWD_DIR/lisp $EMACS_DIR/elisp
 
 # other config files
 ln -s $PWD_DIR/.gitconfig ~
 ln -s $PWD_DIR/.gitignore ~
 ln -s $PWD_DIR/.screenrc ~
-ln -s $PWD_DIR/.vimrc ~
 ln -s $PWD_DIR/.vim ~
 ln -s $PWD_DIR/.tmux.conf ~
 
@@ -19,9 +18,8 @@ ln -s $PWD_DIR/.tmux.conf ~
 cp $PWD_DIR/.git-completion.sh ~
 
 # shell configs
-PATH_DOTFILE=$HOME/.dotfiles
-SOURCE_RC="source $PATH_DOTFILE"
-for FILENAME_RC in .zshrc .zshenv .bashrc
+SOURCE_RC='source $HOME/.dotfiles'
+for FILENAME_RC in .zshrc .zshenv .bashrc .vimrc .gvimrc
 do
     [[ `tail -n1 ~/$FILENAME_RC` != $SOURCE_RC/$FILENAME_RC ]] && echo $SOURCE_RC/$FILENAME_RC >> $HOME/$FILENAME_RC
 done
@@ -30,4 +28,4 @@ done
 git submodule update --init --recursive
 
 # Emacs lisp byte-compile
-emacs -batch -f batch-byte-compile **/*.el
+emacs -batch -f batch-byte-compile **/*.el #> /dev/null 2>&1
