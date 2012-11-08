@@ -51,6 +51,14 @@ set wildmenu "set filelist
 set wildmode=list:full
 set history=1000
 
+" <FileType>
+au FileType ruby set ts=2 sw=2 expandtab
+au FileType js set ts=2 sw=2 expandtab
+au FileType php set ts=4 sw=4 expandtab
+au FileType php5 set ts=4 sw=4 expandtab
+
+" <Template>
+autocmd BufNewFile *.rb 0r ~/.vim/templates/rb.tpl
 
 " <Tab>
 set showtabline=2
