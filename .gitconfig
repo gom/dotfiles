@@ -65,4 +65,6 @@
   bm = branch --merged
   bn = branch --no-merged
 
+  #submodule
+  sbup = submodule update --init --recursive
   
