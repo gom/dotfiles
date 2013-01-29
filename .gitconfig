@@ -28,9 +28,6 @@
 ;  branch = auto
 ;  diff = auto
 ;  interactive = auto
-[github]
-  user = gom
-  token = b9fecde5490e10677a13fcd45ca962a9
 [alias]
   co = checkout
   ci = commit
