@@ -151,6 +151,7 @@ NeoBundle 'thinca/vim-ref'
 NeoBundle 'mattn/zencoding-vim'
 NeoBundle 'Shougo/echodoc'
 NeoBundle 'teramako/jscomplete-vim'
+NeoBundle 'fuenor/qfixhowm'
 
 NeoBundle 'gtags.vim'
 "NeoBundle 'taglist.vim'
@@ -300,3 +301,28 @@ au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
 au FileType unite nnoremap <silent> <buffer> <expr> <C-k> unite#do_action('delete')
 au FileType unite inoremap <silent> <buffer> <expr> <C-k> unite#do_action('delete')
 
+" <Plugins:QFixHowm>
+let QFixHowm_Key = 'g' " Key map reader
+let QFixHowm_FileType = 'markdown' " 'qfix_memo' 'markdown'
+let QFixHowm_Title = '#'
+let QFixHowm_ST = +9 " default JST
+let QFixHowm_Dir = '~/howm'
+let QFixHowm_SplitMode = 1
+
+"" MRU list options
+let QFixMRU_Entries      = 30
+let QFixMRU_Filename     = QFixHowm_Dir . '/.qfixmru'
+let QFixMRU_IgnoreFile   = ''
+let QFixMRU_RegisterFile = '/howm/' " '\.\(howm\|txt\|mkd\|wiki\)$'
+let QFixMRU_IgnoreTitle  = ':invisible'
+let QFixMRU_EntryMax     = 300
+
+let QFixMRU_Title = {}
+let QFixMRU_Title['howm'] = '^='
+let QFixMRU_Title['txt'] = '^='
+let QFixMRU_Title['mkd']  = '^#'
+
+let howm_dir             = QFixHowm_Dir
+let howm_filename        = '%Y/%m/%Y-%m-%d-%H%M%S.mkd'
+let howm_fileencoding    = 'utf-8'
+let howm_fileformat      = 'unix'
