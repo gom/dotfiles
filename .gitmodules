@@ -13,3 +13,6 @@
 [submodule ".vim/bundle/neobundle.vim"]
 	path = .vim/bundle/neobundle.vim
 	url = git://github.com/Shougo/neobundle.vim.git
+[submodule "vendor/zsh-completions"]
+        path = vendor/zsh-completions
+        url = git://github.com/zsh-users/zsh-completions.git
