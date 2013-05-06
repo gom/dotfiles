@@ -3,6 +3,7 @@ PWD_DIR=$(cd $(dirname $0);pwd)
 
 
 # other config files
+ln -s $PWD_DIR/.gemrc ~
 ln -s $PWD_DIR/.gitconfig ~
 ln -s $PWD_DIR/.gitignore ~
 ln -s $PWD_DIR/.screenrc ~
