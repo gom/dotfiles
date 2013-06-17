@@ -49,7 +49,9 @@ PATH=$ANDROIDSDK_PATH:$ANDROIDNDK_PATH:$ANDROIDSDK_TOOLS_PATH:$PATH
 # mysql
 [ -e /usr/local/mysql/bin ] && PATH=/usr/local/mysql/bin:$PATH
 # nvm
-[ -e $HOME/src/nvm ] && source $HOME/src/nvm/nvm.sh
+#[ -e $HOME/src/nvm ] && source $HOME/src/nvm/nvm.sh
+# nodebrew
+[ -e $HOME/.nodebrew ] && PATH=/$HOME/.nodebrew/current/bin:$PATH
 
 HOME_BIN=~/bin
 PATH=$HOME_BIN:$PATH
