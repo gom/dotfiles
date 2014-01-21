@@ -77,18 +77,18 @@ setopt nomatch
 # Work only Mac
 case ${OSTYPE} in
     freebsd*|darwin*)
-		    function e()
-		    {
-	          # Open file with Emacs.app
-            emacsclient -n ${*:-.} 2>/dev/null && return 0
-				    if [ -e $1 ] || touch $1; then
-						    open -a /Applications/Emacs.app ${*:-.}
-				    fi
-		    }
-        ;;
+      function e()
+      {
+        # Open file with Emacs.app
+        emacsclient -n ${*:-.} 2>/dev/null && return 0
+        if [ -e $1 ] || touch $1; then
+          open -a /Applications/Emacs.app ${*:-.}
+        fi
+      }
+      ;;
     linux*)
-		    alias ls='ls --color=auto'
-        ;;
+      alias ls='ls --color=auto'
+      ;;
 esac
 
 ## set alias
