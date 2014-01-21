@@ -1,0 +1,6 @@
+update
+ruby-build
+binstubs
+gem-rehash
+env
+default-gems 
