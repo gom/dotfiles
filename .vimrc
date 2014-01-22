@@ -52,10 +52,12 @@ set wildmode=list:full
 set history=1000
 
 " <FileType>
+au BufRead,BufNewFile,BufReadPre *.coffee   set filetype=coffee
 au FileType ruby set ts=2 sw=2 expandtab
 au FileType js set ts=2 sw=2 expandtab
 au FileType php set ts=4 sw=4 expandtab
 au FileType php5 set ts=4 sw=4 expandtab
+au FileType coffee setlocal ts=2 sw=2 sts=2 expandtab
 
 " <Template>
 autocmd BufNewFile *.rb 0r ~/.vim/templates/rb.tpl
@@ -152,6 +154,8 @@ NeoBundle 'mattn/zencoding-vim'
 NeoBundle 'Shougo/echodoc'
 NeoBundle 'teramako/jscomplete-vim'
 NeoBundle 'fuenor/qfixhowm'
+NeoBundle 'kchmck/vim-coffee-script'
+NeoBundle 'nathanaelkane/vim-indent-guides'
 
 NeoBundle 'gtags.vim'
 "NeoBundle 'taglist.vim'
@@ -326,3 +330,21 @@ let howm_dir             = QFixHowm_Dir
 let howm_filename        = '%Y/%m/%Y-%m-%d-%H%M%S.mkd'
 let howm_fileencoding    = 'utf-8'
 let howm_fileformat      = 'unix'
+
+" <Plugins:vim-indent-guides>
+let g:indent_guides_start_level=2
+let g:indent_guides_auto_colors=0
+let g:indent_guides_enable_on_vim_startup=0
+let g:indent_guides_color_change_percent=20
+let g:indent_guides_guide_size=1
+let g:indent_guides_space_guides=1
+
+hi IndentGuidesOdd  ctermbg=235
+hi IndentGuidesEven ctermbg=237
+au FileType coffee,ruby,javascript,python IndentGuidesEnable
+nmap <silent><Leader>ig <Plug>IndentGuidesToggle
+
+" <Plugins:vim-quickrun>
+let g:quickrun_config = {}
+let g:quickrun_config['coffee'] = {'command' : 'coffee', 'exec' : ['%c -cbp %s']}
+
