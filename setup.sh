@@ -1,7 +1,6 @@
 #!/bin/sh
 PWD_DIR=$(cd $(dirname $0);pwd)
 
-
 # other config files
 ln -s $PWD_DIR/.gemrc ~
 ln -s $PWD_DIR/.gitconfig ~
@@ -26,8 +25,9 @@ git submodule update --init --recursive
 
 # emacs
 EMACS_DIR=$HOME/.emacs.d
+EMACS_SRC=$PWD_DIR/emacs
 [ ! -e $EMACS_DIR ] && mkdir $EMACS_DIR
-[ ! -e $EMACS_DIR/init.el ] && ln -s $PWD_DIR/init.el $EMACS_DIR
-[ ! -e $EMACS_DIR/elisp ] && ln -s $PWD_DIR/lisp $EMACS_DIR/elisp
+[ ! -e $EMACS_DIR/init.el ] && ln -s $EMACS_SRC/init.el $EMACS_DIR
+[ ! -e $EMACS_DIR/elisp ] && ln -s $EMACS_SRC/el $EMACS_DIR/elisp
 # Emacs lisp byte-compile
 [ -s "`which emacs`" ] && emacs -batch -f batch-byte-compile **/*.el #> /dev/null 2>&1
