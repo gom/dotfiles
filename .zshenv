@@ -19,9 +19,10 @@ if [ `uname` = "Darwin" ]
 then
     ## add path (for Mac) 
 	GAEJ_SDK=$HOME/lib/appengine-java-sdk/bin
+        LOCAL_PATH=/usr/local/bin
 	#PORT_PATH=/opt/local/bin:/opt/local/sbin
 	#PYTHONPATH=$HOME/lib/python2.6/site-packages
-        PATH=$GAEJ_SDK:$PATH
+        PATH=$LOCAL_PATH:$GAEJ_SDK:$PATH
 
     ## add manual path
 	#PORT_MAN=/opt/local/man
@@ -44,8 +45,6 @@ PATH=$ANDROIDSDK_PATH:$ANDROIDNDK_PATH:$ANDROIDSDK_TOOLS_PATH:$PATH
 
 # ccache
 [ -e /usr/lib/ccache ] && PATH=/usr/lib/ccache:$PATH
-# rbenv
-[ -e $HOME/.rbenv/bin ] && PATH=$HOME/.rbenv/bin:$PATH
 # mysql
 [ -e /usr/local/mysql/bin ] && PATH=/usr/local/mysql/bin:$PATH
 # nvm
@@ -53,7 +52,12 @@ PATH=$ANDROIDSDK_PATH:$ANDROIDNDK_PATH:$ANDROIDSDK_TOOLS_PATH:$PATH
 # nodebrew
 [ -e $HOME/.nodebrew ] && PATH=/$HOME/.nodebrew/current/bin:$PATH
 
-HOME_BIN=~/bin
+# rbenv
+[ -e $HOME/.rbenv/bin ] && PATH=$HOME/.rbenv/bin:$PATH
+# nodebrew
+[ -e $HOME/.nodebrew ] && PATH=$HOME/.nodebrew/current/bin:$PATH
+
+HOME_BIN=$HOME/bin
 PATH=$HOME_BIN:$PATH
 
 ## Pager
@@ -62,5 +66,5 @@ export LESS=-R
 export LV='-la -Ou8'
 
 ## editor
-EDITOR=/usr/local/bin/vim
+[ -e /usr/local/bin/vim ] && EDITOR=/usr/local/bin/vim
 export PATH EDITOR
