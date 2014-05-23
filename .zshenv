@@ -49,16 +49,21 @@ PATH=$ANDROIDSDK_PATH:$ANDROIDNDK_PATH:$ANDROIDSDK_TOOLS_PATH:$PATH
 [ -e /usr/local/mysql/bin ] && PATH=/usr/local/mysql/bin:$PATH
 # nvm
 #[ -e $HOME/src/nvm ] && source $HOME/src/nvm/nvm.sh
-# nodebrew
-[ -e $HOME/.nodebrew ] && PATH=/$HOME/.nodebrew/current/bin:$PATH
 
 # rbenv
 [ -e $HOME/.rbenv/bin ] && PATH=$HOME/.rbenv/bin:$PATH
 # nodebrew
 [ -e $HOME/.nodebrew ] && PATH=$HOME/.nodebrew/current/bin:$PATH
 
+# go
+if [ -x "`which go`" ]; then
+  export _GOROOT=`go env GOROOT`
+  export GOPATH=$HOME/.goproj
+  PATH=$PATH:$GOPATH/bin:$_GOROOT/bin
+fi
+
 HOME_BIN=$HOME/bin
-PATH=$HOME_BIN:$PATH
+PATH=$HOME_BIN:/usr/local/bin:$PATH
 
 ## Pager
 export LESSCHARSET=utf-8
