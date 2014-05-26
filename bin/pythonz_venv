@@ -1,0 +1,30 @@
+#!/bin/sh
+if [ $# -lt 2 ]; then
+  echo $0 [python_version] [venv_name]
+  exit
+fi
+
+PYTHON_VERSION=$1
+PYTHONZ_ROOT=$HOME/.pythonz
+PYTHONZ_BIN=${PYTHONZ_ROOT}/bin
+PYTHON_BIN=${PYTHONZ_ROOT}/pythons/${PYTHON_VERSION}/bin/python
+
+VENV_NAME=$2
+VENV_BIN=${PYTHONZ_BIN}/virtualenv.py
+VENV_ROOT=${PYTHONZ_ROOT}/venvs/${PYTHON_VERSION}
+VENV_HOME=${VENV_ROOT}/${VENV_NAME}
+VENV_ACTIVATE=${VENV_HOME}/bin/activate
+
+if [ ! -e ${VENV_BIN} ]; then
+    wget -O ${VENV_BIN} https://raw.github.com/pypa/virtualenv/master/virtualenv.py
+fi
+
+${PYTHON_BIN} ${VENV_BIN} --distribute ${VENV_HOME}
+
+cat <<EOT
+Please type:
+
+$ source ${VENV_ACTIVATE} && which python
+
+enjoy!
+EOT

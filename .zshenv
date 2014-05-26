@@ -54,6 +54,8 @@ PATH=$ANDROIDSDK_PATH:$ANDROIDNDK_PATH:$ANDROIDSDK_TOOLS_PATH:$PATH
 [ -e $HOME/.rbenv/bin ] && PATH=$HOME/.rbenv/bin:$PATH
 # nodebrew
 [ -e $HOME/.nodebrew ] && PATH=$HOME/.nodebrew/current/bin:$PATH
+#pythonz
+[[ -s $HOME/.pythonz/etc/bashrc ]] && source $HOME/.pythonz/etc/bashrc
 
 # go
 if [ -x "`which go`" ]; then
