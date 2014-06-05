@@ -17,3 +17,5 @@ for p in `cat ${config}`
 do
   rbenv plug $p
 done
+
+ln -s $(cd $(dirname $0) && pwd)/default-gems $RBENV_DIR/
