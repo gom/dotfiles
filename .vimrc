@@ -123,6 +123,19 @@ if has('mac')
  source $VIMRUNTIME/menu.vim
 endif
 
+" <Golang>
+if $GOROOT != ''
+  set rtp+=${GOROOT}/misc/vim
+  set rtp+=${GOPATH}/src/github.com/nsf/gocode/vim
+endif
+
+"use goimports instead of gofmt
+let g:gofmt_command = 'goimports'
+
+""保存時に :Fmt
+au BufWritePre *.go Fmt
+au BufNewFile,BufRead *.go set sw=4 noexpandtab ts=4
+au FileType go compiler go
 
 " <Plugins>
 
