@@ -100,7 +100,6 @@ setopt hist_verify
 ## set alias
 setopt complete_aliases
 
-alias ls='ls -F --color=auto'
 alias ll='ls -lhF'
 alias la='ls -la'
 alias grep='grep --color=auto'
