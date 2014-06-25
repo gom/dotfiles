@@ -1,0 +1,99 @@
+# As references
+## http://www.clear-code.com/blog/2011/9/5.html
+## http://d.hatena.ne.jp/yascentur/20111111/1321015289
+
+## Path
+# "-U" denies duplicate path
+typeset -U path
+# (N-/): options that check the existing and evaluate symboric link
+# N: NULL_GLOB, -: evaluate symbolic link, /: only allow directory
+path=(
+       $HOME/bin(N-/)
+       $HOME/.rbenv/bin
+       $HOME/.nodebrew/current/bin 
+
+       /usr/lib/ccache(N-/)
+       /usr/local/mysql/bin(N-/)
+       /usr/local/bin(N-/)
+       /usr/bin(N-/)
+       /bin(N-/)
+       /usr/bin/X11(N-/)
+       /usr/games(N-/)
+      )
+
+## colors 
+export LSCOLORS=GxFxCxDxBxegedabagacad
+export CLICOLOR=1
+
+## Language
+export LANGUAGE=ja_JP.UTF-8
+export LANG=ja_JP.UTF-8
+export LC_ALL=ja_JP.UTF-8
+
+# complete list
+# -1 : no asking when the list is too large
+export LISTMAX=0
+
+export _JAVA_OPTIONS="-Dfile.encoding=UTF-8"
+
+## Pager
+if type lv > /dev/null 2>&1; then
+  export PAGER="lv"
+else
+  export PAGER="less"
+fi
+export LESSCHARSET=utf-8
+export LESS="-R"
+export LV='-c -la -Ou8'
+
+if [ "$PAGER" != "lv" ]; then
+  alias lv="$PAGER"
+fi
+
+## grep
+export GREP_OPTIONS
+GREP_OPTIONS="--binary-files=without-match"
+GREP_OPTIONS="--exclude=\*.tmp $GREP_OPTIONS"
+if grep --help | grep -q -- --exclude-dir; then
+  GREP_OPTIONS="--exclude-dir=.svn $GREP_OPTIONS"
+  GREP_OPTIONS="--exclude-dir=.git $GREP_OPTIONS"
+  GREP_OPTIONS="--exclude-dir=.deps $GREP_OPTIONS"
+  GREP_OPTIONS="--exclude-dir=.libs $GREP_OPTIONS"
+fi
+if grep --help | grep -q -- --color; then
+  GREP_OPTIONS="--color=auto $GREP_OPTIONS"
+fi
+
+## editor
+if [ -e /usr/local/bin/vim ]; then
+  EDITOR=/usr/local/bin/vim
+else
+  EDITOR=vim
+fi
+if ! type vim > /dev/null 2>&1; then
+  alias vim=vi
+fi
+export EDITOR
+
+#pythonz
+[[ -s $HOME/.pythonz/etc/bashrc ]] && source $HOME/.pythonz/etc/bashrc
+
+# go
+if [ -x "`which go`" ]; then
+  export _GOROOT=`go env GOROOT`
+  export GOPATH=$HOME/.goproj
+  export PATH=$PATH:$GOPATH/bin:$_GOROOT/bin
+fi
+
+# goenv
+export GOENVGOROOT=$HOME/.goenvs
+export GOENVTARGET=$HOME/bin
+export GOENVHOME=$HOME/workspace
+
+if [ -x "`which goenv`" ]; then
+  export GOROOT=$GOENVGOROOT/release
+  export GOPATH=$HOME/.goproj
+  export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
+  [[ -x "`which goenvwrapper.sh`" ]] && source goenvwrapper.sh > /dev/null
+fi
+

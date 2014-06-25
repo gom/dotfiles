@@ -14,7 +14,7 @@ ln -s $PWD_DIR/.git-completion.sh ~
 
 # shell configs
 SOURCE_RC='source $HOME/.dotfiles'
-for FILENAME_RC in .zshrc .zshenv .bashrc .vimrc .gvimrc
+for FILENAME_RC in .zsh.d/zshrc .zsh.d/zshenv .bashrc .vimrc .gvimrc
 do
     [ ! -e ~/$FILENAME_RC ] && touch ~/$FILENAME_RC
     [[ `tail -n1 ~/$FILENAME_RC` != $SOURCE_RC/$FILENAME_RC ]] && echo $SOURCE_RC/$FILENAME_RC >> $HOME/$FILENAME_RC

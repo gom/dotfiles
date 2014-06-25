@@ -2,7 +2,10 @@
 bindkey -e
 
 # prompt
-autoload -U colors && colors
+setopt prompt_subst
+#autoload -U colors && colors
+setopt prompt_percent
+setopt transient_rprompt
 PROMPT="${USER}@${HOST} %(!.#.$) "
 
 autoload -Uz vcs_info
@@ -10,11 +13,27 @@ zstyle ':vcs_info:*' formats '(%s)-[%b]'
 zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
 precmd () {
     psvar=()
-    LANG=en_US.UTF-8 vcs_info
+    LANG=C vcs_info >&/dev/null
     [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
 }
 RPROMPT="%1(v|%F{green}%1v%f|)"
 RPROMPT+="[%~]"
+
+setopt no_flow_control      # disabled C-s, C-q
+setopt no_beep
+setopt interactive_comments # behind '#' is comment in cmd line
+WORDCHARS=${WORDCHARS:s,/,,}
+
+# log
+watch="all"    # watching login and logout
+log
+setopt no_tify # when bg job finish, notify me.
+setopt nomatch
+setopt ignore_eof # ignore logout when touch ^D
+
+# job
+setopt long_list_jobs
+REPORTTIME=3
 
 ## auto complete
 zstyle :compinstall filename '~/.zshrc'
@@ -23,27 +42,44 @@ compinit
 autoload bashcompinit
 bashcompinit
 [ -f ~/.gitcompletion.sh ] && source ~/.gitcompletion.sh
-zstyle ':completion:*:default' menu select=1        #use emacs keybind
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' # ignore case
-
-setopt auto_pushd        # cd to pushd
-setopt pushd_ignore_dups
-setopt pushd_to_home     # pushd with no argument, go home.
-setopt auto_cd
-setopt auto_menu
-setopt list_types        # display file types in complete list
-setopt magic_equal_subst # able to complete after '='
-setopt print_eight_bit   # display Japanese
-
-#eval `dircolors`
-zstyle ':completion:*:default' list-colors ${LS_COLORS}
+zstyle ':completion:*' format '%B%d%b'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:default' menu select=2        #use emacs keybind
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z} r:|[._-]=*' # ignore case
+zstyle ':completion:*' completer \
+      _oldlist _complete _match _history _ignored _approximate _prefix
+zstyle ':completion:*' use-cache yes
+zstyle ':completion:*' verbose yes
+zstyle ':completion:sudo:*' environ PATH="$SUDO_PATH:$PATH"
 zstyle ':completion:*:default' list-colors ${LSCOLORS}
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([%0-9]#)*=0=01;31'
 
+setopt complete_in_word
+setopt glob_complete
+setopt extended_glob
+setopt numeric_glob_sort    # sort as numeric order
+setopt mark_dirs            # add / when the path is directory
+setopt hist_expand
+setopt auto_list            # display autocomplete list by ^I
+setopt list_types        # display file types in complete list
+setopt auto_menu         # switch items by TAB
+setopt magic_equal_subst # able to complete after '='
+setopt print_eight_bit   # display Japanese
+
+
+# moving directory
+setopt auto_cd
+setopt auto_pushd        # cd to pushd
+setopt pushd_ignore_dups
+setopt pushd_to_home     # pushd with no argument, go home.
+cdpath=(~)
+chpwd_functions=($chpwd_functions dirs) # display the stack of directories
+
+
 ## history
-HISTFILE=~/.histfile
-HISTSIZE=10000
-SAVEHIST=10000
+HISTFILE=~/.zsh_history
+HISTSIZE=10000000
+SAVEHIST=$HISTSIZE
 function history-all { history -E 1 } # output all histories
 
 autoload history-search-end
@@ -61,45 +97,17 @@ setopt hist_no_store        # no store in history, `history` cmd.
 setopt hist_reduce_blanks
 setopt hist_verify
 
-## shell options
-setopt no_flow_control      # disabled C-s, C-q
-setopt no_beep
-setopt auto_list            # display autocomplete list by ^I
-setopt extended_glob
-setopt interactive_comments # behind '#' is comment in cmd line
-setopt numeric_glob_sort
-
-watch="all"    # watching login and logout
-log
-setopt no_tify # when bg job finish, notify me.
-setopt nomatch
-
-# Work only Mac
-case ${OSTYPE} in
-    freebsd*|darwin*)
-      function e()
-      {
-        # Open file with Emacs.app
-        emacsclient -n ${*:-.} 2>/dev/null && return 0
-        if [ -e $1 ] || touch $1; then
-          open -a /Applications/Emacs.app ${*:-.}
-        fi
-      }
-      ;;
-    linux*)
-      alias ls='ls --color=auto'
-      ;;
-esac
-
 ## set alias
 setopt complete_aliases
 
-alias ll='ls -l'
+alias ls='ls -F --color=auto'
+alias ll='ls -lhF'
 alias la='ls -la'
 alias grep='grep --color=auto'
 alias ec='emacsclient -c -t'
 alias em='emacs -nw -fs'
 
+alias rr="command rm -rf"
 alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
@@ -132,6 +140,10 @@ alias en='export LANG=en; export LANGUAGE=en; export LC_ALL=en'
 alias eucjp='export LANG=ja_JP.eucJP; export LANGUAGE=ja_JP.eucJP; export LC_ALL=ja_JP.eucJP'
 alias sjis='export LANG=ja_JP.SJIS; export LANGUAGE=ja_JP.SJIS; export LC_ALL=ja_JP.SJIS'
 
+grm() {
+  git status | grep deleted: | awk '{ print $3 }' | xargs git rm
+}
+
 ## others
 umask 022
 [ -s "`which screen`" ] && screen -r
@@ -139,12 +151,6 @@ umask 022
 
 ## rbenv settings
 [ -s "`which rbenv`" ] && eval "$(rbenv init -)"
-
-## RVM settings
-[ -s "$HOME/.rvm/scripts/rvm" ] && source $HOME/.rvm/scripts/rvm
-
-## pythonbrew
-[[ -s "$HOME/.pythonbrew/etc/bashrc" ]] && source "$HOME/.pythonbrew/etc/bashrc"
 
 ## ssh-agent
 [ -e $HOME/.ssh/agent-env ] && source $HOME/.ssh/agent-env
@@ -158,7 +164,3 @@ case "$TERM" in
     unsetopt zle
     ;;
 esac
-
-grm() {
-  git status | grep deleted: | awk '{ print $3 }' | xargs git rm
-}
