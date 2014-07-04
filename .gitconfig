@@ -28,6 +28,9 @@
 ;  branch = auto
 ;  diff = auto
 ;  interactive = auto
+[ghq]
+  root = ~/.ghq
+  root = ~/.goproj/src
 [alias]
   co = checkout
   ci = commit
