@@ -148,14 +148,22 @@ if has('vim_starting')
 endif
 
 call neobundle#rc(expand('~/.vim/bundle/'))
-NeoBundle 'Shougo/neobundle.vim'
-NeoBundle 'Shougo/vimproc'
+NeoBundle 'Shougo/vimproc.vim', {
+      \ 'build' : {
+      \     'windows' : 'tools\\update-dll-mingw',
+      \     'cygwin' : 'make -f make_cygwin.mak',
+      \     'mac' : 'make -f make_mac.mak',
+      \     'unix' : 'make -f make_unix.mak',
+      \    },
+      \ }
 
 NeoBundle 'Shougo/unite.vim'
+NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'h1mesuke/unite-outline'
 NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/neosnippet'
+NeoBundle 'Shougo/neosnippet-snippets'
 NeoBundle 'Shougo/neocomplcache-clang_complete'
 NeoBundle 'Shougo/vim-vcs'
 NeoBundle 'Shougo/vimfiler'
@@ -163,9 +171,8 @@ NeoBundle 'Shougo/vimshell'
 NeoBundle 'Shougo/vinarise'
 NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'thinca/vim-ref'
-NeoBundle 'mattn/zencoding-vim'
+NeoBundle 'mattn/emmet-vim'
 NeoBundle 'Shougo/echodoc'
-NeoBundle 'teramako/jscomplete-vim'
 NeoBundle 'fuenor/qfixhowm'
 NeoBundle 'kchmck/vim-coffee-script'
 NeoBundle 'nathanaelkane/vim-indent-guides'
@@ -216,7 +223,7 @@ let g:neocomplcache_enable_at_startup = 1
 " Use smartcase.
 let g:neocomplcache_enable_smart_case = 1
 " Use camel case completion.
-let g:neocomplcache_enable_camel_case_completion = 1
+"let g:neocomplcache_enable_camel_case_completion = 1
 " Use underbar completion.
 let g:neocomplcache_enable_underbar_completion = 1
 " Set minimum syntax keyword length.
@@ -293,12 +300,18 @@ let g:ref_source_webdict_sites = {
 let g:ref_source_webdict_sites.default = 'alc'
 
 " <Plugins:unite>
+let g:unite_enable_start_insert=1
+let g:unite_source_history_yank_enable =1
+let g:unite_source_file_mru_limit = 200
+
 noremap <silent> ub :Unite buffer<CR>
 noremap <silent> uf :UniteWithBufferDir -buffer-name=files file file/new<CR>
 noremap <silent> ur :Unite -buffer-name=register register<CR>
 noremap <silent> um :Unite file_mru<CR>
 noremap <silent> ui :Unite buffer file_mru<CR>
 nnoremap <silent> ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file file/new<CR>
+nnoremap <silent> uy :<C-u>Unite history/yank<CR>
+
 
 " new tab
 nnoremap <silent> tb :<C-u>tabnew<CR>:tabmove<CR>:Unite buffer<CR>
