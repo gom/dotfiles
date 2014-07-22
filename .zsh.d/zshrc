@@ -3,7 +3,7 @@ bindkey -e
 
 # prompt
 setopt prompt_subst
-#autoload -U colors && colors
+autoload -U colors && colors
 setopt prompt_percent
 setopt transient_rprompt
 PROMPT="${USER}@${HOST} %(!.#.$) "
@@ -99,6 +99,12 @@ setopt hist_verify
 
 ## set alias
 setopt complete_aliases
+
+case ${OSTYPE} in
+  linux*)
+    alias ls='ls --color=auto'
+    ;;
+esac
 
 alias ll='ls -lhF'
 alias la='ls -la'
