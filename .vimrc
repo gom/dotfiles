@@ -303,14 +303,24 @@ let g:ref_source_webdict_sites.default = 'alc'
 let g:unite_enable_start_insert=1
 let g:unite_source_history_yank_enable =1
 let g:unite_source_file_mru_limit = 200
+let g:unite_source_file_mru_filename_format = ''
 
-noremap <silent> ub :Unite buffer<CR>
-noremap <silent> uf :UniteWithBufferDir -buffer-name=files file file/new<CR>
-noremap <silent> ur :Unite -buffer-name=register register<CR>
-noremap <silent> um :Unite file_mru<CR>
-noremap <silent> ui :Unite buffer file_mru<CR>
-nnoremap <silent> ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file file/new<CR>
-nnoremap <silent> uy :<C-u>Unite history/yank<CR>
+" Prefix key
+nnoremap    [unite]   <Nop>
+nmap    u [unite]
+
+noremap <silent> [unite]b :Unite buffer<CR>
+noremap <silent> [unite]f :UniteWithBufferDir -buffer-name=files file file/new<CR>
+noremap <silent> [unite]r :Unite -buffer-name=register register<CR>
+noremap <silent> [unite]m :Unite file_mru<CR>
+noremap <silent> [unite]i :Unite buffer file_mru<CR>
+noremap <silent> [unite]c :Unite bookmark<CR>
+noremap <silent> [unite]d :UniteBookmarkAdd<CR>
+noremap <silent> uc :Unite bookmark<CR>
+noremap <silent> ud :UniteBookmarkAdd<CR>
+nnoremap <silent> [unite]a :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file file/new<CR>
+nnoremap <silent> [unite]y :<C-u>Unite history/yank<CR>
+nnoremap <silent> [unite]l :<C-u>Unite -auto-preview colorscheme<CR>
 
 
 " new tab
@@ -319,17 +329,23 @@ nnoremap <silent> tf :<C-u>tabnew<CR>:tabmove<CR>:UniteWithBufferDir -buffer-nam
 nnoremap <silent> tm :<C-u>tabnew<CR>:tabmove<CR>:Unite file_mru<CR>
 nnoremap <silent> ti :<C-u>tabnew<CR>:tabmove<CR>:Unite buffer file_mru<CR>
 nnoremap <silent> ta :<C-u>tabnew<CR>:tabmove<CR>:UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file file/new<CR>
+nnoremap <silent> tc :<C-u>tabnew<CR>:tabmove<CR>:Unite bookmark<CR>
 
-" split window
-au FileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-au FileType unite inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-au FileType unite nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-" finish with ESC * 2
-au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
-au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
-au FileType unite nnoremap <silent> <buffer> <expr> <C-k> unite#do_action('delete')
-au FileType unite inoremap <silent> <buffer> <expr> <C-k> unite#do_action('delete')
+autocmd FileType unite call s:unite_my_settings()
+function! s:unite_my_settings()"{{{
+  nmap <buffer> <ESC><ESC> <Plug>(unite_exit)
+  imap <buffer> jj <Plug>(unite_insert_leave)
+  imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
+
+  " split window
+  nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+  inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+  nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+  inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+
+  nnoremap <silent> <buffer> <expr> <C-k> unite#do_action('delete')
+  inoremap <silent> <buffer> <expr> <C-k> unite#do_action('delete')
+endfunction "}}}
 
 " <Plugins:QFixHowm>
 let QFixHowm_Key = 'g' " Key map reader
