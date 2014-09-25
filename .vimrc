@@ -128,6 +128,7 @@ endif
 if $GOROOT != ''
   set rtp+=${GOROOT}/misc/vim
   set rtp+=${GOPATH}/src/github.com/nsf/gocode/vim
+  set rtp+=${GOPATH}/src/github.com/golang/lint/misc/vim
 endif
 
 "use goimports instead of gofmt
