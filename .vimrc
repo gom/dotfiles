@@ -55,6 +55,7 @@ set history=1000
 au BufRead,BufNewFile,BufReadPre *.coffee   set filetype=coffee
 au FileType ruby set ts=2 sw=2 expandtab
 au FileType js set ts=2 sw=2 expandtab
+au FileType json set ts=2 sw=2 expandtab
 au FileType php set ts=4 sw=4 expandtab
 au FileType php5 set ts=4 sw=4 expandtab
 au FileType coffee setlocal ts=2 sw=2 sts=2 expandtab
@@ -175,6 +176,7 @@ NeoBundle 'mattn/emmet-vim'
 NeoBundle 'Shougo/echodoc'
 NeoBundle 'fuenor/qfixhowm'
 NeoBundle 'kchmck/vim-coffee-script'
+NeoBundle 'elzr/vim-json'
 NeoBundle 'nathanaelkane/vim-indent-guides'
 
 NeoBundle 'gtags.vim'
@@ -307,7 +309,7 @@ let g:unite_source_file_mru_filename_format = ''
 
 " Prefix key
 nnoremap    [unite]   <Nop>
-nmap    u [unite]
+nmap    f [unite]
 
 noremap <silent> [unite]b :Unite buffer<CR>
 noremap <silent> [unite]f :UniteWithBufferDir -buffer-name=files file file/new<CR>

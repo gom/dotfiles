@@ -3,7 +3,7 @@ bindkey -e
 
 # prompt
 setopt prompt_subst
-autoload -U colors && colors
+autoload -Uz colors && colors
 setopt prompt_percent
 setopt transient_rprompt
 PROMPT="${USER}@${HOST} %(!.#.$) "
@@ -37,10 +37,8 @@ REPORTTIME=3
 
 ## auto complete
 zstyle :compinstall filename '~/.zshrc'
-autoload -Uz compinit
-compinit
-autoload bashcompinit
-bashcompinit
+autoload -Uz compinit && compinit
+autoload -Uz bashcompinit && bashcompinit
 [ -f ~/.gitcompletion.sh ] && source ~/.gitcompletion.sh
 zstyle ':completion:*' format '%B%d%b'
 zstyle ':completion:*' group-name ''
@@ -53,6 +51,18 @@ zstyle ':completion:*' verbose yes
 zstyle ':completion:sudo:*' environ PATH="$SUDO_PATH:$PATH"
 zstyle ':completion:*:default' list-colors ${LSCOLORS}
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([%0-9]#)*=0=01;31'
+
+# cdr http://blog.n-z.jp/blog/2013-11-12-zsh-cdr.html
+if [[ -n $(echo ${^fpath}/chpwd_recent_dirs(N)) && -n $(echo ${^fpath}/cdr(N)) ]]; then
+  autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+  add-zsh-hook chpwd chpwd_recent_dirs
+  zstyle ':completion:*:*:cdr:*:*' menu selection
+  zstyle ':completion:*' recent-dirs-insert both
+  zstyle ':chpwd:*' recent-dirs-max 500
+  zstyle ':chpwd:*' recent-dirs-default true
+  zstyle ':chpwd:*' recent-dirs-file "${XDG_CACHE_HOME:-$HOME/.cache}/shell/chpwd-recent-dirs"
+  zstyle ':chpwd:*' recent-dirs-pushd true
+fi
 
 setopt complete_in_word
 setopt glob_complete
@@ -210,5 +220,5 @@ if [ -s "`which peco`" ]; then
     zle clear-screen
   }
   zle -N peco-cdr
-  bindkey '^@' peco-cdr
+  bindkey '^[' peco-cdr
 fi
