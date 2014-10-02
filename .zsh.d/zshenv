@@ -80,6 +80,5 @@ if [ -x "`which goenv`" ]; then
   export GOROOT=$GOENVGOROOT/release
   export GOPATH=$HOME/.goproj
   export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
-  [[ -x "`which goenvwrapper.sh`" ]] && source goenvwrapper.sh > /dev/null
 fi
 

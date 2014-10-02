@@ -37,9 +37,10 @@ REPORTTIME=3
 
 ## auto complete
 zstyle :compinstall filename '~/.zshrc'
-autoload -Uz compinit && compinit
+fpath=(~/.zsh.d/completion $fpath)
+autoload -Uz compinit && compinit -u
 autoload -Uz bashcompinit && bashcompinit
-[ -f ~/.gitcompletion.sh ] && source ~/.gitcompletion.sh
+
 zstyle ':completion:*' format '%B%d%b'
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*:default' menu select=2        #use emacs keybind
@@ -166,6 +167,9 @@ umask 022
 
 ## rbenv settings
 [ -s "`which rbenv`" ] && eval "$(rbenv init -)"
+
+## goenv
+[ -s "`which goenvwrapper.sh`" ] && source goenvwrapper.sh > /dev/null
 
 ## ssh-agent
 [ -e $HOME/.ssh/agent-env ] && source $HOME/.ssh/agent-env

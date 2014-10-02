@@ -9,8 +9,7 @@ ln -s $PWD_DIR/.screenrc ~
 ln -s $PWD_DIR/.vim ~
 ln -s $PWD_DIR/.tmux.conf ~
 
-# git complition files
-ln -s $PWD_DIR/.git-completion.sh ~
+ln -s $PWD_DIR/.zsh.d ~
 
 # shell configs
 SOURCE_RC='source $HOME/.dotfiles'
