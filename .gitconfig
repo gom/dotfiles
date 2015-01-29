@@ -28,6 +28,9 @@
 ;  branch = auto
 ;  diff = auto
 ;  interactive = auto
+ 
+[github]
+	user = gom
 [ghq]
   root = ~/.ghq
   root = ~/.goproj/src
@@ -67,4 +70,3 @@
 
   #submodule
   sbup = submodule update --init --recursive
-  
