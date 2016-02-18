@@ -163,13 +163,16 @@ grm() {
 ## others
 umask 022
 [ -s "`which screen`" ] && screen -r
-[ -s "`which tmux`" ] && tmux attach
+[ -s "`which tmux`" ] && tmux -u attach
 
 ## rbenv settings
 [ -s "`which rbenv`" ] && eval "$(rbenv init -)"
 
 ## goenv
 [ -s "`which goenvwrapper.sh`" ] && source goenvwrapper.sh > /dev/null
+
+#pythonz
+[[ -s $HOME/.pythonz/etc/bashrc ]] && source $HOME/.pythonz/etc/bashrc
 
 ## ssh-agent
 [ -e $HOME/.ssh/agent-env ] && source $HOME/.ssh/agent-env

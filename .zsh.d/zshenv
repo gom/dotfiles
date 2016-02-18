@@ -63,9 +63,6 @@ if ! type vim > /dev/null 2>&1; then
 fi
 export EDITOR
 
-#pythonz
-[[ -s $HOME/.pythonz/etc/bashrc ]] && source $HOME/.pythonz/etc/bashrc
-
 # go
 if [ -x "`which go`" ]; then
   export _GOROOT=`go env GOROOT`
