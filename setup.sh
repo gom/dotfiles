@@ -8,6 +8,7 @@ ln -s $PWD_DIR/.gitignore ~
 ln -s $PWD_DIR/.screenrc ~
 ln -s $PWD_DIR/.vim ~
 ln -s $PWD_DIR/.tmux.conf ~
+ln -s $PWD_DIR/.direnvrc ~
 
 ln -s $PWD_DIR/.zsh.d ~
 

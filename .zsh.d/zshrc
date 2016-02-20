@@ -157,16 +157,33 @@ alias eucjp='export LANG=ja_JP.eucJP; export LANGUAGE=ja_JP.eucJP; export LC_ALL
 alias sjis='export LANG=ja_JP.SJIS; export LANGUAGE=ja_JP.SJIS; export LC_ALL=ja_JP.SJIS'
 
 grm() {
-  git status | grep deleted: | awk '{ print $3 }' | xargs git rm
+  git status | grep deleted: | awk '{ print $2 }' | xargs git rm
 }
 
 ## others
 umask 022
-[ -s "`which screen`" ] && screen -r
-[ -s "`which tmux`" ] && tmux -u attach
 
-## rbenv settings
+## auto attach screen / tmux
+if which screen 2>&1 > /dev/null; then
+  screen -q -ls
+  num=$?
+  if [ $num -eq 9 ]; then
+    # screen -xR
+  elif [ $num -eq 11 ]; then ## 9: no session, 10: session cannot atattch, 11: session can attach
+    screen -xr
+  elif [ $num -eq 10 ]; then
+    screen -ls
+  fi
+fi
+
+if which tmux 2>&1 > /dev/null; then
+  [ -z $TMUX ] && (tmux -u attach || tmux -u)
+fi
+
+## direnv, rbenv, pyenv
+[ -s "`which direnv`" ] && eval "$(direnv hook zsh)"
 [ -s "`which rbenv`" ] && eval "$(rbenv init -)"
+[ -s "`which pyenv`" ] && eval "$(pyenv init -)"
 
 ## goenv
 [ -s "`which goenvwrapper.sh`" ] && source goenvwrapper.sh > /dev/null

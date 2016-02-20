@@ -1,0 +1,55 @@
+# Usage: use gover <version>
+# Loads the specified go version into the environment
+#
+use_gover() {
+  GOROOT=$HOME/.gover/gos/$1
+  GOPATH=$PWD
+
+  if [ ! -e "$GOROOT" ]; then
+    echo ""
+    echo "Version not found."
+    echo "Try 'gover install $1'"
+    echo ""
+    exit 1
+  fi
+
+  PATH_add $GOPATH/bin
+  export GOROOT GOPATH
+
+  load_prefix $GOROOT
+}
+
+use_goenv() {
+  GOROOT=$HOME/.goenvs/$1
+  GOPATH=$PWD
+
+  if [ ! -e "$GOROOT" ]; then
+    echo ""
+    echo "Version not found."
+    echo "Try 'goof goinstall $1'"
+    echo ""
+    exit 1
+  fi
+
+  PATH_add $GOPATH/bin
+  export GOROOT GOPATH
+
+  load_prefix $GOROOT
+}
+
+show_virtual_env() {
+  if [ -n "$VIRTUAL_ENV" ]; then
+    echo "(virtualenv)"
+  fi
+}
+
+PS1='$(show_virtual_env)'$PS1
+
+# Usage: use pyenv <version>
+# Loads the specified python version into the environment
+#
+use_pyenv() {
+  local python_root=$HOME/.pyenv/versions/$1
+  load_prefix "$python_root"
+  layout_python "$python_root/bin/python"
+}

@@ -2,6 +2,9 @@
 
 # pythonz
 curl -kL https://raw.github.com/saghul/pythonz/master/pythonz-install | bash
+
+# pyenv
+git clone https://github.com/yyuu/pyenv.git ~/.pyenv
 source $HOME/.zshrc && rehash
 
 # pip
