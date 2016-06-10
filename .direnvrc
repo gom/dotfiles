@@ -3,7 +3,6 @@
 #
 use_gover() {
   GOROOT=$HOME/.gover/gos/$1
-  GOPATH=$PWD
 
   if [ ! -e "$GOROOT" ]; then
     echo ""
@@ -13,7 +12,11 @@ use_gover() {
     exit 1
   fi
 
+  OLD_GOPATH=$GOPATH
+  GOPATH=$PWD
   PATH_add $GOPATH/bin
+  GOPATH=$PWD:$OLD_GOPATH
+
   export GOROOT GOPATH
 
   load_prefix $GOROOT
@@ -21,7 +24,6 @@ use_gover() {
 
 use_goenv() {
   GOROOT=$HOME/.goenvs/$1
-  GOPATH=$PWD
 
   if [ ! -e "$GOROOT" ]; then
     echo ""
@@ -31,7 +33,11 @@ use_goenv() {
     exit 1
   fi
 
+  OLD_GOPATH=$GOPATH
+  GOPATH=$PWD
   PATH_add $GOPATH/bin
+  GOPATH=$PWD:$OLD_GOPATH
+
   export GOROOT GOPATH
 
   load_prefix $GOROOT
