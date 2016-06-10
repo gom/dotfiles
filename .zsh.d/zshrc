@@ -180,6 +180,14 @@ if which tmux 2>&1 > /dev/null; then
   [ -z $TMUX ] && (tmux -u attach || tmux -u)
 fi
 
+show_virtual_env() {
+  if [ -n "$VIRTUAL_ENV" ]; then
+    echo "(venv:${VIRTUAL_ENV##*/})"
+  fi
+}
+
+PS1='$(show_virtual_env)'$PS1
+
 ## direnv, rbenv, pyenv
 [ -s "`which direnv`" ] && eval "$(direnv hook zsh)"
 [ -s "`which rbenv`" ] && eval "$(rbenv init -)"
