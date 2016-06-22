@@ -17,10 +17,6 @@ hook_post_update = '''
 '''
 
 [[plugins]]
-repo = 'elzr/vim-json'
-if   = '''! has('kaoriya')'''
-
-[[plugins]]
 repo = 'nathanaelkane/vim-indent-guides'
 
 [[plugins]]
@@ -30,8 +26,16 @@ repo = 'Lokaltog/vim-powerline'
 repo = 'gtags.vim'
 
 [[plugins]]
-repo = 'Shougo/unite.vim'
-depends = ['Shougo/neomru.vim']
+repo = 'Shougo/vimfiler.vim'
 
 [[plugins]]
-repo = 'Shougo/vimfiler.vim'
+repo = 'Shougo/unite.vim'
+
+[[plugins]]
+repo = 'Shougo/neoyank.vim'
+
+[[plugins]]
+repo = 'Shougo/unite-outline'
+
+[[plugins]]
+repo = 'Shougo/neomru.vim'

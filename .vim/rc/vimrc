@@ -178,7 +178,7 @@ endif
 if dein#check_install()
   call dein#install()
 endif
-"
+
 colorscheme desert
 highlight CursorLine cterm=none ctermbg=black
 
