@@ -39,3 +39,52 @@ repo = 'Shougo/unite-outline'
 
 [[plugins]]
 repo = 'Shougo/neomru.vim'
+
+[[plugins]]
+repo = 'Shougo/context_filetype.vim'
+
+[[plugins]]
+repo = 'Shougo/neosnippet-snippets'
+
+[[plugins]]
+repo = 'Shougo/neocomplete'
+
+[[plugins]]
+repo = 'Shougo/neosnippet'
+
+[[plugins]]
+repo = 'elzr/vim-json'
+if   = '''! has('kaoriya')'''
+on_ft = ['json']
+
+[[plugins]]
+repo = 'fatih/vim-go'
+on_ft = ['go']
+
+[[plugins]]
+repo = 'elixir-lang/vim-elixir'
+on_ft = ['exs', 'ex']
+
+[[plugins]]
+repo = 'cespare/vim-toml'
+on_ft = ['toml']
+
+[[plugins]]
+repo = 'chase/vim-ansible-yaml'
+on_ft = ['yaml', 'ansible']
+
+[[plugins]]
+repo = 'hynek/vim-python-pep8-indent'
+on_ft = ['python']
+
+[[plugins]]
+repo = 'ekalinin/Dockerfile.vim'
+on_ft = ['Dockerfile']
+
+[[plugins]]
+repo = 'lambdalisue/vim-gita'
+on_cmd = ['Gita']
+
+[[plugins]]
+repo = 'lambdalisue/vim-gista'
+on_cmd = ['Gista']
