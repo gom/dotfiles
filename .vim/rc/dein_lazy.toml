@@ -2,9 +2,6 @@
 repo = 'Shougo/neosnippet-snippets'
 
 [[plugins]]
-repo = 'Shougo/neocomplete'
-
-[[plugins]]
 repo = 'Shougo/neosnippet'
 
 [[plugins]]

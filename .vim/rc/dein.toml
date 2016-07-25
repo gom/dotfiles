@@ -42,3 +42,6 @@ repo = 'Shougo/neomru.vim'
 
 [[plugins]]
 repo = 'Shougo/context_filetype.vim'
+
+[[plugins]]
+repo = 'Shougo/neocomplete'
