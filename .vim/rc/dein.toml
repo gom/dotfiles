@@ -20,7 +20,11 @@ hook_post_update = '''
 repo = 'nathanaelkane/vim-indent-guides'
 
 [[plugins]]
-repo = 'Lokaltog/vim-powerline'
+#repo = 'Lokaltog/vim-powerline'
+repo = 'vim-airline/vim-airline'
+
+[[plugins]]
+repo = 'vim-airline/vim-airline-themes'
 
 [[plugins]]
 repo = 'gtags.vim'
