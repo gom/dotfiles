@@ -11,7 +11,6 @@ path=(
        $HOME/bin(N-/)
        $HOME/.rbenv/bin
        $HOME/.pyenv/bin
-       $HOME/.nodebrew/current/bin 
 
        /usr/lib/ccache(N-/)
        /usr/local/mysql/bin(N-/)
@@ -65,20 +64,11 @@ fi
 export EDITOR
 
 # go
-if [ -x "`which go`" ]; then
-  export _GOROOT=`go env GOROOT`
-  export GOPATH=$HOME/.goproj
-  export PATH=$PATH:$GOPATH/bin:$_GOROOT/bin
-fi
+export GOROOT=$HOME/go
+export GOPATH=$HOME/.goproj
+export PATH=$PATH:$GOPATH/bin:$GOROOT/bin
 
-# goenv
-export GOENVGOROOT=$HOME/.goenvs
-export GOENVTARGET=$HOME/bin
-export GOENVHOME=$HOME/workspace
-
-if [ -x "`which goenv`" ]; then
-  export GOROOT=$GOENVGOROOT/release
-  export GOPATH=$HOME/.goproj
-  export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
-fi
-
+# get gover / golang up and runing
+#
+# export GOVER_ROOT="$HOME/.gover"
+eval "$($HOME/.gover/bin/gover init -)"

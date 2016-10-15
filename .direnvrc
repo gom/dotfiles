@@ -1,34 +1,13 @@
 # Usage: use gover <version>
 # Loads the specified go version into the environment
 #
-use_gover() {
+use_go() {
   GOROOT=$HOME/.gover/gos/$1
 
   if [ ! -e "$GOROOT" ]; then
     echo ""
     echo "Version not found."
     echo "Try 'gover install $1'"
-    echo ""
-    exit 1
-  fi
-
-  OLD_GOPATH=$GOPATH
-  GOPATH=$PWD
-  PATH_add $GOPATH/bin
-  GOPATH=$PWD:$OLD_GOPATH
-
-  export GOROOT GOPATH
-
-  load_prefix $GOROOT
-}
-
-use_goenv() {
-  GOROOT=$HOME/.goenvs/$1
-
-  if [ ! -e "$GOROOT" ]; then
-    echo ""
-    echo "Version not found."
-    echo "Try 'goof goinstall $1'"
     echo ""
     exit 1
   fi

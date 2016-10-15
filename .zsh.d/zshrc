@@ -193,12 +193,6 @@ PS1='$(show_virtual_env)'$PS1
 [ -s "`which rbenv`" ] && eval "$(rbenv init -)"
 [ -s "`which pyenv`" ] && eval "$(pyenv init -)"
 
-## goenv
-[ -s "`which goenvwrapper.sh`" ] && source goenvwrapper.sh > /dev/null
-
-#pythonz
-[[ -s $HOME/.pythonz/etc/bashrc ]] && source $HOME/.pythonz/etc/bashrc
-
 ## ssh-agent
 [ -e $HOME/.ssh/agent-env ] && source $HOME/.ssh/agent-env
 
