@@ -1,0 +1,118 @@
+# Install plugins with zplug
+source $ZDOTDIR/zplug.zsh
+
+# key bind
+bindkey -e
+
+# prompt
+source $ZDOTDIR/prompt.zsh
+
+# log
+watch="all"    # watching login and logout
+log
+setopt no_tify # when bg job finish, notify me.
+setopt nomatch
+setopt ignore_eof # ignore logout when touch ^D
+
+# job
+setopt long_list_jobs
+REPORTTIME=3
+
+## auto complete
+source $ZDOTDIR/completions.zsh
+
+# moving directory
+setopt auto_cd
+setopt auto_pushd        # cd to pushd
+setopt pushd_ignore_dups
+setopt pushd_to_home     # pushd with no argument, go home.
+cdpath=(~)
+chpwd_functions=($chpwd_functions dirs) # display the stack of directories
+
+
+## history
+source $ZDOTDIR/history.zsh
+
+## set alias
+source $ZDOTDIR/alias.zsh
+
+## others
+umask 022
+
+## auto attach screen / tmux
+if which screen 2>&1 > /dev/null; then
+  screen -q -ls
+  num=$?
+  if [ $num -eq 9 ]; then
+    # screen -xR
+  elif [ $num -eq 11 ]; then ## 9: no session, 10: session cannot atattch, 11: session can attach
+    screen -xr
+  elif [ $num -eq 10 ]; then
+    screen -ls
+  fi
+fi
+
+if which tmux 2>&1 > /dev/null; then
+  [ -z $TMUX ] && (tmux -u attach || tmux -u)
+fi
+
+## direnv, rbenv, pyenv
+[ -s "`which direnv`" ] && eval "$(direnv hook zsh)"
+[ -s "`which rbenv`" ] && eval "$(rbenv init -)"
+[ -s "`which pyenv`" ] && eval "$(pyenv init -)"
+
+## ssh-agent
+[ -e $HOME/.ssh/agent-env ] && source $HOME/.ssh/agent-env
+
+## for Emacs Shell
+[[ $EMACS = t ]] && unsetopt zle
+## for tramp
+case "$TERM" in
+  dumb | emacs)
+    PROMPT="%m:%~> "
+    unsetopt zle
+    ;;
+esac
+
+# peco
+if [ -s "`which peco`" ]; then
+  function peco-select-history() {
+    local tac
+    if which tac > /dev/null; then
+      tac="tac"
+    else
+      tac="tail -r"
+    fi
+    BUFFER=$(history -n 1 | \
+      eval $tac | \
+      peco --query "$LBUFFER")
+    CURSOR=$#BUFFER
+    zle clear-screen
+  }
+  zle -N peco-select-history
+  bindkey '^r' peco-select-history
+
+  if [ -s "`which ghq`" ]; then
+    function peco-src () {
+      local selected_dir=$(ghq list --full-path | peco --query "$LBUFFER")
+      if [ -n "$selected_dir" ]; then
+        BUFFER="cd ${selected_dir}"
+        zle accept-line
+      fi
+      zle clear-screen
+    }
+    zle -N peco-src
+    bindkey '^]' peco-src
+  fi
+
+  function peco-cdr () {
+    local selected_dir=$(cdr -l | awk '{ print $2 }' | peco)
+    if [ -n "$selected_dir" ]; then
+      BUFFER="cd ${selected_dir}"
+      zle accept-line
+    fi
+    zle clear-screen
+  }
+  zle -N peco-cdr
+  bindkey '^[' peco-cdr
+fi

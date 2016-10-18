@@ -1,4 +1,5 @@
-# git clone [repos] ~/.dotfiles/
-# cd ~/.dotfiles/
-# sh setup.sh
+## Install
+* git clone [repos] ~/.dotfiles/
+* cd ~/.dotfiles/
+* ./install.sh
 
