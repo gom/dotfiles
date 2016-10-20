@@ -61,6 +61,10 @@ fi
 [ -s "`which rbenv`" ] && eval "$(rbenv init -)"
 [ -s "`which pyenv`" ] && eval "$(pyenv init -)"
 
+# get gover / golang up and runing
+#
+[ -d "$GOVER_ROOT" ] && eval "$($GOVER_ROOT/bin/gover init -)"
+
 ## ssh-agent
 [ -e $HOME/.ssh/agent-env ] && source $HOME/.ssh/agent-env
 

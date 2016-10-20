@@ -4,7 +4,7 @@
 
 # -g: declare on global scope
 # -r: Readonly
-typeset -gr ZDOTDIR=${0:A:h}
+typeset -g ZDOTDIR=${0:A:h}
 
 ## Path
 # "-U" denies duplicate path
@@ -72,7 +72,4 @@ export GOROOT=$HOME/go
 export GOPATH=$HOME/.goproj
 export PATH=$PATH:$GOPATH/bin:$GOROOT/bin
 
-# get gover / golang up and runing
-#
-# export GOVER_ROOT="$HOME/.gover"
-eval "$($HOME/.gover/bin/gover init -)"
+export GOVER_ROOT="$HOME/.gover"

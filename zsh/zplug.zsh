@@ -1,7 +1,7 @@
-typeset -x ZPLUG_HOME=$ZDOTDIR/zplug
-typeset -x ZPLUG_USE_CACHE=true
+typeset -gx ZPLUG_HOME=$ZDOTDIR/zplug
+typeset -gx ZPLUG_USE_CACHE=true
 
-if [ -n "$ZPLUG_HOME" ]; then
+if [ ! -d "$ZPLUG_HOME" ]; then
   git clone https://github.com/zplug/zplug.git $ZPLUG_HOME
 fi
 
@@ -31,7 +31,7 @@ zplug "b4b4r07/emoji-cli", \
 zplug "mollifier/cd-gitroot"
 zplug "mollifier/anyframe"
 
-zplug "$ZDOTDIR/functions.zsh", from: local
+zplug "$ZDOTDIR/functions.zsh", from:local
 
 zplug check --verbose || zplug install
 zplug load --verbose
