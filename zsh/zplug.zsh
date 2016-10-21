@@ -33,5 +33,5 @@ zplug "mollifier/anyframe"
 
 zplug "$_ZDOTDIR/functions", from:local
 
-zplug check --verbose || zplug install
-zplug load --verbose
+zplug check || zplug install
+zplug load
