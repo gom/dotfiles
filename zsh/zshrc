@@ -1,9 +1,6 @@
 # Install plugins with zplug
 source $_ZDOTDIR/zplug.zsh
 
-# key bind
-bindkey -e
-
 # prompt
 source $_ZDOTDIR/prompt.zsh
 
@@ -78,45 +75,5 @@ case "$TERM" in
     ;;
 esac
 
-# peco
-if [ -s "`which peco`" ]; then
-  function peco-select-history() {
-    local tac
-    if which tac > /dev/null; then
-      tac="tac"
-    else
-      tac="tail -r"
-    fi
-    BUFFER=$(history -n 1 | \
-      eval $tac | \
-      peco --query "$LBUFFER")
-    CURSOR=$#BUFFER
-    zle clear-screen
-  }
-  zle -N peco-select-history
-  bindkey '^r' peco-select-history
-
-  if [ -s "`which ghq`" ]; then
-    function peco-src () {
-      local selected_dir=$(ghq list --full-path | peco --query "$LBUFFER")
-      if [ -n "$selected_dir" ]; then
-        BUFFER="cd ${selected_dir}"
-        zle accept-line
-      fi
-      zle clear-screen
-    }
-    zle -N peco-src
-    bindkey '^]' peco-src
-  fi
-
-  function peco-cdr () {
-    local selected_dir=$(cdr -l | awk '{ print $2 }' | peco)
-    if [ -n "$selected_dir" ]; then
-      BUFFER="cd ${selected_dir}"
-      zle accept-line
-    fi
-    zle clear-screen
-  }
-  zle -N peco-cdr
-  bindkey '^[' peco-cdr
-fi
+# key bind
+source $_ZDOTDIR/bindkeys.zsh
