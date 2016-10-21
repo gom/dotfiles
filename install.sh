@@ -10,6 +10,6 @@ ln -s $PWD_DIR/vim ~/.vim
 ln -s $PWD_DIR/tmux/tmux.conf ~/.tmux.conf
 ln -s $PWD_DIR/direnv/direnvrc ~/.direnvrc
 
-echo "source $PWD_DIR/zsh/zshenv" > ~/.zshenv
-echo "source $PWD_DIR/zsh/zshrc" > ~/.zshrc
-echo "source $PWD_DIR/vim/rc/vimrc" > ~/.vimrc
+echo "source $PWD_DIR/zsh/zshenv" >> ~/.zshenv
+echo "source $PWD_DIR/zsh/zshrc" >> ~/.zshrc
+echo "source $PWD_DIR/vim/rc/vimrc" >> ~/.vimrc
