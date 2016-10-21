@@ -5,7 +5,7 @@ PWD_DIR=$(cd $(dirname $0);pwd)
 ln -s $PWD_DIR/.gemrc ~
 ln -s $PWD_DIR/git/config ~/.gitconfig
 ln -s $PWD_DIR/git/ignore ~/.gitignore
-ln -s $PWD_DIR/.screenrc ~/.screenrc
+ln -s $PWD_DIR/screen/screenrc ~/.screenrc
 ln -s $PWD_DIR/vim ~/.vim
 ln -s $PWD_DIR/tmux/tmux.conf ~/.tmux.conf
 ln -s $PWD_DIR/direnv/direnvrc ~/.direnvrc

@@ -1,11 +1,11 @@
 # Install plugins with zplug
-source $ZDOTDIR/zplug.zsh
+source $_ZDOTDIR/zplug.zsh
 
 # key bind
 bindkey -e
 
 # prompt
-source $ZDOTDIR/prompt.zsh
+source $_ZDOTDIR/prompt.zsh
 
 # log
 watch="all"    # watching login and logout
@@ -19,7 +19,7 @@ setopt long_list_jobs
 REPORTTIME=3
 
 ## auto complete
-source $ZDOTDIR/completions.zsh
+source $_ZDOTDIR/completions.zsh
 
 # moving directory
 setopt auto_cd
@@ -31,10 +31,10 @@ chpwd_functions=($chpwd_functions dirs) # display the stack of directories
 
 
 ## history
-source $ZDOTDIR/history.zsh
+source $_ZDOTDIR/history.zsh
 
 ## set alias
-source $ZDOTDIR/alias.zsh
+source $_ZDOTDIR/alias.zsh
 
 ## others
 umask 022
