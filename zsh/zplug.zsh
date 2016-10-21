@@ -31,7 +31,7 @@ zplug "b4b4r07/emoji-cli", \
 zplug "mollifier/cd-gitroot"
 zplug "mollifier/anyframe"
 
-zplug "$_ZDOTDIR/functions.zsh", from:local
+zplug "$_ZDOTDIR/functions", from:local
 
 zplug check --verbose || zplug install
 zplug load --verbose
