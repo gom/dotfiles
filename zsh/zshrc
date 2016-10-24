@@ -4,17 +4,6 @@ source $_ZDOTDIR/zplug.zsh
 # prompt
 source $_ZDOTDIR/prompt.zsh
 
-# log
-watch="all"    # watching login and logout
-log
-setopt no_tify # when bg job finish, notify me.
-setopt nomatch
-setopt ignore_eof # ignore logout when touch ^D
-
-# job
-setopt long_list_jobs
-REPORTTIME=3
-
 ## auto complete
 source $_ZDOTDIR/completions.zsh
 
