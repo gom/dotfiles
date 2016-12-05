@@ -66,3 +66,6 @@ esac
 
 # key bind
 source $_ZDOTDIR/bindkeys.zsh
+
+## load gcloud
+source $_ZDOTDIR/gcloud.zsh
