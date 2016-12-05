@@ -1,11 +1,5 @@
-# Install plugins with zplug
-source $_ZDOTDIR/zplug.zsh
-
 # prompt
 source $_ZDOTDIR/prompt.zsh
-
-## auto complete
-source $_ZDOTDIR/completions.zsh
 
 # moving directory
 setopt auto_cd
@@ -14,7 +8,6 @@ setopt pushd_ignore_dups
 setopt pushd_to_home     # pushd with no argument, go home.
 cdpath=(~)
 chpwd_functions=($chpwd_functions dirs) # display the stack of directories
-
 
 ## history
 source $_ZDOTDIR/history.zsh
@@ -25,47 +18,19 @@ source $_ZDOTDIR/alias.zsh
 ## others
 umask 022
 
-## auto attach screen / tmux
-if which screen 2>&1 > /dev/null; then
-  screen -q -ls
-  num=$?
-  if [ $num -eq 9 ]; then
-    # screen -xR
-  elif [ $num -eq 11 ]; then ## 9: no session, 10: session cannot atattch, 11: session can attach
-    screen -xr
-  elif [ $num -eq 10 ]; then
-    screen -ls
-  fi
-fi
-
-if which tmux 2>&1 > /dev/null; then
-  [ -z $TMUX ] && (tmux -u attach || tmux -u)
-fi
-
-## direnv, rbenv, pyenv
-[ -s "`which direnv`" ] && eval "$(direnv hook zsh)"
-[ -s "`which rbenv`" ] && eval "$(rbenv init -)"
-[ -s "`which pyenv`" ] && eval "$(pyenv init -)"
-
-# get gover / golang up and runing
-#
-[ -d "$GOVER_ROOT" ] && eval "$($GOVER_ROOT/bin/gover init -)"
-
-## ssh-agent
-[ -e $HOME/.ssh/agent-env ] && source $HOME/.ssh/agent-env
-
-## for Emacs Shell
-[[ $EMACS = t ]] && unsetopt zle
-## for tramp
-case "$TERM" in
-  dumb | emacs)
-    PROMPT="%m:%~> "
-    unsetopt zle
-    ;;
-esac
-
 # key bind
 source $_ZDOTDIR/bindkeys.zsh
 
-## load gcloud
-source $_ZDOTDIR/gcloud.zsh
+if [ -z "$FASTBOOT_ZSH" ]; then 
+  # Install plugins with zplug
+  source $_ZDOTDIR/zplug.zsh
+
+  ## load gcloud
+  source $_ZDOTDIR/gcloud.zsh
+
+  ## set development tools
+  source $_ZDOTDIR/develop.zsh
+fi
+
+## auto complete
+source $_ZDOTDIR/completions.zsh

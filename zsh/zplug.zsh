@@ -8,7 +8,6 @@ fi
 source $ZPLUG_HOME/init.zsh
 
 zplug "zplug/zplug"
-
 zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-completions"
 zplug "zsh-users/zsh-history-substring-search"
@@ -33,5 +32,5 @@ zplug "mollifier/anyframe"
 
 zplug "$_ZDOTDIR/functions", from:local
 
-zplug check || zplug install
+#zplug check || zplug install
 zplug load

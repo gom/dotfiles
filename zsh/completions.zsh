@@ -1,7 +1,10 @@
 #!/bin/zsh
 zstyle :compinstall filename '~/.zshrc'
 #fpath=(~/.zsh.d/completion $fpath)
-autoload -Uz compinit && compinit -u
+if [ -n "$FASTBOOT_ZSH" ]; then
+  # Default, called in zplug.
+  autoload -Uz compinit && compinit -u
+fi
 autoload -Uz bashcompinit && bashcompinit
 
 zstyle ':completion:*' format '%B%d%b'
