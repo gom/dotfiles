@@ -6,6 +6,9 @@
 # -r: Readonly
 typeset -g _ZDOTDIR=${0:A:h}
 
+# go
+export GOPATH=$HOME/go
+
 ## Path
 # "-U" denies duplicate path
 typeset -U path
@@ -13,8 +16,9 @@ typeset -U path
 # N: NULL_GLOB, -: evaluate symbolic link, /: only allow directory
 path=(
        $HOME/bin(N-/)
-       $HOME/.rbenv/bin
-       $HOME/.pyenv/bin
+       $GOPATH/bin(N-/)
+       $HOME/.rbenv/bin(N-/)
+       $HOME/.pyenv/bin(N-/)
 
        /usr/lib/ccache(N-/)
        /usr/local/mysql/bin(N-/)
@@ -65,9 +69,3 @@ if ! type vim > /dev/null 2>&1; then
 fi
 export EDITOR
 
-# go
-export GOROOT=$HOME/go
-export GOPATH=$HOME/.goproj
-export PATH=$PATH:$GOPATH/bin:$GOROOT/bin
-
-export GOVER_ROOT="$HOME/.gover"

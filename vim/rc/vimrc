@@ -166,6 +166,8 @@ endif
 " <Golang>
 if $GOROOT != ''
   set rtp+=${GOROOT}/misc/vim
+endif
+if $GOPATH != ''
   set rtp+=${GOPATH}/src/github.com/nsf/gocode/vim
   set rtp+=${GOPATH}/src/github.com/golang/lint/misc/vim
 endif
