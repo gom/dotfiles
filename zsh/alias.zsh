@@ -10,8 +10,6 @@ esac
 alias ll='ls -lhF'
 alias la='ls -la'
 alias grep='grep --color=auto'
-alias ec='emacsclient -c -t'
-alias em='emacs -nw -fs'
 
 alias rr="command rm -rf"
 alias cp='cp -i'
@@ -29,9 +27,6 @@ alias t='tmux'
 alias ta='tmux attach'
 alias td='tmux detach'
 alias g='git'
-
-alias re='ruby -e'
-alias spec='spec -c -fs'
 
 alias -g L='| less'
 alias -g H='| head'

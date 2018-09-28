@@ -32,3 +32,6 @@ a.out
 #python
 *.pyc
 
+.idea
+*.iml
+
