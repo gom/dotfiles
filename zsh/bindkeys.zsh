@@ -1,5 +1,14 @@
 bindkey -e
 
+zle -N anyframe-widget-cdr
+zle -N anyframe-widget-checkout-git-branch
+zle -N anyframe-widget-execute-history
+zle -N anyframe-widget-put-history
+zle -N anyframe-widget-cd-ghq-repository
+zle -N anyframe-widget-kill
+zle -N anyframe-widget-insert-git-branch
+zle -N anyframe-widget-insert-filename
+
 bindkey '^xb' anyframe-widget-cdr
 bindkey '^x^b' anyframe-widget-checkout-git-branch
 
@@ -20,46 +29,3 @@ bindkey '^x^i' anyframe-widget-insert-git-branch
 
 bindkey '^xf' anyframe-widget-insert-filename
 bindkey '^x^f' anyframe-widget-insert-filename
-
-# peco
-if [ -s "`which peco`" ]; then
-  function peco-select-history() {
-    local tac
-    if which tac > /dev/null; then
-      tac="tac"
-    else
-      tac="tail -r"
-    fi
-    BUFFER=$(history -n 1 | \
-      eval $tac | \
-      peco --query "$LBUFFER")
-    CURSOR=$#BUFFER
-    zle clear-screen
-  }
-  zle -N peco-select-history
-  bindkey '^r' peco-select-history
-
-  if [ -s "`which ghq`" ]; then
-    function peco-src () {
-      local selected_dir=$(ghq list --full-path | peco --query "$LBUFFER")
-      if [ -n "$selected_dir" ]; then
-        BUFFER="cd ${selected_dir}"
-        zle accept-line
-      fi
-      zle clear-screen
-    }
-    zle -N peco-src
-    bindkey '^]' peco-src
-  fi
-
-  function peco-cdr () {
-    local selected_dir=$(cdr -l | awk '{ print $2 }' | peco)
-    if [ -n "$selected_dir" ]; then
-      BUFFER="cd ${selected_dir}"
-      zle accept-line
-    fi
-    zle clear-screen
-  }
-  zle -N peco-cdr
-  bindkey '^[' peco-cdr
-fi

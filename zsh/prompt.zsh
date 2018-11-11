@@ -1,22 +1,5 @@
 autoload -Uz colors && colors
-
-setopt prompt_subst
-setopt prompt_percent
-setopt transient_rprompt
-PROMPT="${USER}@${HOST} %(!.#.$) "
-
-autoload -Uz add-zsh-hook
-autoload -Uz vcs_info
-zstyle ':vcs_info:*' formats '(%s)-[%b]'
-zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
-_update_prompt() {
-    psvar=()
-    LANG=C vcs_info >&/dev/null
-    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
-}
-add-zsh-hook precmd _update_prompt
-RPROMPT="%1(v|%F{green}%1v%f|)"
-RPROMPT+="[%~]"
+autoload -Uz promptinit && promptinit
 
 setopt no_flow_control      # disabled C-s, C-q
 setopt no_beep
