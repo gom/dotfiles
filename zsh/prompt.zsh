@@ -6,14 +6,6 @@ setopt no_beep
 setopt interactive_comments # behind '#' is comment in cmd line
 WORDCHARS=${WORDCHARS:s,/,,}
 
-show_virtual_env() {
-  if [ -n "$VIRTUAL_ENV" ]; then
-    echo "(venv:${VIRTUAL_ENV##*/})"
-  fi
-}
-
-PS1='$(show_virtual_env)'$PS1
-
 # log
 watch="all"    # watching login and logout
 
