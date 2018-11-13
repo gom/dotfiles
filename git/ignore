@@ -7,6 +7,9 @@
 *~
 *.bak
 
+# zsh
+*.zwc
+
 # editor
 *.elc
 *.swp
