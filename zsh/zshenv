@@ -19,6 +19,8 @@ path=(
        $GOPATH/bin(N-/)
        $HOME/.rbenv/bin(N-/)
        $HOME/.pyenv/bin(N-/)
+       $HOME/.cargo/bin(N-/)
+       $HOME/.nodebrew/current/bin
 
        /usr/lib/ccache(N-/)
        /usr/local/mysql/bin(N-/)
