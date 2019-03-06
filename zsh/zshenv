@@ -20,7 +20,7 @@ path=(
        $HOME/.rbenv/bin(N-/)
        $HOME/.pyenv/bin(N-/)
        $HOME/.cargo/bin(N-/)
-       $HOME/.nodebrew/current/bin
+       $HOME/.nodebrew/current/bin(N-/)
 
        /usr/lib/ccache(N-/)
        /usr/local/mysql/bin(N-/)

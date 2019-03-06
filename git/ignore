@@ -38,3 +38,6 @@ a.out
 .idea
 *.iml
 
+.vscode
+.python-version
+.ruby-version
