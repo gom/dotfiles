@@ -2,13 +2,11 @@
 PWD_DIR=$(cd $(dirname $0);pwd)
 
 # other config files
-ln -s $PWD_DIR/.gemrc ~
-ln -s $PWD_DIR/git/config ~/.gitconfig
-ln -s $PWD_DIR/git/ignore ~/.gitignore
-ln -s $PWD_DIR/screen/screenrc ~/.screenrc
 ln -s $PWD_DIR/vim ~/.vim
-ln -s $PWD_DIR/tmux/tmux.conf ~/.tmux.conf
-ln -s $PWD_DIR/direnv/direnvrc ~/.direnvrc
+ln -s $PWD_DIR/gem $XDG_CONFIG_HOME/
+ln -s $PWD_DIR/git $XDG_CONFIG_HOME/
+ln -s $PWD_DIR/tmux/tmux.conf $XDG_CONFIG_HOME/
+ln -s $PWD_DIR/direnv $XDG_CONFIG_HOME/
 
 echo "source $PWD_DIR/zsh/zshenv" >> ~/.zshenv
 echo "source $PWD_DIR/zsh/zshrc" >> ~/.zshrc

@@ -6,8 +6,9 @@
 # -r: Readonly
 typeset -g _ZDOTDIR=${0:A:h}
 
-# go
-export GOPATH=$HOME/go
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_DATA_HOME=$HOME/.local/share
 
 ## Path
 # "-U" denies duplicate path
@@ -20,7 +21,6 @@ path=(
        $HOME/.rbenv/bin(N-/)
        $HOME/.pyenv/bin(N-/)
        $HOME/.cargo/bin(N-/)
-       $HOME/.nodebrew/current/bin(N-/)
 
        /usr/lib/ccache(N-/)
        /usr/local/mysql/bin(N-/)

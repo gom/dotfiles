@@ -8,5 +8,5 @@ fi
 source $ZPLUG_HOME/init.zsh
 source $_ZDOTDIR/zplug_plugins.zsh
 
-#zplug check || zplug install
+zplug check || zplug install
 zplug load
