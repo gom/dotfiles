@@ -1,16 +1,4 @@
-## auto attach screen / tmux
-if which screen 2>&1 > /dev/null; then
-  screen -q -ls
-  num=$?
-  if [ $num -eq 9 ]; then
-    # screen -xR
-  elif [ $num -eq 11 ]; then ## 9: no session, 10: session cannot atattch, 11: session can attach
-    screen -xr
-  elif [ $num -eq 10 ]; then
-    screen -ls
-  fi
-fi
-
+## auto attach tmux
 if type tmux 2>&1 > /dev/null; then
   [ -z $TMUX ] && (tmux -u attach || tmux -u)
 fi

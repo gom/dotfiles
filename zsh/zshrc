@@ -18,15 +18,12 @@ source $_ZDOTDIR/alias.zsh
 ## others
 umask 022
 
-# key bind
-source $_ZDOTDIR/bindkeys.zsh
-
 if [ -z "$FASTBOOT_ZSH" ]; then 
-  # Install plugins with zplug
-  source $_ZDOTDIR/zplug.zsh
+  # Install plugins
+  source $_ZDOTDIR/zinit.zsh
 
-  ## load gcloud
-  source $_ZDOTDIR/gcloud.zsh
+  # key bind
+  source $_ZDOTDIR/bindkeys.zsh
 
   ## set development tools
   source $_ZDOTDIR/develop.zsh

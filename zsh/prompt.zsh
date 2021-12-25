@@ -7,7 +7,7 @@ setopt interactive_comments # behind '#' is comment in cmd line
 WORDCHARS=${WORDCHARS:s,/,,}
 
 # log
-watch="all"    # watching login and logout
+#watch="all"    # watching login and logout
 
 case ${OSTYPE} in
   linux*)

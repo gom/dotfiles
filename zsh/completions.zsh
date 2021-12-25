@@ -2,7 +2,7 @@
 zstyle :compinstall filename '~/.zshrc'
 #fpath=(~/.zsh.d/completion $fpath)
 if [ -n "$FASTBOOT_ZSH" ]; then
-  # Default, called in zplug.
+  # Default, called in zinit.zsh.
   autoload -Uz compinit && compinit -u
 fi
 autoload -Uz bashcompinit && bashcompinit

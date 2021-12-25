@@ -7,9 +7,14 @@ case ${OSTYPE} in
     ;;
 esac
 
+alias ls='exa'
+alias grep='rg'
+alias cat='bat'
+alias find='fd'
+
 alias ll='ls -lhF'
 alias la='ls -la'
-alias grep='grep --color=auto'
+#alias grep='grep --color=auto'
 
 alias rr="command rm -rf"
 alias cp='cp -i'
@@ -35,9 +40,4 @@ alias -g G='| grep'
 alias -g W='| wc'
 alias -g S='| sed'
 alias -g A='| awk'
-
-alias utf='export LANG=ja_JP.UTF-8; export LANGUAGE=ja_JP.UTF-8; export LC_ALL=ja_JP.UTF-8'
-alias en='export LANG=en; export LANGUAGE=en; export LC_ALL=en'
-alias eucjp='export LANG=ja_JP.eucJP; export LANGUAGE=ja_JP.eucJP; export LC_ALL=ja_JP.eucJP'
-alias sjis='export LANG=ja_JP.SJIS; export LANGUAGE=ja_JP.SJIS; export LC_ALL=ja_JP.SJIS'
 

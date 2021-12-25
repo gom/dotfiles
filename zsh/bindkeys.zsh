@@ -1,5 +1,6 @@
 bindkey -e
 
+# anyframe
 zle -N anyframe-widget-cdr
 zle -N anyframe-widget-checkout-git-branch
 zle -N anyframe-widget-execute-history
