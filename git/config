@@ -3,7 +3,7 @@
   email = gomgom68@gmail.com
 [core]
   pager = less -FRSX
-  editor=/usr/local/bin/vim
+  editor= vim
   excludesfile=~/.gitignore
 [push]
   default = tracking
@@ -50,6 +50,7 @@
   r = reset
   m = merge
   s = stash
+  pushf = push --force-with-lease
 
   #log
   lg = log
