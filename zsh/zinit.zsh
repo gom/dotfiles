@@ -8,6 +8,7 @@ fi
 source ${ZINIT_HOME}/zinit.zsh
 source ${_ZDOTDIR}/zinit_plugins.zsh
 
+fpath=(${ASDF_DIR}/completions $fpath)
 autoload -Uz compinit && compinit -u
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
