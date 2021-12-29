@@ -11,6 +11,7 @@ alias ls='exa'
 alias grep='rg'
 alias cat='bat'
 alias find='fd'
+alias diff='delta'
 
 alias ll='ls -lhF'
 alias la='ls -la'
