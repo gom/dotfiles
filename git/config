@@ -6,6 +6,8 @@
   pager = delta  
   editor= vim
   excludesfile=~/.gitignore
+[init]
+  defaultBranch = main
 [interactive]
   diffFilter = delta --color-only --features=interactive
 [delta]
