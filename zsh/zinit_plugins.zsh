@@ -35,13 +35,16 @@ zinit as"null" wait"1" lucid light-mode for \
 zinit as"null" wait"1" lucid from"gh-r" light-mode for \
     sbin"fzf" junegunn/fzf-bin \
     mv"jq-* -> jq" sbin stedolan/jq \
-    sbin"**/exa" ogham/exa \
     sbin"**/fd" @sharkdp/fd \
     sbin"**/bat" @sharkdp/bat \
     sbin"**/rg" BurntSushi/ripgrep \
-    bpick"*lnx*" sbin"**/procs" dalance/procs \
     sbin"**/delta" dandavison/delta \
     bpick"*linux-gnu*" sbin"**/tokei" XAMPPRocky/tokei
+
+zinit as"null" wait"1" lucid from"gh-r" light-mode \
+  extract'' for \
+    bpick"*lnx*" sbin"**/procs" dalance/procs \
+    sbin"**/exa" ogham/exa \
 
 zinit from"gh-r" as"program" mv"direnv* -> direnv" \
     atclone'./direnv hook zsh > zhook.zsh' atpull'%atclone' \
