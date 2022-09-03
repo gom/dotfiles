@@ -17,9 +17,10 @@ typeset -U path
 # N: NULL_GLOB, -: evaluate symbolic link, /: only allow directory
 path=(
        $HOME/bin(N-/)
+       $HOME/.local/bin(N-/)
        $GOPATH/bin(N-/)
        $HOME/.rbenv/bin(N-/)
-       $HOME/.pyenv/bin(N-/)
+       $HOME/.pyenv/shims(N-/)
        $HOME/.cargo/bin(N-/)
 
        /usr/lib/ccache(N-/)
