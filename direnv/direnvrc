@@ -1,27 +1,3 @@
-# Usage: use gover <version>
-# Loads the specified go version into the environment
-#
-use_go() {
-  GOROOT=$HOME/.gover/gos/$1
-
-  if [ ! -e "$GOROOT" ]; then
-    echo ""
-    echo "Version not found."
-    echo "Try 'gover install $1'"
-    echo ""
-    exit 1
-  fi
-
-  OLD_GOPATH=$GOPATH
-  GOPATH=$PWD
-  PATH_add $GOPATH/bin
-  GOPATH=$PWD:$OLD_GOPATH
-
-  export GOROOT GOPATH
-
-  load_prefix $GOROOT
-}
-
 show_virtual_env() {
   if [ -n "$VIRTUAL_ENV" ]; then
     echo "(virtualenv)"
@@ -37,4 +13,42 @@ use_pyenv() {
   local python_root=$HOME/.pyenv/versions/$1
   load_prefix "$python_root"
   layout_python "$python_root/bin/python"
+}
+layout_poetry() {
+  if [[ ! -f pyproject.toml ]]; then
+    log_error 'No pyproject.toml found. Use `poetry new` or `poetry init` to create one first.'
+    exit 2
+  fi
+
+  # create venv if it doesn't exist
+  poetry run true
+
+  export VIRTUAL_ENV=$(poetry env info --path)
+  export POETRY_ACTIVE=1
+  PATH_add "$VIRTUAL_ENV/bin"
+}
+
+
+# Usage: Export function
+# https://github.com/direnv/direnv/issues/73#issuecomment-152284914
+# https://eidera.com/blog/2018/12/28/direnv_alias/
+
+ALIASES_DIR=".direnv/aliases"
+export_function() {
+  local name=$1
+  local alias_dir=$PWD/${ALIASES_DIR}
+  mkdir -p "$alias_dir"
+  PATH_add "$alias_dir"
+  local target="$alias_dir/$name"
+  if declare -f "$name" >/dev/null; then
+    echo "#!/usr/bin/env bash" > "$target"
+    declare -f "$name" >> "$target" 2>/dev/null
+    echo "$name" '"$@"' >> "$target"
+    chmod +x "$target"
+  fi
+}
+
+clear_direnv_aliases() {
+  local alias_dir=$PWD/${ALIASES_DIR}
+  rm -rf $alias_dir/*
 }
