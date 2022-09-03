@@ -35,9 +35,13 @@ a.out
 #python
 *.pyc
 
-.idea
-*.iml
+#.idea
+#*.iml
 
 .vscode
 .python-version
 .ruby-version
+
+.envrc
+.direnv
+.devcontainer/
