@@ -34,7 +34,7 @@ zinit as"null" wait"1" lucid light-mode for \
 # Tools
 zinit as"null" wait"1" lucid from"gh-r" light-mode for \
     sbin"fzf" junegunn/fzf-bin \
-    mv"jq-* -> jq" sbin stedolan/jq \
+    mv"jq-* -> jq" sbin jqlang/jq \
     sbin"**/fd" @sharkdp/fd \
     sbin"**/bat" @sharkdp/bat \
     sbin"**/rg" BurntSushi/ripgrep \
@@ -43,7 +43,7 @@ zinit as"null" wait"1" lucid from"gh-r" light-mode for \
 
 zinit as"null" wait"1" lucid from"gh-r" light-mode \
   extract'' for \
-    bpick"*lnx*" sbin"**/procs" dalance/procs \
+    bpick"*linux*" sbin"**/procs" dalance/procs \
     sbin"**/exa" ogham/exa \
 
 zinit from"gh-r" as"program" mv"direnv* -> direnv" \
