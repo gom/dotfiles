@@ -34,7 +34,7 @@ zinit as"null" wait"1" lucid light-mode for \
 # Tools
 zinit as"null" wait"1" lucid from"gh-r" light-mode for \
     sbin"fzf" junegunn/fzf-bin \
-    mv"jq-* -> jq" sbin jqlang/jq \
+    mv"jq-* -> jq" sbin"**/jq" jqlang/jq \
     sbin"**/fd" @sharkdp/fd \
     sbin"**/bat" @sharkdp/bat \
     sbin"**/rg" BurntSushi/ripgrep \
