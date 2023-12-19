@@ -1,5 +1,6 @@
 zinit light-mode for \
-    zdharma-continuum/zinit-annex-bin-gem-node
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-binary-symlink
 
 zinit wait"0" lucid light-mode for \
     atload"_zsh_autosuggest_start" \
@@ -32,24 +33,23 @@ zinit as"null" wait"1" lucid light-mode for \
             zdharma-continuum/git-url
 
 # Tools
-zinit as"null" wait"1" lucid from"gh-r" light-mode for \
+zinit wait"1" lucid from"gh-r" light-mode for \
     sbin"fzf" junegunn/fzf-bin \
-    mv"jq-* -> jq" sbin"**/jq" jqlang/jq \
-    sbin"**/fd" @sharkdp/fd \
-    sbin"**/bat" @sharkdp/bat \
+    sbin"* -> jq" nocompile @jqlang/jq \
     sbin"**/rg" BurntSushi/ripgrep \
     sbin"**/delta" dandavison/delta \
-    bpick"*linux-gnu*" sbin"**/tokei" XAMPPRocky/tokei
+    sbin"**/procs -> procs" dalance/procs \
+    atclone"cp -vf completions/exa.zsh _exa" sbin"**/exa -> exa" ogham/exa \
+    sbin"**/tokei -> tokei" XAMPPRocky/tokei \
+    lbin"!" id-as null @sharkdp/fd \
+    lbin"!" id-as null @sharkdp/bat \
+    lbin"!" id-as null @bootandy/dust
 
-zinit as"null" wait"1" lucid from"gh-r" light-mode \
-  extract'' for \
-    bpick"*linux*" sbin"**/procs" dalance/procs \
-    sbin"**/exa" ogham/exa \
-
-zinit from"gh-r" as"program" mv"direnv* -> direnv" \
-    atclone'./direnv hook zsh > zhook.zsh' atpull'%atclone' \
-    pick"direnv" src="zhook.zsh" for \
-        direnv/direnv
+zinit light-mode from"gh-r" as"program" for \
+      mv"direnv* -> direnv" \
+      atclone'./direnv hook zsh > zhook.zsh' \
+      src"zhook.zsh" \
+    direnv/direnv
 
 # Theme
 zinit depth"1" lucid nocd for romkatv/powerlevel10k
