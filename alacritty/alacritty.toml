@@ -1,0 +1,13 @@
+
+[font]
+size = 10.0
+
+[font.normal]
+family = "Source Code Pro"
+
+[window.dimensions]
+columns = 100
+lines = 45
+
+[general]
+import = ["/home/dai/.config/alacritty/linux.toml", "/home/dai/.config/alacritty/color_solarized_dark.toml"]
