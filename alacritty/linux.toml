@@ -2,7 +2,7 @@
 size = 12.0
 
 [font.normal]
-family = "monospace"
+family = "Source Code Pro"
 
 [[keyboard.bindings]]
 action = "Paste"
@@ -78,8 +78,8 @@ opacity = 0.8
 startup_mode = "Windowed"
 
 [window.dimensions]
-columns = 80
-lines = 40
+columns = 140
+lines = 45
 
 [window.position]
 x = 0
