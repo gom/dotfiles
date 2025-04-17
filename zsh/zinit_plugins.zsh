@@ -14,8 +14,7 @@ zinit wait"0" lucid light-mode for \
     chrissicool/zsh-256color \
     reegnz/jq-zsh-plugin \
     mollifier/cd-gitroot \
-    mollifier/anyframe \
-    @asdf-vm/asdf
+    mollifier/anyframe
 
 # Extending Git
 # https://github.com/zdharma-continuum/zinit#customizing-paths
@@ -43,7 +42,8 @@ zinit wait"1" lucid from"gh-r" light-mode for \
     sbin"**/tokei -> tokei" XAMPPRocky/tokei \
     lbin"!" id-as null @sharkdp/fd \
     lbin"!" id-as null @sharkdp/bat \
-    lbin"!" id-as null @bootandy/dust
+    lbin"!" id-as null @bootandy/dust \
+    sbin"**/asdf" @asdf-vm/asdf
 
 zinit light-mode from"gh-r" as"program" for \
       mv"direnv* -> direnv" \
