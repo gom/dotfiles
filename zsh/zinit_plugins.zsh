@@ -39,7 +39,6 @@ zinit wait"1" lucid from"gh-r" light-mode for \
     sbin"**/delta" dandavison/delta \
     sbin"**/procs -> procs" dalance/procs \
     atclone"cp -vf completions/exa.zsh _exa" sbin"**/exa -> exa" ogham/exa \
-    sbin"**/tokei -> tokei" XAMPPRocky/tokei \
     lbin"!" id-as null @sharkdp/fd \
     lbin"!" id-as null @sharkdp/bat \
     lbin"!" id-as null @bootandy/dust \
