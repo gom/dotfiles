@@ -55,3 +55,5 @@ zinit depth"1" lucid nocd for romkatv/powerlevel10k
 #zinit pick"async.zsh" src"pure.zsh" light-mode for sindresorhus/pure
 
 zinit snippet $_ZDOTDIR/functions/ssh-start.zsh
+zinit snippet $_ZDOTDIR/functions/git_bulk_pull.zsh
+zinit snippet $_ZDOTDIR/functions/update.zsh
