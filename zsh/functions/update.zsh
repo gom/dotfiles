@@ -23,7 +23,7 @@ update() {
   fi
 
   # Update rust
-  if commnad -v rustup &>/dev/null; then
+  if command -v rustup >/dev/null; then
     echo "\e[31mUpdating Rust toolchain...\e[m"
     rustup update
   else
