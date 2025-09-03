@@ -41,7 +41,13 @@ a.out
 .vscode
 .python-version
 .ruby-version
+.tool-versions
 
 .envrc
 .direnv
 .devcontainer/
+
+# coding agent
+GEMINI.md
+CLAUDE.md
+
