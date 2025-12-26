@@ -19,6 +19,6 @@ if ! [ -x "$(command -v sheldon)" ]; then
 fi
 
 # Source Sheldon plugins
-if [ -x "$(command -v sheldon)" ]; then
+if (( $+commands[sheldon] )); then
   eval "$(sheldon source)"
 fi
