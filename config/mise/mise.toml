@@ -11,7 +11,7 @@ fd = "latest"
 # cd
 zoxide = "latest"
 # top
-procs = "latest"
+"github:dalance/procs" = "latest"
 # du
 dust = "latest"
 neovim = "latest"
@@ -31,7 +31,7 @@ direnv = "latest"
 # shell history
 atuin = "latest"
 # shell plugin manager
-sheldon = "latest"
+"github:rossmacarthur/sheldon" = "latest"
 starship = "latest"
 
 # --- Languages ---
