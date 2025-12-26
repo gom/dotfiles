@@ -38,6 +38,9 @@ github = "mollifier/cd-gitroot"
 [plugins.anyframe]
 github = "mollifier/anyframe"
 
+[plugins.zoxide]
+inline = 'eval "$(zoxide init zsh)"'
+
 # -----------------------------------------------------------------------------
 # Git Extensions (PATHに追加する系)
 # -----------------------------------------------------------------------------
