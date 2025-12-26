@@ -27,14 +27,14 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([%0-9]#)*=0=01;31
 
 # cdr http://blog.n-z.jp/blog/2013-11-12-zsh-cdr.html
 if [[ -n $(echo ${^fpath}/chpwd_recent_dirs(N)) && -n $(echo ${^fpath}/cdr(N)) ]]; then
-  export CDR_DIR="${XDG_CACHE_HOME:-${HOME}/.cache}/shell/chpwd-recent-dirs"
+  export CDR_DIR="${XDG_CACHE_HOME:-${HOME}/.cache}/shell"
   autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
   add-zsh-hook chpwd chpwd_recent_dirs
   zstyle ':completion:*:*:cdr:*:*' menu selection
   zstyle ':completion:*' recent-dirs-insert both
   zstyle ':chpwd:*' recent-dirs-max 500
   zstyle ':chpwd:*' recent-dirs-default true
-  zstyle ':chpwd:*' recent-dirs-file "${CDR_DIR}"
+  zstyle ':chpwd:*' recent-dirs-file "${CDR_DIR}/chpwd-recent-dirs"
   zstyle ':chpwd:*' recent-dirs-pushd true
   [[ -n "${CDR_DIR}" ]] && mkdir -p "${CDR_DIR}"
 fi

@@ -1,5 +1,10 @@
 
 setopt complete_aliases
+has_alias() {
+    if (( $+commands[$2[(w)1]] )); then
+        alias "$1"="$2"
+    fi
+}
 
 case ${OSTYPE} in
   linux*)
@@ -7,18 +12,18 @@ case ${OSTYPE} in
     ;;
 esac
 
-alias ls='eza --icons'
-alias tree='eza --tree --icons'
-alias grep='rg'
-alias cat='bat'
-alias find='fd'
-alias diff='delta'
+has_alias ls 'eza --icons'
+has_alias tree 'eza --tree --icons'
 
-alias ll='eza -l --icons --git'
-alias la='eza -la --icons --git'
-#alias grep='grep --color=auto'
+has_alias 'grep --color=auto' 'rg'
+has_alias cat 'bat'
+has_alias find 'fd'
+has_alias diff 'delta'
+has_alias ps 'procs'
 
-alias rr="command rm -rf"
+has_alias ll 'eza -l --icons --git'
+has_alias la 'eza -la --icons --git'
+
 alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'

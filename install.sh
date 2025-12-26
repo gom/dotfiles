@@ -39,6 +39,12 @@ done
 # The rest of your setup for zsh and vimrc.
 # This part is still not ideal because it appends on every run.
 # A better way would be to check if the line already exists.
-echo "source ${DOTFILES_DIR}/zsh/zshenv" >> ~/.zshenv
-echo "source ${DOTFILES_DIR}/zsh/zshrc" >> ~/.zshrc
-echo "source ${DOTFILES_DIR}/config/vim/rc/vimrc" >> ~/.vimrc
+append_to_file() {
+    local line="$1"
+    local file="$2"
+    [ -f "$file" ] || touch "$file"
+    grep -Fxq "$line" "$file" || echo "$line" >> "$file"
+}
+append_to_file "source ${DOTFILES_DIR}/zsh/zshenv" $HOME/.zshenv
+append_to_file "source ${DOTFILES_DIR}/zsh/zshrc" $HOME/.zshrc
+append_to_file "source ${DOTFILES_DIR}/config/vim/rc/vimrc" $HOME/.vimrc
