@@ -4,10 +4,14 @@ shell = "zsh"
 # Templates: 読み込み方法の定義
 # -----------------------------------------------------------------------------
 [templates]
-# PATHに追加するだけのテンプレート
+# PATHに追加するテンプレート
 path = 'export PATH="{{ dir }}:$PATH"'
-# fpathに追加してcompinitを実行（補完用）
-defer = '{{ hooks?.pre | nl }}{% for file in files %}source "{{ file }}"{% endfor %}{{ hooks?.post | nl }}'
+# fpathに追加するテンプレート
+fpath = 'fpath=({{ dir }} $fpath)'
+# 即時実行するテンプレート
+source = '{{ hooks?.pre | nl }}{% for file in files %}source "{{ file }}"{% endfor %}{{ hooks?.post | nl }}'
+# 遅延実行するテンプレート
+defer = '{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source "{{ file }}"\n{% endfor %}{{ hooks?.post | nl }}'
 
 # -----------------------------------------------------------------------------
 # Theme
@@ -18,13 +22,18 @@ inline = 'eval "$(starship init zsh)"'
 # -----------------------------------------------------------------------------
 # Core Plugins
 # -----------------------------------------------------------------------------
+[plugins.zsh-defer]
+github = "romkatv/zsh-defer"
+apply = ["source"]
+
 [plugins.zsh-autosuggestions]
 github = "zsh-users/zsh-autosuggestions"
 use = ["{{ name }}.zsh"]
+apply = ["defer"]
 
 [plugins.zsh-completions]
 github = "zsh-users/zsh-completions"
-apply = ["defer"] # 遅延読み込み推奨
+apply = ["fpath", "defer"] # 遅延読み込み推奨
 
 [plugins.zsh-256color]
 github = "chrissicool/zsh-256color"
@@ -84,3 +93,4 @@ use = ["*.zsh"]
 # -----------------------------------------------------------------------------
 [plugins.fast-syntax-highlighting]
 github = "zdharma-continuum/fast-syntax-highlighting"
+apply = ["defer"]
