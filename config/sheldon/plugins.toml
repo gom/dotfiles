@@ -12,9 +12,8 @@ defer = '{{ hooks?.pre | nl }}{% for file in files %}source "{{ file }}"{% endfo
 # -----------------------------------------------------------------------------
 # Theme
 # -----------------------------------------------------------------------------
-[plugins.powerlevel10k]
-github = "romkatv/powerlevel10k"
-# p10kは設定ファイル生成のために初回起動時に即時読み込み推奨
+[plugins.starship]
+inline = 'eval "$(starship init zsh)"'
 
 # -----------------------------------------------------------------------------
 # Core Plugins
