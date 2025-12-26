@@ -1,13 +1,11 @@
+umask 022
+
+# Install plugins
+source ${_ZDOTDIR}/mise.zsh
+source ${_ZDOTDIR}/sheldon.zsh
+
 # prompt
 source ${_ZDOTDIR}/prompt.zsh
-
-# moving directory
-setopt auto_cd
-setopt auto_pushd        # cd to pushd
-setopt pushd_ignore_dups
-setopt pushd_to_home     # pushd with no argument, go home.
-cdpath=(~)
-chpwd_functions=(${chpwd_functions} dirs) # display the stack of directories
 
 ## history
 source ${_ZDOTDIR}/history.zsh
@@ -15,20 +13,11 @@ source ${_ZDOTDIR}/history.zsh
 ## set alias
 source ${_ZDOTDIR}/alias.zsh
 
-## others
-umask 022
+# key bind
+source ${_ZDOTDIR}/bindkeys.zsh
 
-if [ -z "${FASTBOOT_ZSH}" ]; then
-  # Install plugins
-  source ${_ZDOTDIR}/mise.zsh
-  source ${_ZDOTDIR}/sheldon.zsh
-
-  # key bind
-  source ${_ZDOTDIR}/bindkeys.zsh
-
-  ## set development tools
-  source ${_ZDOTDIR}/functions.zsh
-fi
+## set utility functions
+source ${_ZDOTDIR}/functions.zsh
 
 ## auto complete
 source ${_ZDOTDIR}/completions.zsh

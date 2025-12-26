@@ -1,4 +1,12 @@
 #!/bin/zsh
+# moving directory
+setopt auto_cd
+setopt auto_pushd        # cd to pushd
+setopt pushd_ignore_dups
+setopt pushd_to_home     # pushd with no argument, go home.
+cdpath=(~)
+chpwd_functions=(${chpwd_functions} dirs) # display the stack of directories
+
 zstyle :compinstall filename '~/.zshrc'
 #fpath=(~/.zsh.d/completion $fpath)
 fpath+=~/.zsh.d
