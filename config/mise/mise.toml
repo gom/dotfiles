@@ -15,6 +15,7 @@ procs = "latest"
 # du
 dust = "latest"
 neovim = "latest"
+zellij = "latest"
 
 # --- Text Processing & JSON ---
 # fuzzy finder

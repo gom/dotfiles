@@ -1,0 +1,13 @@
+// Zellij configuration file
+
+options {
+    theme "solarized-dark"
+    default_shell "zsh"
+    copy_command "sh -c 'command -v wl-copy >/dev/null 2>&1 && wl-copy || command -v xclip >/dev/null 2>&1 && xclip -selection clipboard || command -v pbcopy >/dev/null 2>&1 && pbcopy || command -v clip.exe >/dev/null 2>&1 && clip.exe'"
+}
+
+ui {
+    pane_frames {
+        rounded_corners true
+    }
+}

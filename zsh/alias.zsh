@@ -33,6 +33,12 @@ alias sd='screen -D'
 alias t='tmux'
 alias ta='tmux attach'
 alias td='tmux detach'
+
+# zellij (zj to avoid conflict with zoxide)
+alias zj='zellij'
+alias za='zellij attach'
+alias zd='zellij detach'
+
 alias g='git'
 
 alias -g L='| less'
