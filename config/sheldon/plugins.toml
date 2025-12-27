@@ -48,7 +48,11 @@ github = "mollifier/cd-gitroot"
 github = "mollifier/anyframe"
 
 [plugins.zoxide]
-inline = 'zsh-defer eval "$(zoxide init zsh)"'
+inline = 'eval "$(zoxide init zsh --cmd cd)"'
+
+[plugins.fzf-init]
+# zoxide の検索画面をリッチにするために fzf も init
+inline = 'eval "$(fzf --zsh)"'
 
 # -----------------------------------------------------------------------------
 # Git Extensions (PATHに追加する系)
@@ -79,6 +83,26 @@ github = "tj/git-extras"
 # git-extrasは本来make installが必要ですが、binをPATHに通すだけでも多くの機能が動きます
 dir = "bin"
 apply = ["path"]
+
+[plugins.editor-settings]
+inline = '''
+if (( $+commands[nvim] )); then
+    export EDITOR='nvim'
+elif [ -e /usr/local/bin/vim ]; then
+      EDITOR=/usr/local/bin/vim
+elif (( $+commands[vim] )); then
+    export EDITOR='vim'
+else
+    export EDITOR='vi'
+fi
+export VISUAL="$EDITOR"
+
+zsh-defer -c "
+    rehash
+    has_alias vi '$EDITOR'
+    has_alias vim '$EDITOR'
+"
+'''
 
 # -----------------------------------------------------------------------------
 # Syntax Highlighting (必ず最後に記述)

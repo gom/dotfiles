@@ -19,3 +19,5 @@ case $TERM in
     linux) LANG=C ;;
     *) LANG=ja_JP.UTF-8 ;;
 esac
+
+alias zj='SHELL=$(which zsh) ~/.local/share/mise/shims/zellij attach -c main'

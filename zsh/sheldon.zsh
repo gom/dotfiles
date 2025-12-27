@@ -21,4 +21,5 @@ fi
 # Source Sheldon plugins
 if (( $+commands[sheldon] )); then
   eval "$(sheldon source)"
+  rehash
 fi

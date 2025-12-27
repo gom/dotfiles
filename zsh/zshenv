@@ -23,9 +23,11 @@ path=(
 
        /usr/lib/ccache(N-/)
        /usr/local/mysql/bin(N-/)
+
        /usr/local/bin(N-/)
        /usr/bin(N-/)
        /bin(N-/)
+       /usr/local/sbin(N-/)
        /usr/sbin(N-/)
        /sbin(N-/)
        /usr/bin/X11(N-/)
@@ -58,14 +60,3 @@ export LV='-c -la -Ou8'
 if [ "${PAGER}" != "lv" ]; then
   alias lv="${PAGER}"
 fi
-
-## editor
-if [ -e /usr/local/bin/vim ]; then
-  EDITOR=/usr/local/bin/vim
-else
-  EDITOR=vim
-fi
-if ! type vim > /dev/null 2>&1; then
-  alias vim=vi
-fi
-export EDITOR

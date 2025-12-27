@@ -1,28 +1,29 @@
 
 setopt complete_aliases
 has_alias() {
-    if (( $+commands[$2[(w)1]] )); then
-        alias "$1"="$2"
+    local name="$1"
+    local primary="$2"
+    local fallback="$3"
+
+    if (( ${+commands[${primary[(w)1]}]} )); then
+        alias "${name}"="${primary}"
+    elif [[ -n "${fallback}" ]]; then
+        alias "${name}"="${fallback}"
     fi
 }
 
-case ${OSTYPE} in
-  linux*)
-    alias ls='ls --color=auto'
-    ;;
-esac
-
-has_alias ls 'eza --icons'
+has_alias ls 'eza --group-directories-first --git' 'ls -F'
 has_alias tree 'eza --tree --icons'
 
-has_alias 'grep --color=auto' 'rg'
+has_alias grep 'rg' 'grep --color=auto'
 has_alias cat 'bat'
 has_alias find 'fd'
 has_alias diff 'delta'
 has_alias ps 'procs'
+has_alias cd 'z'
 
-has_alias ll 'eza -l --icons --git'
-has_alias la 'eza -la --icons --git'
+has_alias ll 'eza -l --group-directories-first --git'
+has_alias la 'eza -la --group-directories-first --git'
 
 alias cp='cp -i'
 alias mv='mv -i'
@@ -33,16 +34,8 @@ alias po='popd'
 alias gd='dirs -v; echo -n "select number: "; read newdir; cd +"${newdir}"'
 alias lss='less -MN'
 
-alias sc='screen'
-alias sd='screen -D'
-alias t='tmux'
-alias ta='tmux attach'
-alias td='tmux detach'
-
 # zellij (zj to avoid conflict with zoxide)
-alias zj='zellij'
-alias za='zellij attach'
-alias zd='zellij detach'
+alias zj='SHELL=$(which zsh) zellij attach -c main'
 
 alias g='git'
 

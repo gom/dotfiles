@@ -40,6 +40,9 @@ python = "latest"
 go = "latest"
 rust = "latest"
 
+[env]
+STARSHIP_CONFIG = '{{env.HOME}}/.config/starship/starship.toml'
+
 [settings]
 # 開発機能の有効化（推奨）
 experimental = true

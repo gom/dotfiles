@@ -3,8 +3,6 @@
   email = gomgom68@gmail.com
 [core]
 ;  pager = less -FRSX
-  pager = delta
-  editor= vim
   excludesfile=~/.gitignore
 [init]
   defaultBranch = main

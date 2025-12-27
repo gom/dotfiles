@@ -48,3 +48,4 @@ append_to_file() {
 append_to_file "source ${DOTFILES_DIR}/zsh/zshenv" $HOME/.zshenv
 append_to_file "source ${DOTFILES_DIR}/zsh/zshrc" $HOME/.zshrc
 append_to_file "source ${DOTFILES_DIR}/config/vim/rc/vimrc" $HOME/.vimrc
+append_to_file "source ${DOTFILES_DIR}/.bashrc" $HOME/.bashrc

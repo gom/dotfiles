@@ -1,0 +1,54 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+
+# プロンプトの並び順（必要なものだけに絞る）
+format = """
+$directory\
+$git_branch\
+$git_status\
+$python\
+$rust\
+$package\
+$character"""
+
+[directory]
+style = "bold cyan"
+truncation_length = 3
+truncation_symbol = "…/"
+read_only = " [RO]" # アイコンの代わりにテキストで表現
+
+[character]
+success_symbol = "[󠄀❯](bold green)" # シンプルな記号
+error_symbol = "[󠄀❯](bold red)"
+
+[git_branch]
+symbol = " " # Nerd Fontなしの場合、"on " などのテキストにするのが安全
+style = "bold purple"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+# 記号だけで状態を表現（! = 変更あり, + = ステージ済み など）
+format = "([\\[$all_status$ahead_behind\\]]($style) )"
+style = "red"
+conflicted = "="
+ahead = ">"
+behind = "<"
+diverged = "<>"
+untracked = "?"
+stashed = "$"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "x"
+
+[python]
+symbol = "py "
+style = "bold yellow"
+
+[rust]
+symbol = "rs "
+style = "bold orange"
+
+[package]
+disabled = true # 余計な情報を減らすために無効化

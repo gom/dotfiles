@@ -51,11 +51,9 @@ setopt auto_menu         # switch items by TAB
 setopt magic_equal_subst # able to complete after '='
 setopt print_eight_bit   # display Japanese
 
-if [ -n "${FASTBOOT_ZSH}" ]; then
-  autoload -Uz compinit
-  if [[ -n ${_ZDOTDIR:-${HOME}}/.zcompdump(#qN.mh+24) ]]; then
-    compinit -u
-  else
-    compinit -C
-  fi
+autoload -Uz compinit
+if [[ -n ${_ZDOTDIR:-${HOME}}/.zcompdump(#qN.mh+24) ]]; then
+  compinit -u
+else
+  compinit -C
 fi
