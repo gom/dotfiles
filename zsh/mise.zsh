@@ -8,4 +8,3 @@ if [ ! -e "${MISE_INSTALL_PATH}" ]; then
   mise install
 fi
 eval "$(mise activate zsh)"
-eval "$(mise completion zsh)"

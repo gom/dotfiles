@@ -92,10 +92,13 @@ source "${_ZDOTDIR}/prompt.zsh"
 
 [plugins.zsh-local-deferred]
 inline = '''
-zsh-defer source "${_ZDOTDIR}/history.zsh"
-zsh-defer source "${_ZDOTDIR}/bindkeys.zsh"
-zsh-defer source "${_ZDOTDIR}/alias.zsh"
-zsh-defer source "${_ZDOTDIR}/completions.zsh"
+zsh-defer -c '
+source "${_ZDOTDIR}/history.zsh"
+source "${_ZDOTDIR}/bindkeys.zsh"
+source "${_ZDOTDIR}/alias.zsh"
+source "${_ZDOTDIR}/completions.zsh"
+eval "$(mise completion zsh)"
+'
 '''
 
 [plugins.zsh-local-functions]
