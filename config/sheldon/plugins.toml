@@ -53,7 +53,12 @@ inline = 'eval "$(zoxide init zsh --cmd cd)"'
 
 [plugins.fzf-init]
 # zoxide の検索画面をリッチにするために fzf も init
-inline = 'eval "$(fzf --zsh)"'
+inline = '''
+eval "$(fzf --zsh)"
+# Remap fzf file search from Ctrl+T to Alt+t to avoid conflict with zellij prefix
+bindkey -r "^T"
+bindkey "^[t" fzf-file-widget
+'''
 
 [plugins.atuin-init]
 inline = 'eval "$(atuin init zsh)"'

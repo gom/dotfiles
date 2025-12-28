@@ -11,3 +11,15 @@ ui {
         rounded_corners true
     }
 }
+
+default_mode "locked"
+
+keybinds {
+    unbind "Ctrl g"
+    locked {
+        bind "Ctrl t" { SwitchToMode "Normal"; }
+    }
+    normal {
+        bind "Ctrl t" { SwitchToMode "Locked"; }
+    }
+}
