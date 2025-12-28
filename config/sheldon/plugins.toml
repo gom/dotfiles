@@ -94,6 +94,14 @@ dir = "bin"
 apply = ["path"]
 
 # Shell Settings
+[plugins.zsh-local-functions]
+local = "{{ env._ZDOTDIR }}/functions"
+apply = ["fpath"]
+inline = '''
+autoload -Uz ${_ZDOTDIR}/functions/*(N:t)
+[ -e ${HOME}/.ssh/agent-env ] && source ${HOME}/.ssh/agent-env
+'''
+
 [plugins.zsh-local-immediate]
 local = "{{ env._ZDOTDIR }}"
 use = ["env.zsh", "prompt.zsh"]
@@ -105,7 +113,6 @@ use = [
     "history.zsh",
     "bindkeys.zsh",
     "alias.zsh",
-    "functions.zsh",
     "completions.zsh"
 ]
 apply = ["defer"]
