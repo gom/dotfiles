@@ -85,19 +85,18 @@ apply = ["path"]
 
 # Shell Settings
 [plugins.zsh-local-immediate]
-local = "{{ env._ZDOTDIR }}"
-use = ["env.zsh", "prompt.zsh"]
-apply = ["source"]
+inline = '''
+source "${_ZDOTDIR}/env.zsh"
+source "${_ZDOTDIR}/prompt.zsh"
+'''
 
 [plugins.zsh-local-deferred]
-local = "{{ env._ZDOTDIR }}"
-use = [
-    "history.zsh",
-    "bindkeys.zsh",
-    "alias.zsh",
-    "completions.zsh"
-]
-apply = ["defer"]
+inline = '''
+zsh-defer source "${_ZDOTDIR}/history.zsh"
+zsh-defer source "${_ZDOTDIR}/bindkeys.zsh"
+zsh-defer source "${_ZDOTDIR}/alias.zsh"
+zsh-defer source "${_ZDOTDIR}/completions.zsh"
+'''
 
 [plugins.zsh-local-functions]
 inline = '''
