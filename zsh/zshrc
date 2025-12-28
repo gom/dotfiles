@@ -3,21 +3,3 @@ umask 022
 # Install plugins
 source ${_ZDOTDIR}/mise.zsh
 source ${_ZDOTDIR}/sheldon.zsh
-
-# prompt
-source ${_ZDOTDIR}/prompt.zsh
-
-## history
-source ${_ZDOTDIR}/history.zsh
-
-## set alias
-source ${_ZDOTDIR}/alias.zsh
-
-# key bind
-source ${_ZDOTDIR}/bindkeys.zsh
-
-## set utility functions
-source ${_ZDOTDIR}/functions.zsh
-
-## auto complete
-source ${_ZDOTDIR}/completions.zsh

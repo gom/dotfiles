@@ -94,10 +94,21 @@ dir = "bin"
 apply = ["path"]
 
 # Shell Settings
-[plugins.zsh-local-scripts]
+[plugins.zsh-local-immediate]
 local = "{{ env._ZDOTDIR }}"
-use = ["env.zsh", "history.zsh", "bindkeys.zsh", "alias.zsh", "prompt.zsh", "functions.zsh", "completions.zsh"]
+use = ["env.zsh", "prompt.zsh"]
 apply = ["source"]
+
+[plugins.zsh-local-deferred]
+local = "{{ env._ZDOTDIR }}"
+use = [
+    "history.zsh",
+    "bindkeys.zsh",
+    "alias.zsh",
+    "functions.zsh",
+    "completions.zsh"
+]
+apply = ["defer"]
 
 # -----------------------------------------------------------------------------
 # Syntax Highlighting (必ず最後に記述)
