@@ -4,9 +4,8 @@
 
 # --- Locale Settings ---
 # Ensure consistent encoding across all shell instances
-export LANGUAGE=C.UTF-8
 export LANG=C.UTF-8
-export LC_ALL=C.UTF-8
+export LC_CTYPE=C.UTF-8
 
 # -g: declare on global scope
 # -r: Readonly
