@@ -16,7 +16,6 @@ zstyle :compinstall filename '~/.zshrc'
 #fpath=(~/.zsh.d/completion $fpath)
 fpath+=~/.zsh.d
 
-autoload -Uz bashcompinit && bashcompinit
 
 zstyle ':completion:*' format '%B%d%b'
 zstyle ':completion:*' group-name ''
@@ -57,8 +56,8 @@ setopt magic_equal_subst # able to complete after '='
 setopt print_eight_bit   # display Japanese
 
 autoload -Uz compinit
-if [[ -n ${_ZDOTDIR:-${HOME}}/.zcompdump(#qN.mh+24) ]]; then
-  compinit -u
-else
+if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh-24) ]]; then
   compinit -C
+else
+  compinit
 fi
