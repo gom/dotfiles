@@ -84,6 +84,7 @@ github = "tj/git-extras"
 dir = "bin"
 apply = ["path"]
 
+# Shell Settings
 [plugins.editor-settings]
 inline = '''
 if (( $+commands[nvim] )); then
