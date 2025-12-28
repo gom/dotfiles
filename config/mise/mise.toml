@@ -38,7 +38,7 @@ starship = "latest"
 node = "latest"
 python = "latest"
 go = "latest"
-rust = "latest"
+# rust = "latest" # use rustup instead.
 
 [env]
 STARSHIP_CONFIG = '{{env.HOME}}/.config/starship/starship.toml'

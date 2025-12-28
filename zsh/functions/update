@@ -1,48 +1,60 @@
 update() {
   # Update all packages and plugins
-  echo "\e[31mUpdating system packages...\e[m"
-  # MacOS
-  if [[ $(uname) == "Darwin" ]]; then
+  echo -e "\e[32mUpdating system packages...\e[m"
+  if command -v brew &>/dev/null; then
     brew update && brew upgrade
-  # Arch Linux
   elif command -v paru &>/dev/null; then
     paru -Syu --skipreview
   elif command -v pacman &>/dev/null; then
     sudo pacman -Syu --noconfirm
-  # Debian/Ubuntu
   elif command -v apt-get &>/dev/null; then
     sudo apt-get update && sudo apt-get upgrade -y
   elif command -v dnf &>/dev/null; then
     sudo dnf upgrade --refresh -y
-  # Fedora
   elif command -v yum &>/dev/null; then
     sudo yum update -y
   else
-    echo "No command is available. Please install one of them to manage packages."
-    return 1
+    echo -e "\e[31mNo package manager found. Skipping system update.\e[m"
   fi
 
-  # Update rust
-  if command -v rustup >/dev/null; then
-    echo "\e[31mUpdating Rust toolchain...\e[m"
+  # Update mise and its plugins/tools
+  if command -v mise &>/dev/null; then
+    echo -e "\e[32mUpdating mise...\e[m"
+    mise self-update
+    echo -e "\e[32mUpdating mise plugins...\e[m"
+    mise plugins update
+    echo -e "\e[32mUpgrading mise tools...\e[m"
+    mise upgrade
+  else
+    echo -e "\e[31mmise is not installed. Skipping mise updates.\e[m"
+  fi
+
+  # Update rust toolchain
+  if command -v rustup &>/dev/null; then
+    echo -e "\e[32mUpdating Rust toolchain...\e[m"
     rustup update
   else
-    echo "rustup is not installed. Skipping Rust updates."
+    echo -e "\e[31mrustup is not installed. Skipping Rust updates.\e[m"
   fi
 
-  # update asdf plugins
-  if command -v asdf &>/dev/null; then
-    echo "\e[31mUpdating asdf plugins...\e[m"
-    asdf plugin update --all
+  # Update sheldon plugins
+  if command -v sheldon &>/dev/null; then
+    echo -e "\e[32mUpdating sheldon plugins...\e[m"
+    sheldon lock --update
   else
-    echo "asdf is not installed. Skipping asdf plugin updates."
+    echo -e "\e[31msheldon is not installed. Skipping sheldon plugin updates.\e[m"
+  fi
+
+  # Update NeoVim plugins
+  if command -v nvim &>/dev/null; then
+    echo -e "\e[32mUpdating NeoVim plugins...\e[m"
+    nvim --headless "+Lazy! sync" +qa
+  else
+    echo -e "\e[31mneovim is not installed. Skipping neovim plugin updates.\e[m"
   fi
 
   # Update all git repositories in ${HOME}/src
-  bulk_pull ${HOME}/src
-
-  # Update zinit plugins
-  echo "\e[31mUpdating zinit plugins...\e[m"
-  zinit update --all
-  zinit cclear
+  if type bulk_pull &>/dev/null; then
+    bulk_pull ${HOME}/src
+  fi
 }
