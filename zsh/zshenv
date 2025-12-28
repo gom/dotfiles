@@ -2,6 +2,12 @@
 ## http://www.clear-code.com/blog/2011/9/5.html
 ## http://d.hatena.ne.jp/yascentur/20111111/1321015289
 
+# --- Locale Settings ---
+# Ensure consistent encoding across all shell instances
+export LANGUAGE=C.UTF-8
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+
 # -g: declare on global scope
 # -r: Readonly
 typeset -g _ZDOTDIR=${0:A:h}

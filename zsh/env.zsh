@@ -1,9 +1,4 @@
 
-## Language
-export LANGUAGE=C.UTF-8
-export LANG=C.UTF-8
-export LC_ALL=C.UTF-8
-
 export GPG_TTY=$(tty)
 
 if (( $+commands[nvim] )); then
