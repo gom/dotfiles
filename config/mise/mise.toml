@@ -29,7 +29,7 @@ delta = "latest"
 # envrc
 direnv = "latest"
 # shell history
-atuin = "latest"
+atuin = { version = "latest", postinstall = "atuin import auto" }
 # shell plugin manager
 "github:rossmacarthur/sheldon" = "latest"
 starship = "latest"

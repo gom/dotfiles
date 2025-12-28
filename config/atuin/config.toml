@@ -1,0 +1,25 @@
+# Atuin configuration file
+
+# Set the search UI style to compact
+style = "compact"
+
+# Set the height of the search UI
+inline_height = 10
+
+# --- Optional minimal style configurations ---
+# Uncomment the following lines to apply a more minimal style.
+
+# Place the search bar at the top
+invert = true
+
+# Hide the command preview
+# show_preview = false
+
+# Hide the help row
+show_help = false
+
+# Hide the search and inspect tabs
+# show_tabs = false
+
+# Reduce motion in the TUI
+prefers_reduced_motion = true

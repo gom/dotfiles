@@ -16,7 +16,7 @@ defer = '{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source "{{ file }
 # -----------------------------------------------------------------------------
 # Theme
 # -----------------------------------------------------------------------------
-[plugins.starship]
+[plugins.starship-init]
 inline = 'eval "$(starship init zsh)"'
 
 # -----------------------------------------------------------------------------
@@ -47,12 +47,16 @@ github = "mollifier/cd-gitroot"
 [plugins.anyframe]
 github = "mollifier/anyframe"
 
-[plugins.zoxide]
+# Initialize tools
+[plugins.zoxide-init]
 inline = 'eval "$(zoxide init zsh --cmd cd)"'
 
 [plugins.fzf-init]
 # zoxide の検索画面をリッチにするために fzf も init
 inline = 'eval "$(fzf --zsh)"'
+
+[plugins.atuin-init]
+inline = 'eval "$(atuin init zsh)"'
 
 # -----------------------------------------------------------------------------
 # Git Extensions (PATHに追加する系)
