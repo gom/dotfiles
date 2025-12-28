@@ -1,44 +1,56 @@
-# ~/.config/starship.toml
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# 改行を入れてプロンプトを読みやすくする
 add_newline = true
 
-# プロンプトのフォーマット（表示順序）
+# プロンプトの並び順（必要なものだけに絞る）
 format = """
-$os$directory$git_branch$git_status$rust$node$python$lua$fill$cmd_duration$line_break$character
+$directory\
+$git_branch\
+$git_status\
+$python\
+$rust\
+$package\
+$line_break\
+$character
 """
 
 [directory]
 style = "bold cyan"
 truncation_length = 3
 truncation_symbol = "…/"
-
-[git_branch]
-symbol = " "
-style = "bold ppurple"
-
-[git_status]
-style = "bold red"
-format = '([\[$all_status$ahead_behind\]]($style) )'
-
-[fill]
-symbol = " " # 右側に情報を寄せるための空白埋め
-
-[cmd_duration]
-min_time = 500
-format = "took [$duration]($style) "
-style = "yellow"
-
-[os]
-disabled = false
-style = "bold white"
-
-[os.symbols]
-Macos = " "
-Ubuntu = " "
-Arch = " "
+read_only = " [RO]" # アイコンの代わりにテキストで表現
 
 [character]
-success_symbol = "[❯](bold green)"
-error_symbol = "[❯](bold red)"
+success_symbol = "[󠄀❯](bold green)" # シンプルな記号
+error_symbol = "[󠄀❯](bold red)"
+
+[git_branch]
+symbol = " " # Nerd Fontなしの場合、"on " などのテキストにするのが安全
+style = "bold purple"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+# 記号だけで状態を表現（! = 変更あり, + = ステージ済み など）
+format = "([\\[$all_status$ahead_behind\\]]($style) )"
+style = "red"
+conflicted = "="
+ahead = ">"
+behind = "<"
+diverged = "<>"
+untracked = "?"
+stashed = '\$'
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "x"
+
+[python]
+symbol = "py "
+style = "bold yellow"
+
+[rust]
+symbol = "rs "
+style = "bold orange"
+
+[package]
+disabled = true # 余計な情報を減らすために無効化
