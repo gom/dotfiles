@@ -1,3 +1,4 @@
+## Prompt
 autoload -Uz colors && colors
 autoload -Uz promptinit && promptinit
 
@@ -8,27 +9,22 @@ setopt no_hist_beep
 setopt interactive_comments # behind '#' is comment in cmd line
 WORDCHARS=${WORDCHARS:s,/,,}
 
-# log
+## Log
 #watch="all"    # watching login and logout
-
 case ${OSTYPE} in
   linux*)
-    # Darwin has /usr/bin/log.
     log # show watching log
     ;;
 esac
 
+## Job
 setopt no_tify # when bg job finish, notify me.
 setopt nomatch
 setopt ignore_eof # ignore logout when touch ^D
 setopt rm_star_wait # wait for confirmation when using rm *
-
-# job
 setopt long_list_jobs
 REPORTTIME=3
 
-export GPG_TTY=$(tty)
-
-## colors
+## Colors
 export LSCOLORS=GxFxCxDxBxegedabagacad
 export CLICOLOR=1

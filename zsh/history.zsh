@@ -1,12 +1,15 @@
+## History
 HISTFILE=~/.zsh_history
 HISTSIZE=10000000
 SAVEHIST=${HISTSIZE}
 function history-all { history -E 1 } # output all histories
 
+## History search
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 
+## History options
 setopt extended_history     # write datetime to history
 setopt append_history       # add .zsh_history
 setopt inc_append_history   # add history with incremental

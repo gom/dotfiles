@@ -1,6 +1,8 @@
 
+## GPG
 export GPG_TTY=$(tty)
 
+## Editor
 if (( $+commands[nvim] )); then
     export EDITOR='nvim'
 elif [ -e /usr/local/bin/vim ]; then
@@ -25,6 +27,7 @@ fi
 export LESS="-R -i -F"
 export LV='-c -la -Ou8'
 
+## Pager alias
 if [ "${PAGER}" != "lv" ]; then
   alias lv="${PAGER}"
 fi

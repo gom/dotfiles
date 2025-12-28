@@ -1,3 +1,4 @@
+## Mise
 typeset -gx MISE_DATA_DIR="${XDG_DATA_HOME:-${HOME}/.local/share}/mise"
 typeset -gx MISE_INSTALL_PATH="${HOME}/.local/bin/mise"
 

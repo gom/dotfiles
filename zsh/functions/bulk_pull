@@ -1,7 +1,6 @@
 bulk_pull() {
   PWD="${1}"
   echo "\e[32mPull all the repositories under the ${PWD}...\e[m"
-#PWD="$(cd $(dirname $0) && pwd)"
 
   for d in $(env find ${PWD} -maxdepth 2 -name '.git' -type d | env sed -e 's/\/\.git//'); do
     pushd "${d}"

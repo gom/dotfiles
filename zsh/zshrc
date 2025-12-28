@@ -2,4 +2,9 @@ umask 022
 
 # Install plugins
 source ${_ZDOTDIR}/mise.zsh
-source ${_ZDOTDIR}/sheldon.zsh
+
+## Sheldon
+if (( $+commands[sheldon] )); then
+  eval "$(sheldon source)"
+  rehash
+fi

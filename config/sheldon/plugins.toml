@@ -1,8 +1,6 @@
 shell = "zsh"
 
-# -----------------------------------------------------------------------------
-# Templates: 読み込み方法の定義
-# -----------------------------------------------------------------------------
+## Templates
 [templates]
 # PATHに追加するテンプレート
 path = 'export PATH="{{ dir }}:$PATH"'
@@ -14,14 +12,11 @@ source = '{{ hooks?.pre | nl }}{% for file in files %}source "{{ file }}"{% endf
 defer = '{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source "{{ file }}"\n{% endfor %}{{ hooks?.post | nl }}'
 
 # -----------------------------------------------------------------------------
-# Theme
-# -----------------------------------------------------------------------------
+## Theme
 [plugins.starship-init]
 inline = 'eval "$(starship init zsh)"'
 
-# -----------------------------------------------------------------------------
-# Core Plugins
-# -----------------------------------------------------------------------------
+## Core Plugins
 [plugins.zsh-defer]
 github = "romkatv/zsh-defer"
 apply = ["source"]
@@ -52,10 +47,8 @@ github = "mollifier/anyframe"
 inline = 'eval "$(zoxide init zsh --cmd cd)"'
 
 [plugins.fzf-init]
-# zoxide の検索画面をリッチにするために fzf も init
 inline = '''
 eval "$(fzf --zsh)"
-# Remap fzf file search from Ctrl+T to Alt+t to avoid conflict with zellij prefix
 bindkey -r "^T"
 bindkey "^[t" fzf-file-widget
 '''
@@ -63,10 +56,7 @@ bindkey "^[t" fzf-file-widget
 [plugins.atuin-init]
 inline = 'eval "$(atuin init zsh)"'
 
-# -----------------------------------------------------------------------------
-# Git Extensions (PATHに追加する系)
-# -----------------------------------------------------------------------------
-# Sheldonはバイナリ管理ではないですが、Git拡張スクリプトのリポジトリは管理可能です
+## Git Extensions
 [plugins.git-recall]
 github = "Fakerr/git-recall"
 apply = ["path"]
@@ -94,14 +84,6 @@ dir = "bin"
 apply = ["path"]
 
 # Shell Settings
-[plugins.zsh-local-functions]
-local = "{{ env._ZDOTDIR }}/functions"
-apply = ["fpath"]
-inline = '''
-autoload -Uz ${_ZDOTDIR}/functions/*(N:t)
-[ -e ${HOME}/.ssh/agent-env ] && source ${HOME}/.ssh/agent-env
-'''
-
 [plugins.zsh-local-immediate]
 local = "{{ env._ZDOTDIR }}"
 use = ["env.zsh", "prompt.zsh"]
@@ -117,9 +99,14 @@ use = [
 ]
 apply = ["defer"]
 
-# -----------------------------------------------------------------------------
-# Syntax Highlighting (必ず最後に記述)
-# -----------------------------------------------------------------------------
+[plugins.zsh-local-functions]
+local = "{{ env._ZDOTDIR }}/functions"
+inline = 'autoload -Uz ${_ZDOTDIR}/functions/*(N:t)'
+apply = ["fpath"]
+
+[plugins.zsh-local-ssh-agent]
+inline = '[ -e ${HOME}/.ssh/agent-env ] && source ${HOME}/.ssh/agent-env'
+
 [plugins.fast-syntax-highlighting]
 github = "zdharma-continuum/fast-syntax-highlighting"
 apply = ["defer"]
