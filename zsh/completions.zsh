@@ -1,4 +1,9 @@
 #!/bin/zsh
+
+# complete list
+# -1 : no asking when the list is too large
+export LISTMAX=0
+
 # moving directory
 setopt auto_cd
 setopt auto_pushd        # cd to pushd

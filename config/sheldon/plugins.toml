@@ -94,25 +94,10 @@ dir = "bin"
 apply = ["path"]
 
 # Shell Settings
-[plugins.editor-settings]
-inline = '''
-if (( $+commands[nvim] )); then
-    export EDITOR='nvim'
-elif [ -e /usr/local/bin/vim ]; then
-      EDITOR=/usr/local/bin/vim
-elif (( $+commands[vim] )); then
-    export EDITOR='vim'
-else
-    export EDITOR='vi'
-fi
-export VISUAL="$EDITOR"
-
-zsh-defer -c "
-    rehash
-    has_alias vi '$EDITOR'
-    has_alias vim '$EDITOR'
-"
-'''
+[plugins.zsh-local-scripts]
+local = "{{ env._ZDOTDIR }}"
+use = ["env.zsh", "history.zsh", "bindkeys.zsh", "alias.zsh", "prompt.zsh", "functions.zsh", "completions.zsh"]
+apply = ["source"]
 
 # -----------------------------------------------------------------------------
 # Syntax Highlighting (必ず最後に記述)

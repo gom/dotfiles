@@ -20,6 +20,7 @@ path=(
        ${HOME}/.local/bin(N-/)
        ${HOME}/.cargo/bin(N-/)
        ${GOPATH:-${HOME}/go}/bin(N-/)
+       ${HOME}/.local/share/mise/shims(N-/)
 
        /usr/lib/ccache(N-/)
        /usr/local/mysql/bin(N-/)
@@ -33,30 +34,3 @@ path=(
        /usr/bin/X11(N-/)
        /usr/games(N-/)
       )
-
-## colors
-export LSCOLORS=GxFxCxDxBxegedabagacad
-export CLICOLOR=1
-
-## Language
-export LANGUAGE=C.UTF-8
-export LANG=C.UTF-8
-export LC_ALL=C.UTF-8
-
-# complete list
-# -1 : no asking when the list is too large
-export LISTMAX=0
-
-## Pager
-if type lv > /dev/null 2>&1; then
-  export PAGER="lv"
-else
-  export PAGER="less"
-fi
-export LESSCHARSET=utf-8
-export LESS="-R"
-export LV='-c -la -Ou8'
-
-if [ "${PAGER}" != "lv" ]; then
-  alias lv="${PAGER}"
-fi

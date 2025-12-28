@@ -25,6 +25,9 @@ has_alias cd 'z'
 has_alias ll 'eza -l --group-directories-first --git'
 has_alias la 'eza -la --group-directories-first --git'
 
+has_alias vi ${EDITOR}
+has_alias vim ${EDITOR}
+
 alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'

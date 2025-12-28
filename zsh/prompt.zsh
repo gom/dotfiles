@@ -28,3 +28,7 @@ setopt long_list_jobs
 REPORTTIME=3
 
 export GPG_TTY=$(tty)
+
+## colors
+export LSCOLORS=GxFxCxDxBxegedabagacad
+export CLICOLOR=1
