@@ -12,7 +12,7 @@ setopt pushd_to_home     # pushd with no argument, go home.
 cdpath=(~)
 chpwd_functions=(${chpwd_functions} dirs) # display the stack of directories
 
-zstyle :compinstall filename '~/.zshrc'
+zstyle :compinstall filename "${HOME}/.zshrc"
 #fpath=(~/.zsh.d/completion $fpath)
 fpath+=~/.zsh.d
 
@@ -55,9 +55,13 @@ setopt auto_menu         # switch items by TAB
 setopt magic_equal_subst # able to complete after '='
 setopt print_eight_bit   # display Japanese
 
+# Optimization: only run compinit if the dump is old or doesn't exist
+local zcompdump="${XDG_CACHE_HOME}/zsh/zcompdump"
+mkdir -p "$(dirname "$zcompdump")"
+
 autoload -Uz compinit
-if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh-24) ]]; then
-  compinit -C
+if [[ -n "$zcompdump"(#qN.mh-24) ]]; then
+  compinit -C -d "$zcompdump"
 else
-  compinit
+  compinit -d "$zcompdump"
 fi

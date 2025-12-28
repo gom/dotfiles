@@ -22,7 +22,7 @@ path=(
        ${HOME}/.local/bin(N-/)
        ${HOME}/.cargo/bin(N-/)
        ${GOPATH:-${HOME}/go}/bin(N-/)
-       ${HOME}/.local/share/mise/shims(N-/)
+       ${XDG_DATA_HOME}/mise/shims(N-/)
 
        /usr/lib/ccache(N-/)
        /usr/local/mysql/bin(N-/)

@@ -1,6 +1,5 @@
 ## Prompt
 autoload -Uz colors && colors
-autoload -Uz promptinit && promptinit
 
 setopt no_flow_control      # disabled C-s, C-q
 setopt no_beep

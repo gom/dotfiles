@@ -6,6 +6,8 @@
   excludesfile=~/.gitignore
 [init]
   defaultBranch = main
+[checkout]
+  defaultRemote = origin
 [interactive]
   diffFilter = delta --color-only --features=interactive
 [delta]
@@ -72,6 +74,8 @@
   m = merge
   s = stash
   pushf = push --force-with-lease
+  # List all aliases
+  aliases = !git config --get-regexp '^alias\\.' | sed 's/^alias\\.//;s/ / = /'
 
   #log
   lg = log
