@@ -26,8 +26,6 @@ jq = "latest"
 delta = "latest"
 
 # --- Environment & Shell Managers ---
-# envrc
-direnv = "latest"
 # shell history
 atuin = { version = "latest", postinstall = "atuin import auto" }
 # shell plugin manager
@@ -38,6 +36,7 @@ starship = "latest"
 node = "latest"
 python = "latest"
 go = "latest"
+usage = "latest"
 # rust = "latest" # use rustup instead.
 
 [env]

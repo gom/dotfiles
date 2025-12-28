@@ -19,6 +19,7 @@ has_alias grep 'rg' 'grep --color=auto'
 has_alias cat 'bat'
 has_alias find 'fd'
 has_alias diff 'delta'
+has_alias du 'dust'
 has_alias ps 'procs'
 has_alias cd 'z'
 
