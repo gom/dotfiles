@@ -36,6 +36,20 @@ for config in "${DOTFILES_DIR}/config/"*; do
     fi
 done
 
+# --- Mise Installation ---
+MISE_INSTALL_PATH="${HOME}/.local/bin/mise"
+if [ ! -e "${MISE_INSTALL_PATH}" ]; then
+    echo "Installing mise..."
+    mkdir -p "$(dirname "${MISE_INSTALL_PATH}")"
+    curl https://mise.run | sh
+fi
+
+# Install tools via mise
+if [ -e "${MISE_INSTALL_PATH}" ]; then
+    echo "Installing tools via mise..."
+    "${MISE_INSTALL_PATH}" install
+fi
+
 # The rest of your setup for zsh and vimrc.
 # This part is still not ideal because it appends on every run.
 # A better way would be to check if the line already exists.
