@@ -44,10 +44,10 @@ zinit wait"1" lucid from"gh-r" light-mode for \
     lbin"!" id-as null @bootandy/dust \
     sbin"**/asdf" @asdf-vm/asdf
 
-zinit light-mode from"gh-r" as"program" for \
+zinit from"gh-r" as"program" for \
       mv"direnv* -> direnv" \
       atclone'./direnv hook zsh > zhook.zsh' \
-      src"zhook.zsh" \
+      src="zhook.zsh" \
     direnv/direnv
 
 # Theme
