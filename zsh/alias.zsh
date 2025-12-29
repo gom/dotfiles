@@ -43,6 +43,7 @@ alias lss='less -MN'
 alias zj='SHELL=$(which zsh) zellij attach -c main'
 
 alias g='git'
+alias lg='lazygit'
 
 alias -g L='| less'
 alias -g H='| head'

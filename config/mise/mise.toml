@@ -24,6 +24,8 @@ fzf = "latest"
 jq = "latest"
 # Git diff
 delta = "latest"
+# Git TUI
+lazygit = "latest"
 
 # --- Environment & Shell Managers ---
 # shell history
