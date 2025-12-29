@@ -19,7 +19,6 @@ path=(
        ${HOME}/bin(N-/)
        ${HOME}/.local/bin(N-/)
        ${HOME}/.cargo/bin(N-/)
-       ${ASDF_DATA_DIR:-${HOME}/.asdf}/shims(N-/)
        ${GOPATH:-${HOME}/go}/bin(N-/)
 
        /usr/lib/ccache(N-/)

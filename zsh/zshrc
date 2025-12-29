@@ -20,13 +20,14 @@ umask 022
 
 if [ -z "${FASTBOOT_ZSH}" ]; then
   # Install plugins
-  source ${_ZDOTDIR}/zinit.zsh
+  source ${_ZDOTDIR}/mise.zsh
+  source ${_ZDOTDIR}/sheldon.zsh
 
   # key bind
   source ${_ZDOTDIR}/bindkeys.zsh
 
   ## set development tools
-  source ${_ZDOTDIR}/develop.zsh
+  source ${_ZDOTDIR}/functions.zsh
 fi
 
 ## auto complete
