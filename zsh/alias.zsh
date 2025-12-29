@@ -7,14 +7,15 @@ case ${OSTYPE} in
     ;;
 esac
 
-alias ls='exa'
+alias ls='eza --icons'
+alias tree='eza --tree --icons'
 alias grep='rg'
 alias cat='bat'
 alias find='fd'
 alias diff='delta'
 
-alias ll='ls -lhF'
-alias la='ls -la'
+alias ll='eza -l --icons --git'
+alias la='eza -la --icons --git'
 #alias grep='grep --color=auto'
 
 alias rr="command rm -rf"
@@ -24,7 +25,7 @@ alias rm='rm -i'
 
 alias pd='pushd'
 alias po='popd'
-alias gd='dirs -v; echo -n "select number: "; read newdir; cd +"$newdir"'
+alias gd='dirs -v; echo -n "select number: "; read newdir; cd +"${newdir}"'
 alias lss='less -MN'
 
 alias sc='screen'
@@ -41,4 +42,3 @@ alias -g G='| grep'
 alias -g W='| wc'
 alias -g S='| sed'
 alias -g A='| awk'
-

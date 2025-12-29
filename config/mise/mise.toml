@@ -1,0 +1,46 @@
+[tools]
+# --- Core Utilities ---
+# ls
+eza = "latest"
+# cat
+bat = "latest"
+# grep
+ripgrep = "latest"
+# find
+fd = "latest"
+# cd
+zoxide = "latest"
+# top
+procs = "latest"
+# du
+dust = "latest"
+
+# --- Text Processing & JSON ---
+# fuzzy finder
+fzf = "latest"
+# JSON
+jq = "latest"
+# Git diff
+delta = "latest"
+
+# --- Environment & Shell Managers ---
+# envrc
+direnv = "latest"
+# shell history
+atuin = "latest"
+# shell plugin manager
+sheldon = "latest"
+
+# --- Languages ---
+node = "latest"
+python = "latest"
+go = "latest"
+rust = "latest"
+
+[settings]
+# 開発機能の有効化（推奨）
+experimental = true
+# ツールインストール時の詳細表示
+verbose = false
+# asdfのプラグインショートカットを使用
+plugin_autoupdate_last_check_duration = "1 week"

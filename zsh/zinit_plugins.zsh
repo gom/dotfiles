@@ -26,7 +26,7 @@ zinit as"null" wait"1" lucid light-mode for \
     sbin atload"export _MENU_THEME=legacy" \
             arzzen/git-quick-stats \
     sbin    iwata/git-now \
-    make"PREFIX=$ZPFX install" \
+    make"PREFIX=${ZPFX} install" \
             tj/git-extras \
     sbin"git-url;git-guclone" make"GITURL_NO_CGITURL=1" \
             zdharma-continuum/git-url
@@ -54,6 +54,6 @@ zinit from"gh-r" as"program" for \
 zinit depth"1" lucid nocd for romkatv/powerlevel10k
 #zinit pick"async.zsh" src"pure.zsh" light-mode for sindresorhus/pure
 
-zinit snippet $_ZDOTDIR/functions/ssh-start.zsh
-zinit snippet $_ZDOTDIR/functions/git_bulk_pull.zsh
-zinit snippet $_ZDOTDIR/functions/update.zsh
+zinit snippet ${_ZDOTDIR}/functions/ssh-start.zsh
+zinit snippet ${_ZDOTDIR}/functions/git_bulk_pull.zsh
+zinit snippet ${_ZDOTDIR}/functions/update.zsh

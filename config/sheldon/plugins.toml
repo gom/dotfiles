@@ -1,0 +1,84 @@
+shell = "zsh"
+
+# -----------------------------------------------------------------------------
+# Templates: 読み込み方法の定義
+# -----------------------------------------------------------------------------
+[templates]
+# PATHに追加するだけのテンプレート
+path = 'export PATH="{{ dir }}:$PATH"'
+# fpathに追加してcompinitを実行（補完用）
+defer = '{{ hooks?.pre | nl }}{% for file in files %}source "{{ file }}"{% endfor %}{{ hooks?.post | nl }}'
+
+# -----------------------------------------------------------------------------
+# Theme
+# -----------------------------------------------------------------------------
+[plugins.powerlevel10k]
+github = "romkatv/powerlevel10k"
+# p10kは設定ファイル生成のために初回起動時に即時読み込み推奨
+
+# -----------------------------------------------------------------------------
+# Core Plugins
+# -----------------------------------------------------------------------------
+[plugins.zsh-autosuggestions]
+github = "zsh-users/zsh-autosuggestions"
+use = ["{{ name }}.zsh"]
+
+[plugins.zsh-completions]
+github = "zsh-users/zsh-completions"
+apply = ["defer"] # 遅延読み込み推奨
+
+[plugins.zsh-256color]
+github = "chrissicool/zsh-256color"
+
+[plugins.jq-zsh-plugin]
+github = "reegnz/jq-zsh-plugin"
+
+[plugins.cd-gitroot]
+github = "mollifier/cd-gitroot"
+
+[plugins.anyframe]
+github = "mollifier/anyframe"
+
+# -----------------------------------------------------------------------------
+# Git Extensions (PATHに追加する系)
+# -----------------------------------------------------------------------------
+# Sheldonはバイナリ管理ではないですが、Git拡張スクリプトのリポジトリは管理可能です
+[plugins.git-recall]
+github = "Fakerr/git-recall"
+apply = ["path"]
+
+[plugins.git-open]
+github = "paulirish/git-open"
+apply = ["path"]
+
+[plugins.git-recent]
+github = "paulirish/git-recent"
+apply = ["path"]
+
+[plugins.git-my]
+github = "davidosomething/git-my"
+apply = ["path"]
+
+[plugins.git-now]
+github = "iwata/git-now"
+apply = ["path"]
+
+[plugins.git-extras]
+github = "tj/git-extras"
+# git-extrasは本来make installが必要ですが、binをPATHに通すだけでも多くの機能が動きます
+dir = "bin"
+apply = ["path"]
+
+# -----------------------------------------------------------------------------
+# Local Snippets (ローカルファイル)
+# -----------------------------------------------------------------------------
+# 元の $_ZDOTDIR/functions 以下のファイルを読み込みます
+[plugins.local-functions]
+local = "~/.zsh/functions" # 実際のパスに合わせて変更してください
+use = ["*.zsh"]
+
+# -----------------------------------------------------------------------------
+# Syntax Highlighting (必ず最後に記述)
+# -----------------------------------------------------------------------------
+[plugins.fast-syntax-highlighting]
+github = "zdharma-continuum/fast-syntax-highlighting"

@@ -1,6 +1,6 @@
 HISTFILE=~/.zsh_history
 HISTSIZE=10000000
-SAVEHIST=$HISTSIZE
+SAVEHIST=${HISTSIZE}
 function history-all { history -E 1 } # output all histories
 
 autoload history-search-end

@@ -1,16 +1,44 @@
 #!/bin/sh
-PWD_DIR=$(cd $(dirname $0);pwd)
-CONFIG_DIR=${XDG_CONFIG_HOME:-"$HOME/.config"}
-mkdir -p $CONFIG_DIR
 
-# other config files
-ln -s $PWD_DIR/vim ~/.vim
-ln -s $PWD_DIR/gem $CONFIG_DIR/
-ln -s $PWD_DIR/git $CONFIG_DIR/
-ln -s $PWD_DIR/tmux $CONFIG_DIR/
-ln -s $PWD_DIR/direnv $CONFIG_DIR/
-ln -s $PWD_DIR/alacritty $CONFIG_DIR/
+set -e
 
-echo "source $PWD_DIR/zsh/zshenv" >> ~/.zshenv
-echo "source $PWD_DIR/zsh/zshrc" >> ~/.zshrc
-echo "source $PWD_DIR/vim/rc/vimrc" >> ~/.vimrc
+# The directory of this script.
+DOTFILES_DIR=$(cd "$(dirname "$0")"; pwd)
+
+# The XDG_CONFIG_HOME directory.
+CONFIG_DIR=${XDG_CONFIG_HOME:-"${HOME}/.config"}
+
+# Create the XDG_CONFIG_HOME directory if it doesn't exist.
+mkdir -p "${CONFIG_DIR}"
+
+# A function to safely create a symlink.
+# It will back up an existing file or directory at the destination.
+safe_symlink() {
+    local src=${1}
+    local dst=${2}
+
+    if [ -e "${dst}" ] || [ -L "${dst}" ]; then
+        if [ "$(readlink "${dst}")" = "${src}" ]; then
+            echo "✔ Already linked: ${dst} -> ${src}"
+            return
+        fi
+        echo "Moving ${dst} to ${dst}.bak"
+        mv "${dst}" "${dst}.bak"
+    fi
+    echo "Linking ${dst} -> ${src}"
+    ln -s "${src}" "${dst}"
+}
+
+# Symlink all directories from our config to the user's .config
+for config in "${DOTFILES_DIR}/config/"*; do
+    if [ -d "${config}" ]; then
+        safe_symlink "${config}" "${CONFIG_DIR}/$(basename "${config}")"
+    fi
+done
+
+# The rest of your setup for zsh and vimrc.
+# This part is still not ideal because it appends on every run.
+# A better way would be to check if the line already exists.
+echo "source ${DOTFILES_DIR}/zsh/zshenv" >> ~/.zshenv
+echo "source ${DOTFILES_DIR}/zsh/zshrc" >> ~/.zshrc
+echo "source ${DOTFILES_DIR}/config/vim/rc/vimrc" >> ~/.vimrc

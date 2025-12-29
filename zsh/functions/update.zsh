@@ -35,11 +35,11 @@ update() {
     echo "\e[31mUpdating asdf plugins...\e[m"
     asdf plugin update --all
   else
-    echo "asdf is not installed. Skipping asdf plugin updates." 
+    echo "asdf is not installed. Skipping asdf plugin updates."
   fi
 
-  # Update all git repositories in $HOME/src
-  bulk_pull $HOME/src
+  # Update all git repositories in ${HOME}/src
+  bulk_pull ${HOME}/src
 
   # Update zinit plugins
   echo "\e[31mUpdating zinit plugins...\e[m"

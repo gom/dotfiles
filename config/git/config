@@ -3,7 +3,7 @@
   email = gomgom68@gmail.com
 [core]
 ;  pager = less -FRSX
-  pager = delta  
+  pager = delta
   editor= vim
   excludesfile=~/.gitignore
 [init]
@@ -51,7 +51,7 @@
 ;  branch = auto
 ;  diff = auto
 ;  interactive = auto
- 
+
 [github]
 	user = gom
 [ghq]
@@ -62,7 +62,7 @@
   ci = commit
   st = status
   up = pull --rebase
-  a = add 
+  a = add
   b = branch
   c = commit
   d = diff
@@ -92,7 +92,7 @@
   ba = branch -a
   bm = branch --merged
   bn = branch --no-merged
-  bt = !"(for i in `git branch | colrm 1 2` ; do echo `git log --date=iso8601 -n 1 --pretty='format:[%ai] %h' $i` $i ; done) | sort -r"
+  bt = !"(for i in `git branch | colrm 1 2` ; do echo `git log --date=iso8601 -n 1 --pretty='format:[%ai] %h' ${i}` ${i} ; done) | sort -r"
 
   #submodule
   sbup = submodule update --init --recursive

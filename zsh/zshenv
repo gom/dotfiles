@@ -6,9 +6,9 @@
 # -r: Readonly
 typeset -g _ZDOTDIR=${0:A:h}
 
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_CACHE_HOME=$HOME/.cache
-export XDG_DATA_HOME=$HOME/.local/share
+export XDG_CONFIG_HOME=${HOME}/.config
+export XDG_CACHE_HOME=${HOME}/.cache
+export XDG_DATA_HOME=${HOME}/.local/share
 
 ## Path
 # "-U" denies duplicate path
@@ -16,13 +16,11 @@ typeset -U path
 # (N-/): options that check the existing and evaluate symboric link
 # N: NULL_GLOB, -: evaluate symbolic link, /: only allow directory
 path=(
-       $HOME/bin(N-/)
-       $HOME/.local/bin(N-/)
-       $HOME/.cargo/bin(N-/)
-       ${ASDF_DATA_DIR:-$HOME/.asdf}/shims(N-/)
-       ${GOPATH:-$HOME/go}/bin(N-/)
-       $HOME/.rbenv/bin(N-/)
-       $HOME/.pyenv/shims(N-/)
+       ${HOME}/bin(N-/)
+       ${HOME}/.local/bin(N-/)
+       ${HOME}/.cargo/bin(N-/)
+       ${ASDF_DATA_DIR:-${HOME}/.asdf}/shims(N-/)
+       ${GOPATH:-${HOME}/go}/bin(N-/)
 
        /usr/lib/ccache(N-/)
        /usr/local/mysql/bin(N-/)
@@ -35,7 +33,7 @@ path=(
        /usr/games(N-/)
       )
 
-## colors 
+## colors
 export LSCOLORS=GxFxCxDxBxegedabagacad
 export CLICOLOR=1
 
@@ -58,8 +56,8 @@ export LESSCHARSET=utf-8
 export LESS="-R"
 export LV='-c -la -Ou8'
 
-if [ "$PAGER" != "lv" ]; then
-  alias lv="$PAGER"
+if [ "${PAGER}" != "lv" ]; then
+  alias lv="${PAGER}"
 fi
 
 ## editor
@@ -72,4 +70,3 @@ if ! type vim > /dev/null 2>&1; then
   alias vim=vi
 fi
 export EDITOR
-
