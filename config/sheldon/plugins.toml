@@ -12,23 +12,10 @@ source = '{{ hooks?.pre | nl }}{% for file in files %}source "{{ file }}"{% endf
 defer = '{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source "{{ file }}"\n{% endfor %}{{ hooks?.post | nl }}'
 
 # -----------------------------------------------------------------------------
-## Theme
-[plugins.starship-init]
-inline = 'eval "$(starship init zsh)"'
-
 ## Core Plugins
 [plugins.zsh-defer]
 github = "romkatv/zsh-defer"
 apply = ["source"]
-
-[plugins.zsh-autosuggestions]
-github = "zsh-users/zsh-autosuggestions"
-use = ["{{ name }}.zsh"]
-apply = ["defer"]
-
-[plugins.zsh-completions]
-github = "zsh-users/zsh-completions"
-apply = ["fpath", "defer"] # 遅延読み込み推奨
 
 [plugins.zsh-256color]
 github = "chrissicool/zsh-256color"
@@ -41,20 +28,6 @@ github = "mollifier/cd-gitroot"
 
 [plugins.anyframe]
 github = "mollifier/anyframe"
-
-# Initialize tools
-[plugins.zoxide-init]
-inline = 'eval "$(zoxide init zsh --cmd cd)"'
-
-[plugins.fzf-init]
-inline = '''
-eval "$(fzf --zsh)"
-bindkey -r "^T"
-bindkey "^[t" fzf-file-widget
-'''
-
-[plugins.atuin-init]
-inline = 'eval "$(atuin init zsh)"'
 
 ## Git Extensions
 [plugins.git-recall]
@@ -90,16 +63,19 @@ source "${_ZDOTDIR}/env.zsh"
 source "${_ZDOTDIR}/prompt.zsh"
 '''
 
-[plugins.zsh-local-deferred]
+[plugins.zsh-local-settings]
 inline = '''
-zsh-defer -c '
 source "${_ZDOTDIR}/history.zsh"
 source "${_ZDOTDIR}/bindkeys.zsh"
 source "${_ZDOTDIR}/alias.zsh"
-source "${_ZDOTDIR}/completions.zsh"
-eval "$(mise completion zsh)"
-'
 '''
+
+[plugins.zsh-local-ssh-agent]
+inline = '[ -e ${HOME}/.ssh/agent-env ] && source ${HOME}/.ssh/agent-env'
+
+[plugins.zsh-completions]
+github = "zsh-users/zsh-completions"
+apply = ["fpath"]
 
 [plugins.zsh-local-functions]
 inline = '''
@@ -107,9 +83,19 @@ fpath=(${_ZDOTDIR}/functions $fpath)
 autoload -Uz ${_ZDOTDIR}/functions/*(N:t)
 '''
 
-[plugins.zsh-local-ssh-agent]
-inline = '[ -e ${HOME}/.ssh/agent-env ] && source ${HOME}/.ssh/agent-env'
+[plugins.plugins-init-tools]
+inline = '''
+local comp_dir="${XDG_CACHE_HOME}/zsh/completions"
+[[ ! -d "$comp_dir" ]] && mkdir -p "$comp_dir"
+fpath=($comp_dir $fpath)
+
+source ${_ZDOTDIR}/completions.zsh
+source "${_ZDOTDIR}/init_tools.zsh"
+'''
 
 [plugins.fast-syntax-highlighting]
 github = "zdharma-continuum/fast-syntax-highlighting"
-apply = ["defer"]
+
+[plugins.zsh-autosuggestions]
+github = "zsh-users/zsh-autosuggestions"
+use = ["{{ name }}.zsh"]
