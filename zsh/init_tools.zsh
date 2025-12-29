@@ -1,14 +1,29 @@
-eval "$(starship init zsh)"
-eval "$(fzf --zsh)"
-eval "$(atuin init zsh)"
+# Helper for caching tool initializations
+zsh_cache_init() {
+  local name="$1"
+  shift
+  local cache_file="${XDG_CACHE_HOME}/zsh/init/${name}.zsh"
+  
+  if [[ ! -f "$cache_file" ]]; then
+    mkdir -p "$(dirname "$cache_file")"
+    eval "$@" > "$cache_file"
+  fi
+  source "$cache_file"
+}
+
+zsh_cache_init starship starship init zsh
+zsh_cache_init fzf fzf --zsh
+zsh_cache_init atuin atuin init zsh
 
 # zoxide init make completions
 export _ZO_DOCTOR=0
-eval "$(zoxide init zsh --cmd cd)"
+zsh_cache_init zoxide zoxide init zsh --cmd cd
 
 # Generate completions if missing
 zsh_generate_completions() {
   local comp_dir="${XDG_CACHE_HOME}/zsh/completions"
+  [[ ! -d "$comp_dir" ]] && mkdir -p "$comp_dir"
+  
   [[ ! -f "$comp_dir/_mise" ]]     && mise completion zsh > "$comp_dir/_mise"
   [[ ! -f "$comp_dir/_sheldon" ]]  && sheldon completions --shell zsh > "$comp_dir/_sheldon"
   [[ ! -f "$comp_dir/_atuin" ]]    && atuin gen-completions --shell zsh > "$comp_dir/_atuin"
