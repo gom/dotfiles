@@ -23,10 +23,13 @@ path=(
        ${HOME}/.cargo/bin(N-/)
        ${GOPATH:-${HOME}/go}/bin(N-/)
        ${XDG_DATA_HOME}/mise/shims(N-/)
+       /opt/homebrew/bin(N-/)
 
        /usr/lib/ccache(N-/)
        /usr/local/mysql/bin(N-/)
+     )
 
+path=(
        /usr/local/bin(N-/)
        /usr/bin(N-/)
        /bin(N-/)
@@ -34,5 +37,6 @@ path=(
        /usr/sbin(N-/)
        /sbin(N-/)
        /usr/bin/X11(N-/)
-       /usr/games(N-/)
+
+       $path
       )
