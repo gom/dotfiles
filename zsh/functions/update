@@ -2,7 +2,9 @@ update() {
   # Update all packages and plugins
   echo -e "\e[32mUpdating system packages...\e[m"
   if command -v brew &>/dev/null; then
-    brew update && brew upgrade
+    brew update
+    brew upgrade
+    brew upgrade --cask
   elif command -v paru &>/dev/null; then
     paru -Syu --skipreview
   elif command -v pacman &>/dev/null; then
