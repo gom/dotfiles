@@ -14,7 +14,8 @@ export XDG_DATA_HOME=${HOME}/.local/share
 
 ## Path
 # "-U" denies duplicate path
-typeset -U path
+typeset -g -U path PATH
+typeset -g -U fpath FPATH
 # (N-/): options that check the existing and evaluate symboric link
 # N: NULL_GLOB, -: evaluate symbolic link, /: only allow directory
 path=(
@@ -25,18 +26,6 @@ path=(
        ${XDG_DATA_HOME}/mise/shims(N-/)
        /opt/homebrew/bin(N-/)
 
-       /usr/lib/ccache(N-/)
-       /usr/local/mysql/bin(N-/)
+       $path
      )
 
-path=(
-       /usr/local/bin(N-/)
-       /usr/bin(N-/)
-       /bin(N-/)
-       /usr/local/sbin(N-/)
-       /usr/sbin(N-/)
-       /sbin(N-/)
-       /usr/bin/X11(N-/)
-
-       $path
-      )
