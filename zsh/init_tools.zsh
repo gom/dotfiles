@@ -3,9 +3,10 @@ zsh_cache_init() {
   local name="$1"
   shift
   local cache_file="${XDG_CACHE_HOME}/zsh/init/${name}.zsh"
-  local bin_file="$(mise where ${name} 2> /dev/null)/bin/${name}"
+  local bin_file="$(mise where ${name} 2> /dev/null)/${name}"
   
   if [[ ! -f "$cache_file" || "$bin_file" -nt "$cache_file" ]]; then
+    echo "Update an init cache: ${bin_file}"
     mkdir -p "$(dirname "$cache_file")"
     eval "$@" > "$cache_file"
   fi
