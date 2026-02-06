@@ -22,11 +22,11 @@ update() {
   # Update mise and its plugins/tools
   if command -v mise &>/dev/null; then
     echo -e "\e[32mUpdating mise...\e[m"
-    mise self-update
+    mise self-update -y
     echo -e "\e[32mUpdating mise plugins...\e[m"
-    mise plugins update
+    mise plugins update -y
     echo -e "\e[32mUpgrading mise tools...\e[m"
-    mise upgrade
+    mise upgrade -y
   else
     echo -e "\e[31mmise is not installed. Skipping mise updates.\e[m"
   fi
