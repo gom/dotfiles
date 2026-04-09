@@ -55,6 +55,15 @@ update() {
     echo -e "\e[31mneovim is not installed. Skipping neovim plugin updates.\e[m"
   fi
 
+  # Update tmux plugins
+  if [ -x "${HOME}/.tmux/plugins/tpm/bin/update_plugins" ]; then
+    echo -e "\e[32mUpdating tmux plugins...\e[m"
+    "${HOME}/.tmux/plugins/tpm/bin/update_plugins" all
+  else
+    # Note: Not an error. TPM is naturally absent before the first tmux launch.
+    echo -e "\e[33mTPM updater script not found. It might not be installed yet by tmux.\e[m"
+  fi
+
   # Update all git repositories in ${HOME}/src
   if type bulk_pull &>/dev/null; then
     bulk_pull ${HOME}/src
