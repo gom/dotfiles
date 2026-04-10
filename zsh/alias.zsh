@@ -39,9 +39,7 @@ alias po='popd'
 alias gd='dirs -v; echo -n "select number: "; read newdir; cd +"${newdir}"'
 alias lss='less -MN'
 
-# zellij (zj to avoid conflict with zoxide)
-alias zj='SHELL=$(which zsh) zellij attach -c main'
-
+# git
 alias g='git'
 alias lg='lazygit'
 
