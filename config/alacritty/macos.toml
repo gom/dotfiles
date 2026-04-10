@@ -107,7 +107,7 @@ mods = "Command"
 size = 12.0
 
 [font.normal]
-family = "NotoSansM Nerd Font"
+family = "NotoSansM Nerd Font Mono"
 
 [scrolling]
 history = 10000
