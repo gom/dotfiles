@@ -36,6 +36,20 @@ for config in "${DOTFILES_DIR}/config/"*; do
     fi
 done
 
+# --- Font Installation ---
+echo "Checking and installing necessary fonts..."
+if command -v brew &>/dev/null; then
+    # macOS (and Linux running Homebrew)
+    # Use || true to prevent the script from exiting if the user already has them installed and brew complains
+    brew install --cask font-noto-nerd-font font-noto-sans-cjk-jp || true
+elif command -v paru &>/dev/null; then
+    # Arch Linux with paru AUR helper
+    paru -S --needed --noconfirm ttf-noto-nerd noto-fonts-cjk
+elif command -v pacman &>/dev/null; then
+    # Arch Linux default
+    sudo pacman -S --needed --noconfirm ttf-noto-nerd noto-fonts-cjk
+fi
+
 # --- Mise Installation ---
 MISE_INSTALL_PATH="${HOME}/.local/bin/mise"
 if [ ! -e "${MISE_INSTALL_PATH}" ]; then
