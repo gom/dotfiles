@@ -38,6 +38,7 @@ node = "latest"
 python = "latest"
 go = "latest"
 usage = "latest"
+uv = "latest"
 # rust = "latest" # use rustup instead.
 
 [env]
