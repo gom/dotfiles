@@ -1,0 +1,24 @@
+{
+  "theme": "tokyo night",
+  "permissions": {
+    "allow": [
+      "command(ls)",
+      "command(cat)",
+      "command(git status)",
+      "command(git log)",
+      "command(docker compose)",
+      "command(mkdir)",
+      "command(pwd)",
+      "command(find)",
+      "command(git rev-parse)",
+      "command(git remote)",
+      "command(diff)",
+      "command(date)",
+      "command(echo)"
+    ],
+    "ask": [
+      "command(git commit)",
+      "command(git push)"
+    ]
+  }
+}
