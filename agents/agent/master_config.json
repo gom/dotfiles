@@ -14,7 +14,8 @@
       "command(git remote)",
       "command(diff)",
       "command(date)",
-      "command(echo)"
+      "command(echo)",
+      "command(git add)"
     ],
     "ask": [
       "command(git commit)",

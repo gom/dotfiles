@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import json
+import shutil
 
 def dict_to_toml(data):
     """
@@ -45,8 +46,60 @@ def dict_to_toml(data):
     serialize(data)
     return "\n".join(output)
 
+def safe_write_file(path, content, is_json=False):
+    """
+    Safely writes a file to target path, removing any pre-existing symlinks 
+    or conflicting directory structures first.
+    """
+    if os.path.islink(path):
+        os.remove(path)
+    elif os.path.isdir(path):
+        shutil.rmtree(path)
+        
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        if is_json:
+            json.dump(content, f, indent=2)
+            f.write("\n")
+        else:
+            f.write(content)
+
+def safe_copy_file(src, dst):
+    """
+    Safely copies a file, removing any pre-existing symlinks or files first.
+    """
+    if os.path.islink(dst):
+        os.remove(dst)
+    elif os.path.isdir(dst):
+        shutil.rmtree(dst)
+    elif os.path.exists(dst):
+        os.remove(dst)
+        
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    shutil.copy2(src, dst)
+
+def clean_target_dir(path):
+    """
+    Prepares a clean target directory in system paths, removing symlinks or stale files.
+    """
+    if os.path.islink(path):
+        os.remove(path)
+    
+    if os.path.isdir(path):
+        for f in os.listdir(path):
+            p = os.path.join(path, f)
+            if os.path.islink(p):
+                os.remove(p)
+            elif os.path.isdir(p):
+                shutil.rmtree(p)
+            else:
+                os.remove(p)
+    else:
+        os.makedirs(path, exist_ok=True)
+
 def main():
-    # Resolve paths relative to this script
+    # Resolve system and master directories
+    home = os.path.expanduser("~")
     script_dir = os.path.dirname(os.path.abspath(__file__))
     master_path = os.path.join(script_dir, "agent", "master_config.json")
     
@@ -58,23 +111,127 @@ def main():
     with open(master_path, "r") as f:
         master = json.load(f)
         
-    # --- 1. Prepare Target Directory Structures ---
-    agents = ["antigravity-cli", "claude", "codex", "opencode", "agent"]
-    for agent in agents:
-        agent_dir = os.path.join(script_dir, agent)
-        os.makedirs(agent_dir, exist_ok=True)
+    # --- 1. Define Active System Configurations Directories ---
+    antigravity_dir = os.path.join(home, ".gemini", "antigravity-cli")
+    claude_dir = os.path.join(home, ".claude")
+    codex_dir = os.path.join(home, ".codex")
+    opencode_dir = os.path.join(home, ".config", "opencode")
+    
+    # Clean target directories of compiled components in system paths
+    clean_target_dir(os.path.join(antigravity_dir, "skills"))
+    clean_target_dir(os.path.join(antigravity_dir, "hooks"))
+    clean_target_dir(os.path.join(claude_dir, "skills"))
+    clean_target_dir(os.path.join(claude_dir, "hooks"))
+    clean_target_dir(os.path.join(codex_dir, "skills"))
+    clean_target_dir(os.path.join(codex_dir, "hooks"))
+    clean_target_dir(os.path.join(opencode_dir, "commands"))
+    clean_target_dir(os.path.join(opencode_dir, "hooks"))
+    clean_target_dir(os.path.join(opencode_dir, "agents"))
+    
+    # Initialize basic files
+    claude_md_path = os.path.join(claude_dir, "CLAUDE.md")
+    safe_write_file(claude_md_path, (
+        "# Claude Code Global Instructions\n\n"
+        "This file is dynamically deployed from your unified plugins.\n\n"
+        "## Core Guidelines\n"
+        "* Prefer standard command line utilities managed via mise.\n"
+        "* Follow clean development guidelines for editing code.\n\n"
+    ))
         
-    # --- 2. Generate Antigravity CLI MCP Configuration (JSON) ---
+    # --- 2. Scan and Process Plugins ---
+    plugins_dir = os.path.join(script_dir, "plugins")
+    plugins_data = []
+    if os.path.exists(plugins_dir):
+        # Walk directories recursively to scan both bespoke and external subfolders
+        for root, dirs, files in os.walk(plugins_dir):
+            if "plugin.json" in files:
+                manifest_path = os.path.join(root, "plugin.json")
+                print(f"🔌 Found plugin manifest: {manifest_path}")
+                with open(manifest_path, "r") as f:
+                    plugin = json.load(f)
+                    plugin["_dir"] = root
+                    plugins_data.append(plugin)
+
+    # Accumulators for generated configurations
+    custom_skills = []
+    custom_hooks = []
+    custom_subagents = []
+
+    for plugin in sorted(plugins_data, key=lambda x: x.get("name", "")):
+        p_dir = plugin["_dir"]
+        
+        # Process Skills
+        for skill in plugin.get("skills", []):
+            skill_name = skill["name"]
+            rel_script = skill["script"]
+            src_script = os.path.join(p_dir, rel_script)
+            
+            if os.path.exists(src_script):
+                print(f"  ⚡ Deploying skill: {skill_name}")
+                # Deploy directly to active system paths!
+                safe_copy_file(src_script, os.path.join(antigravity_dir, "skills", skill_name))
+                safe_copy_file(src_script, os.path.join(claude_dir, "skills", skill_name))
+                safe_copy_file(src_script, os.path.join(codex_dir, "skills", skill_name))
+                safe_copy_file(src_script, os.path.join(opencode_dir, "commands", skill_name))
+                
+                custom_skills.append({
+                    "name": skill_name,
+                    "description": skill.get("description", "")
+                })
+
+        # Process Hooks
+        for hook in plugin.get("hooks", []):
+            rel_script = hook["script"]
+            src_script = os.path.join(p_dir, rel_script)
+            
+            if os.path.exists(src_script):
+                hook_name = os.path.basename(rel_script)
+                print(f"  🪝 Deploying hook: {hook_name} ({hook.get('event')})")
+                # Deploy directly to active system paths!
+                safe_copy_file(src_script, os.path.join(antigravity_dir, "hooks", hook_name))
+                safe_copy_file(src_script, os.path.join(claude_dir, "hooks", hook_name))
+                safe_copy_file(src_script, os.path.join(codex_dir, "hooks", hook_name))
+                safe_copy_file(src_script, os.path.join(opencode_dir, "hooks", hook_name))
+                
+                custom_hooks.append({
+                    "event": hook.get("event", "pre-command"),
+                    "name": hook_name
+                })
+
+        # Process Subagents
+        for agent in plugin.get("agents", []):
+            agent_name = agent["name"]
+            system_prompt = agent["system_prompt"]
+            print(f"  🤖 Deploying subagent profile: {agent_name}")
+            
+            # Append directly to Claude active CLAUDE.md
+            with open(claude_md_path, "a") as f:
+                f.write(f"## Subagent Profile: {agent_name}\n")
+                f.write(f"> {system_prompt}\n\n")
+                
+            # Write directly to OpenCode active agents/ directory
+            opencode_agent_path = os.path.join(opencode_dir, "agents", f"{agent_name}.md")
+            safe_write_file(opencode_agent_path, (
+                f"# {agent_name} Subagent Profile\n\n"
+                f"{system_prompt}\n"
+            ))
+                
+            custom_subagents.append({
+                "name": agent_name,
+                "system_prompt": system_prompt
+            })
+
+    # --- 3. Compile & Deploy Active System Configurations ---
     mcp_config = {
         "mcpServers": master.get("mcp_servers", {})
     }
-    mcp_path = os.path.join(script_dir, "antigravity-cli", "mcp_config.json")
-    print(f"💾 Compiling Antigravity CLI MCP configuration to {mcp_path}...")
-    with open(mcp_path, "w") as f:
-        json.dump(mcp_config, f, indent=2)
-        f.write("\n")
+    
+    # 3.1. Antigravity CLI MCP (JSON)
+    antigravity_mcp_path = os.path.join(antigravity_dir, "mcp_config.json")
+    print(f"💾 Deploying Antigravity CLI MCP configuration to {antigravity_mcp_path}...")
+    safe_write_file(antigravity_mcp_path, mcp_config, is_json=True)
         
-    # --- 3. Compile Antigravity CLI Configuration ---
+    # 3.2. Antigravity CLI Settings (JSON)
     antigravity_config = {
         "colorScheme": master.get("colorScheme", "tokyo night"),
         "permissions": master.get("permissions", {}),
@@ -83,57 +240,54 @@ def main():
             "command": "",
             "enabled": True
         },
-        "trustedWorkspaces": master.get("trustedWorkspaces", [])
+        "trustedWorkspaces": master.get("trustedWorkspaces", []),
+        "hooks": custom_hooks,
+        "subagents": custom_subagents
     }
-    antigravity_path = os.path.join(script_dir, "antigravity-cli", "settings.json")
-    print(f"💾 Compiling Antigravity CLI settings to {antigravity_path}...")
-    with open(antigravity_path, "w") as f:
-        json.dump(antigravity_config, f, indent=2)
-        f.write("\n")
+    antigravity_settings_path = os.path.join(antigravity_dir, "settings.json")
+    print(f"💾 Deploying Antigravity CLI settings to {antigravity_settings_path}...")
+    safe_write_file(antigravity_settings_path, antigravity_config, is_json=True)
         
-    # --- 4. Compile Claude Code Configurations ---
+    # 3.3. Claude Code Settings (JSON)
     claude_settings = {
         "theme": master.get("colorScheme", "dark"),
-        "permissions": master.get("permissions", {})
+        "permissions": master.get("permissions", {}),
+        "hooks": custom_hooks
     }
-    claude_settings_path = os.path.join(script_dir, "claude", "settings.json")
-    print(f"💾 Compiling Claude Code settings to {claude_settings_path}...")
-    with open(claude_settings_path, "w") as f:
-        json.dump(claude_settings, f, indent=2)
-        f.write("\n")
+    claude_settings_path = os.path.join(claude_dir, "settings.json")
+    print(f"💾 Deploying Claude Code settings to {claude_settings_path}...")
+    safe_write_file(claude_settings_path, claude_settings, is_json=True)
+    
+    # 3.4. Claude Code MCP (JSON)
+    claude_mcp_path = os.path.join(home, ".claude.json")
+    print(f"💾 Deploying Claude Code MCP configuration to {claude_mcp_path}...")
+    safe_write_file(claude_mcp_path, mcp_config, is_json=True)
         
-    claude_mcp_path = os.path.join(script_dir, "claude", "claude.json")
-    print(f"💾 Compiling Claude Code MCP configuration to {claude_mcp_path}...")
-    with open(claude_mcp_path, "w") as f:
-        json.dump(mcp_config, f, indent=2)
-        f.write("\n")
-        
-    # --- 5. Compile Codex Configuration (TOML) ---
+    # 3.5. Codex Configuration (TOML)
     codex_data = {
         "color_scheme": master.get("colorScheme", "tokyo night"),
         "permissions": master.get("permissions", {}),
-        "mcp_servers": master.get("mcp_servers", {})
+        "mcp_servers": master.get("mcp_servers", {}),
+        "hooks": custom_hooks,
+        "subagents": custom_subagents
     }
     codex_toml = dict_to_toml(codex_data)
-    codex_path = os.path.join(script_dir, "codex", "config.toml")
-    print(f"💾 Compiling Codex config to {codex_path}...")
-    with open(codex_path, "w") as f:
-        f.write(codex_toml)
-        f.write("\n")
+    codex_path = os.path.join(codex_dir, "config.toml")
+    print(f"💾 Deploying Codex config to {codex_path}...")
+    safe_write_file(codex_path, codex_toml)
         
-    # --- 6. Compile OpenCode Configuration (JSON) ---
+    # 3.6. OpenCode Configuration (JSON)
     opencode_config = {
         "theme": master.get("colorScheme", "tokyo night"),
         "permissions": master.get("permissions", {}),
-        "mcpServers": master.get("mcp_servers", {})
+        "mcpServers": master.get("mcp_servers", {}),
+        "hooks": custom_hooks
     }
-    opencode_path = os.path.join(script_dir, "opencode", "opencode.json")
-    print(f"💾 Compiling OpenCode settings to {opencode_path}...")
-    with open(opencode_path, "w") as f:
-        json.dump(opencode_config, f, indent=2)
-        f.write("\n")
+    opencode_path = os.path.join(opencode_dir, "opencode.json")
+    print(f"💾 Deploying OpenCode settings to {opencode_path}...")
+    safe_write_file(opencode_path, opencode_config, is_json=True)
         
-    print("✨ Compilation complete! All configuration formats generated successfully.")
+    print("✨ Deploy-time compilation complete! All configs natively built and written to system folders.")
     return 0
 
 if __name__ == "__main__":

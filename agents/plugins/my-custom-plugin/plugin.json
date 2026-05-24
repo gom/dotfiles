@@ -1,0 +1,24 @@
+{
+  "name": "my-custom-plugin",
+  "version": "1.0.0",
+  "description": "Unified Git and Architect capabilities for developer agents",
+  "skills": [
+    {
+      "name": "git-helper.sh",
+      "description": "Automates local Git branching and formatting",
+      "script": "scripts/git_helper.sh"
+    }
+  ],
+  "hooks": [
+    {
+      "event": "pre-command",
+      "script": "scripts/check_git_status.sh"
+    }
+  ],
+  "agents": [
+    {
+      "name": "Architect",
+      "system_prompt": "You are a professional system architect specializing in modular and decoupled code designs."
+    }
+  ]
+}

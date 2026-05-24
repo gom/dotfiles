@@ -1,0 +1,17 @@
+{
+  "skills": {
+    "antigravity-cli": {
+      "external": []
+    },
+    "claude": {
+      "external": []
+    },
+    "codex": {
+      "external": []
+    },
+    "opencode": {
+      "external": []
+    }
+  },
+  "plugins": []
+}

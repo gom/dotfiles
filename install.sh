@@ -80,5 +80,5 @@ append_to_file "source ${DOTFILES_DIR}/.bashrc" $HOME/.bashrc
 
 # --- Agent Configurations ---
 echo "Setting up unified agent configurations..."
-"${DOTFILES_DIR}/agents/setup.sh"
+bash "${DOTFILES_DIR}/agents/deploy.sh"
 
