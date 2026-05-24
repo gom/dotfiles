@@ -77,9 +77,9 @@ if command -v jq &>/dev/null; then
             *)                 agent_name="${agent_key}" ;;
         esac
         
-        EXTERNAL_SKILLS=$(jq -r ".skills.\"${agent_key}\".external[]" "${DOTFILES_AGENTS_DIR}/agent/manifest.json" 2>/dev/null || echo "")
+        EXTERNAL_SKILLS=$(jq -r "(.skills.global // []) + (.skills.\"${agent_key}\".external // []) | .[]" "${DOTFILES_AGENTS_DIR}/agent/manifest.json" 2>/dev/null || echo "")
         if [ -n "${EXTERNAL_SKILLS}" ]; then
-            echo "  📥 Installing skills manifest for ${agent_key} (${agent_name}):"
+            echo "  📥 Installing combined skills manifest for ${agent_key} (${agent_name}):"
             for skill in ${EXTERNAL_SKILLS}; do
                 echo "    ⚙️ Running: npx skills add ${skill} --global --agent ${agent_name} --yes"
                 npx -y skills add "${skill}" --global --agent "${agent_name}" --yes
