@@ -82,7 +82,9 @@ if command -v jq &>/dev/null; then
             echo "  📥 Installing combined skills manifest for ${agent_key} (${agent_name}):"
             for skill in ${EXTERNAL_SKILLS}; do
                 echo "    ⚙️ Running: npx skills add ${skill} --global --agent ${agent_name} --yes"
-                npx -y skills add "${skill}" --global --agent "${agent_name}" --yes
+                # Use || true so a network/package failure does not abort the entire deploy (fix #11)
+                npx -y skills add "${skill}" --global --agent "${agent_name}" --yes || \
+                    echo "  ⚠️ Warning: failed to install skill '${skill}' for ${agent_key}, continuing..."
             done
         fi
     done

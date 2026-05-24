@@ -1,5 +1,6 @@
 {
   "colorScheme": "tokyo night",
+  "trustedWorkspaces": [],
   "permissions": {
     "allow": [
       "command(ls)",
