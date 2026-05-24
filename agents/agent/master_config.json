@@ -46,9 +46,5 @@
         "--project-from-cwd"
       ]
     }
-  },
-  "trustedWorkspaces": [
-    "/home/dai/dev/agentic-dev/tectonix-dev",
-    "/home/dai/.dotfiles/agents"
-  ]
+  }
 }

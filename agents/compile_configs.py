@@ -97,6 +97,140 @@ def clean_target_dir(path):
     else:
         os.makedirs(path, exist_ok=True)
 
+def deep_merge(existing, new_data):
+    """
+    Recursively merges new_data into existing dictionary.
+    """
+    for k, v in new_data.items():
+        if k in existing and isinstance(existing[k], dict) and isinstance(v, dict):
+            deep_merge(existing[k], v)
+        else:
+            existing[k] = v
+    return existing
+
+def parse_toml(content):
+    """
+    A very lightweight line-by-line TOML parser for basic Codex configurations.
+    """
+    data = {}
+    current_table = data
+    
+    for line in content.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+            
+        if line.startswith("[") and line.endswith("]"):
+            table_name = line[1:-1].strip()
+            parts = table_name.split(".")
+            current_table = data
+            for part in parts:
+                part = part.strip()
+                if part not in current_table or not isinstance(current_table[part], dict):
+                    current_table[part] = {}
+                current_table = current_table[part]
+        elif "=" in line:
+            key, val_str = line.split("=", 1)
+            key = key.strip()
+            val_str = val_str.strip()
+            
+            if val_str.startswith("[") and val_str.endswith("]"):
+                items = []
+                inner = val_str[1:-1].strip()
+                if inner:
+                    for x in inner.split(","):
+                        x = x.strip()
+                        if x.startswith('"') and x.endswith('"'):
+                            items.append(x[1:-1].replace('\\"', '"'))
+                        elif x == "true":
+                            items.append(True)
+                        elif x == "false":
+                            items.append(False)
+                        else:
+                            try:
+                                items.append(int(x))
+                            except ValueError:
+                                items.append(x)
+                current_table[key] = items
+            elif val_str.startswith('"') and val_str.endswith('"'):
+                current_table[key] = val_str[1:-1].replace('\\"', '"')
+            elif val_str == "true":
+                current_table[key] = True
+            elif val_str == "false":
+                current_table[key] = False
+            else:
+                try:
+                    current_table[key] = int(val_str)
+                except ValueError:
+                    current_table[key] = val_str
+                    
+    return data
+
+def merge_json_file(path, new_data, overwrite_keys=None):
+    """
+    Reads an existing JSON file, deep-merges new_data into it (with priority to new_data),
+    and completely overwrites specific top-level keys if specified.
+    """
+    if os.path.islink(path):
+        os.remove(path)
+    elif os.path.isdir(path):
+        shutil.rmtree(path)
+        
+    existing = {}
+    if os.path.exists(path):
+        try:
+            with open(path, "r") as f:
+                existing = json.load(f)
+                if not isinstance(existing, dict):
+                    existing = {}
+        except Exception:
+            existing = {}
+            
+    merged = deep_merge(existing, new_data)
+    
+    if overwrite_keys:
+        for key in overwrite_keys:
+            if key in new_data:
+                merged[key] = new_data[key]
+                
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(merged, f, indent=2)
+        f.write("\n")
+
+def merge_toml_file(path, new_data, overwrite_keys=None):
+    """
+    Reads an existing TOML file, deep-merges new_data into it,
+    and writes it back.
+    """
+    if os.path.islink(path):
+        os.remove(path)
+    elif os.path.isdir(path):
+        shutil.rmtree(path)
+        
+    existing = {}
+    if os.path.exists(path):
+        try:
+            with open(path, "r") as f:
+                content = f.read()
+            existing = parse_toml(content)
+        except Exception:
+            existing = {}
+            
+    merged = deep_merge(existing, new_data)
+    
+    if overwrite_keys:
+        for key in overwrite_keys:
+            if key in new_data:
+                merged[key] = new_data[key]
+                
+    toml_str = dict_to_toml(merged)
+    
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        f.write(toml_str)
+        f.write("\n")
+
 def main():
     # Resolve system and master directories
     home = os.path.expanduser("~")
@@ -229,7 +363,7 @@ def main():
     # 3.1. Antigravity CLI MCP (JSON)
     antigravity_mcp_path = os.path.join(antigravity_dir, "mcp_config.json")
     print(f"💾 Deploying Antigravity CLI MCP configuration to {antigravity_mcp_path}...")
-    safe_write_file(antigravity_mcp_path, mcp_config, is_json=True)
+    merge_json_file(antigravity_mcp_path, mcp_config, overwrite_keys=["mcpServers"])
         
     # 3.2. Antigravity CLI Settings (JSON)
     antigravity_config = {
@@ -246,7 +380,7 @@ def main():
     }
     antigravity_settings_path = os.path.join(antigravity_dir, "settings.json")
     print(f"💾 Deploying Antigravity CLI settings to {antigravity_settings_path}...")
-    safe_write_file(antigravity_settings_path, antigravity_config, is_json=True)
+    merge_json_file(antigravity_settings_path, antigravity_config, overwrite_keys=["permissions", "hooks", "subagents"])
         
     # 3.3. Claude Code Settings (JSON)
     claude_settings = {
@@ -256,12 +390,12 @@ def main():
     }
     claude_settings_path = os.path.join(claude_dir, "settings.json")
     print(f"💾 Deploying Claude Code settings to {claude_settings_path}...")
-    safe_write_file(claude_settings_path, claude_settings, is_json=True)
+    merge_json_file(claude_settings_path, claude_settings, overwrite_keys=["permissions", "hooks"])
     
     # 3.4. Claude Code MCP (JSON)
     claude_mcp_path = os.path.join(home, ".claude.json")
     print(f"💾 Deploying Claude Code MCP configuration to {claude_mcp_path}...")
-    safe_write_file(claude_mcp_path, mcp_config, is_json=True)
+    merge_json_file(claude_mcp_path, mcp_config, overwrite_keys=["mcpServers"])
         
     # 3.5. Codex Configuration (TOML)
     codex_data = {
@@ -271,10 +405,9 @@ def main():
         "hooks": custom_hooks,
         "subagents": custom_subagents
     }
-    codex_toml = dict_to_toml(codex_data)
     codex_path = os.path.join(codex_dir, "config.toml")
     print(f"💾 Deploying Codex config to {codex_path}...")
-    safe_write_file(codex_path, codex_toml)
+    merge_toml_file(codex_path, codex_data, overwrite_keys=["permissions", "mcp_servers", "hooks", "subagents"])
         
     # 3.6. OpenCode Configuration (JSON)
     opencode_config = {
@@ -285,7 +418,7 @@ def main():
     }
     opencode_path = os.path.join(opencode_dir, "opencode.json")
     print(f"💾 Deploying OpenCode settings to {opencode_path}...")
-    safe_write_file(opencode_path, opencode_config, is_json=True)
+    merge_json_file(opencode_path, opencode_config, overwrite_keys=["permissions", "mcpServers", "hooks"])
         
     print("✨ Deploy-time compilation complete! All configs natively built and written to system folders.")
     return 0
