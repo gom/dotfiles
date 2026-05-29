@@ -63,15 +63,49 @@ echo ""
 # --- Step 3: Standalone External Skills Sync ---
 echo "📦 [3/3] Synchronizing standalone outer-world skills..."
 if command -v jq &>/dev/null; then
+
+    # ---------------------------------------------------------------------------
+    # install_skill_entry <json-entry> <agent-name>
+    #
+    # Handles both manifest entry shapes:
+    #   - Plain string  → "https://github.com/obra/superpowers"
+    #     Installs all skills from the repo.
+    #   - JSON object   → {"source":"...","skills":["grill-me","grill-with-docs"]}
+    #     Installs only the listed skills via --skill flags.
+    # ---------------------------------------------------------------------------
+    install_skill_entry() {
+        local entry="${1}"
+        local agent_name="${2}"
+
+        if [[ "${entry}" == {* ]]; then
+            # JSON object: extract source and build --skill flags
+            local source
+            source=$(echo "${entry}" | jq -r '.source')
+            local skill_flags=""
+            while IFS= read -r skill_name; do
+                skill_flags="${skill_flags} --skill ${skill_name}"
+            done < <(echo "${entry}" | jq -r '.skills[]')
+            echo "    ⚙️ Running: npx skills add ${source}${skill_flags} --global --agent ${agent_name} --yes"
+            # shellcheck disable=SC2086
+            npx -y skills add "${source}" ${skill_flags} --global --agent "${agent_name}" --yes || \
+                echo "  ⚠️ Warning: failed to install filtered skills from '${source}' for ${agent_name}, continuing..."
+        else
+            # Plain string: strip surrounding quotes produced by jq -c on a string
+            local source
+            source=$(echo "${entry}" | jq -r '.')
+            echo "    ⚙️ Running: npx skills add ${source} --global --agent ${agent_name} --yes"
+            npx -y skills add "${source}" --global --agent "${agent_name}" --yes || \
+                echo "  ⚠️ Warning: failed to install global skill '${source}', continuing..."
+        fi
+    }
+
     # Install global skills once — all agent skill dirs symlink to ~/.agents/skills,
-    # so installing once is sufficient and avoids quadruple network calls (I4 fix).
-    GLOBAL_SKILLS=$(jq -r '(.skills.global // []) | .[]' "${DOTFILES_AGENTS_DIR}/agent/manifest.json" 2>/dev/null || echo "")
-    if [ -n "${GLOBAL_SKILLS}" ]; then
+    # so installing once is sufficient and avoids quadruple network calls.
+    mapfile -t GLOBAL_ENTRIES < <(jq -c '(.skills.global // []) | .[]' "${DOTFILES_AGENTS_DIR}/agent/manifest.json" 2>/dev/null || true)
+    if [ ${#GLOBAL_ENTRIES[@]} -gt 0 ]; then
         echo "  🌐 Installing global skills (shared across all agents):"
-        for skill in ${GLOBAL_SKILLS}; do
-            echo "    ⚙️ Running: npx skills add ${skill} --global --agent antigravity --yes"
-            npx -y skills add "${skill}" --global --agent antigravity --yes || \
-                echo "  ⚠️ Warning: failed to install global skill '${skill}', continuing..."
+        for entry in "${GLOBAL_ENTRIES[@]}"; do
+            install_skill_entry "${entry}" "antigravity"
         done
     fi
 
@@ -87,13 +121,11 @@ if command -v jq &>/dev/null; then
             *)                 agent_name="${agent_key}" ;;
         esac
 
-        AGENT_SKILLS=$(jq -r "(.skills.\"${agent_key}\".external // []) | .[]" "${DOTFILES_AGENTS_DIR}/agent/manifest.json" 2>/dev/null || echo "")
-        if [ -n "${AGENT_SKILLS}" ]; then
+        mapfile -t AGENT_ENTRIES < <(jq -c "(.skills.\"${agent_key}\".external // []) | .[]" "${DOTFILES_AGENTS_DIR}/agent/manifest.json" 2>/dev/null || true)
+        if [ ${#AGENT_ENTRIES[@]} -gt 0 ]; then
             echo "  📥 Installing agent-specific skills for ${agent_key} (${agent_name}):"
-            for skill in ${AGENT_SKILLS}; do
-                echo "    ⚙️ Running: npx skills add ${skill} --global --agent ${agent_name} --yes"
-                npx -y skills add "${skill}" --global --agent "${agent_name}" --yes || \
-                    echo "  ⚠️ Warning: failed to install skill '${skill}' for ${agent_key}, continuing..."
+            for entry in "${AGENT_ENTRIES[@]}"; do
+                install_skill_entry "${entry}" "${agent_name}"
             done
         fi
     done

@@ -1,7 +1,11 @@
 {
   "skills": {
     "global": [
-      "https://github.com/obra/superpowers"
+      "https://github.com/obra/superpowers",
+      {
+        "source": "https://github.com/mattpocock/skills",
+        "skills": ["grill-me", "grill-with-docs"]
+      }
     ],
     "antigravity-cli": {
       "external": []
