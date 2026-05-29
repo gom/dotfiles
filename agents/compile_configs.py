@@ -279,10 +279,18 @@ def save_deployed(directory, filenames):
 def clean_compiler_owned(directory):
     """
     Removes only files recorded in the .deployed manifest from a previous run,
-    leaving any user-placed or npx-installed files untouched (fix #3).
+    leaving any user-placed or npx-installed files untouched.
+
+    IMPORTANT: must always be called with a physical (non-symlink) directory.
+    Passing a symlink here would silently destroy it (C1 guard).
     """
     if os.path.islink(directory):
-        os.remove(directory)
+        # Safety guard: never operate on a symlink — it would remove the link
+        # and re-create an empty physical directory, breaking the architecture.
+        raise RuntimeError(
+            f"clean_compiler_owned called on a symlink: {directory!r}. "
+            "Only call this on physical central directories (~/.agents/...)."
+        )
     os.makedirs(directory, exist_ok=True)
 
     for name in load_deployed(directory):
@@ -338,6 +346,68 @@ def update_claude_md(path, base_content, subagent_blocks):
 
 
 # ---------------------------------------------------------------------------
+# Symlink helpers
+# ---------------------------------------------------------------------------
+
+def ensure_symlink(target, link_name):
+    """
+    Ensures that a symlink at `link_name` points to `target`.
+
+    Argument order matches os.symlink(src, dst): target first, link second.
+
+    Handles all pre-existing states at link_name:
+      - Correct symlink → no-op (idempotent).
+      - Wrong symlink   → remove and re-create.
+      - Physical dir    → migrate contents to target (best-effort, skipping
+                          files that already exist at the destination), then
+                          remove the dir and create the symlink. This migration
+                          is not atomic: if interrupted between copy and rmtree,
+                          re-running will skip already-migrated items and safely
+                          finish — no data loss, but modifications made to the
+                          old dir during that window are silently discarded.
+      - Physical file   → warn and remove (unusual; no migration needed).
+    """
+    # C2 fix: resolve relative readlink targets against the symlink's own dir,
+    # not against os.getcwd(), to correctly compare paths from any tool.
+    if os.path.islink(link_name):
+        existing_target = os.readlink(link_name)
+        if not os.path.isabs(existing_target):
+            existing_target = os.path.join(
+                os.path.dirname(os.path.abspath(link_name)), existing_target
+            )
+        if os.path.normpath(existing_target) == os.path.normpath(os.path.abspath(target)):
+            return  # Already correctly symlinked
+        os.remove(link_name)
+    elif os.path.exists(link_name):
+        if os.path.isdir(link_name):
+            # Migrate any existing files inside to target to prevent data loss
+            for item in os.listdir(link_name):
+                src_item = os.path.join(link_name, item)
+                dst_item = os.path.join(target, item)
+                if not os.path.exists(dst_item):
+                    if os.path.isdir(src_item):
+                        shutil.copytree(src_item, dst_item)
+                    else:
+                        shutil.copy2(src_item, dst_item)
+            shutil.rmtree(link_name)
+        else:
+            # I2 fix: warn before silently removing a plain file
+            print(f"⚠️  Warning: removing unexpected file at {link_name!r} to create symlink.")
+            os.remove(link_name)
+
+    # I3 fix: use abspath so dirname is always non-empty even for bare names
+    parent = os.path.dirname(os.path.abspath(link_name))
+    os.makedirs(parent, exist_ok=True)
+    try:
+        os.symlink(target, link_name)
+    except OSError as exc:
+        raise RuntimeError(
+            f"Failed to create symlink {link_name!r} → {target!r}: {exc}"
+        ) from exc
+    print(f"🔗 Created symlink: {link_name} ➔ {target}")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -360,18 +430,38 @@ def main():
     codex_dir       = os.path.join(home, ".codex")
     opencode_dir    = os.path.join(home, ".config", "opencode")
 
-    # Clean only previously compiler-owned files (fix #3)
-    capability_dirs = [
-        os.path.join(antigravity_dir, "skills"),
-        os.path.join(antigravity_dir, "hooks"),
-        os.path.join(claude_dir,      "skills"),
-        os.path.join(claude_dir,      "hooks"),
-        os.path.join(codex_dir,       "skills"),
-        os.path.join(codex_dir,       "hooks"),
-        os.path.join(opencode_dir,    "commands"),
-        os.path.join(opencode_dir,    "hooks"),
-        os.path.join(opencode_dir,    "agents"),
-    ]
+    # Define centralized directories under ~/.agents
+    agents_base_dir   = os.path.join(home, ".agents")
+    central_skills    = os.path.join(agents_base_dir, "skills")
+    central_hooks     = os.path.join(agents_base_dir, "hooks")
+    central_subagents = os.path.join(agents_base_dir, "subagents")
+
+    os.makedirs(central_skills, exist_ok=True)
+    os.makedirs(central_hooks, exist_ok=True)
+    os.makedirs(central_subagents, exist_ok=True)
+
+    # Establish the symlinks map from active dirs to the centralized store.
+    # Only OpenCode has a first-class "agents" directory concept — Antigravity,
+    # Claude Code, and Codex read subagent definitions from settings.json
+    # (injected by the compiler), so no subagents symlink is needed for them.
+    symlinks_map = {
+        os.path.join(antigravity_dir, "skills"):   central_skills,
+        os.path.join(antigravity_dir, "hooks"):    central_hooks,
+        os.path.join(claude_dir,      "skills"):   central_skills,
+        os.path.join(claude_dir,      "hooks"):    central_hooks,
+        os.path.join(codex_dir,       "skills"):   central_skills,
+        os.path.join(codex_dir,       "hooks"):    central_hooks,
+        os.path.join(opencode_dir,    "commands"): central_skills,
+        os.path.join(opencode_dir,    "hooks"):    central_hooks,
+        os.path.join(opencode_dir,    "agents"):   central_subagents,
+    }
+
+    # Ensure all symlinks are created and point to the centralized store
+    for link_name, target in symlinks_map.items():
+        ensure_symlink(target, link_name)
+
+    # Clean only previously compiler-owned files from the central directories
+    capability_dirs = [central_skills, central_hooks, central_subagents]
     for d in capability_dirs:
         clean_compiler_owned(d)
 
@@ -393,7 +483,7 @@ def main():
     custom_subagents = []
     subagent_blocks  = []   # collected for CLAUDE.md
 
-    # Track files deployed per directory so we can persist .deployed (fix #3)
+    # Track files deployed per directory so we can persist .deployed
     deployed_tracking = {d: set() for d in capability_dirs}
 
     for plugin in sorted(plugins_data, key=lambda x: x.get("name", "")):
@@ -405,14 +495,8 @@ def main():
             src_script = os.path.join(p_dir, skill["script"])
             if os.path.exists(src_script):
                 print(f"  ⚡ Deploying skill: {skill_name}")
-                for d in [
-                    os.path.join(antigravity_dir, "skills"),
-                    os.path.join(claude_dir,      "skills"),
-                    os.path.join(codex_dir,       "skills"),
-                    os.path.join(opencode_dir,    "commands"),
-                ]:
-                    safe_copy_file(src_script, os.path.join(d, skill_name))
-                    deployed_tracking[d].add(skill_name)
+                safe_copy_file(src_script, os.path.join(central_skills, skill_name))
+                deployed_tracking[central_skills].add(skill_name)
                 custom_skills.append({
                     "name":        skill_name,
                     "description": skill.get("description", ""),
@@ -424,14 +508,8 @@ def main():
             if os.path.exists(src_script):
                 hook_name = os.path.basename(hook["script"])
                 print(f"  🪝 Deploying hook: {hook_name} ({hook.get('event')})")
-                for d in [
-                    os.path.join(antigravity_dir, "hooks"),
-                    os.path.join(claude_dir,      "hooks"),
-                    os.path.join(codex_dir,       "hooks"),
-                    os.path.join(opencode_dir,    "hooks"),
-                ]:
-                    safe_copy_file(src_script, os.path.join(d, hook_name))
-                    deployed_tracking[d].add(hook_name)
+                safe_copy_file(src_script, os.path.join(central_hooks, hook_name))
+                deployed_tracking[central_hooks].add(hook_name)
                 custom_hooks.append({
                     "event": hook.get("event", "pre-command"),
                     "name":  hook_name,
@@ -449,12 +527,11 @@ def main():
             )
 
             agent_filename = f"{agent_name}.md"
-            agents_dir     = os.path.join(opencode_dir, "agents")
             write_text_file(
-                os.path.join(agents_dir, agent_filename),
+                os.path.join(central_subagents, agent_filename),
                 f"# {agent_name} Subagent Profile\n\n{system_prompt}\n",
             )
-            deployed_tracking[agents_dir].add(agent_filename)
+            deployed_tracking[central_subagents].add(agent_filename)
 
             custom_subagents.append({
                 "name":          agent_name,
@@ -474,7 +551,7 @@ def main():
         subagent_blocks,
     )
 
-    # Persist deployment manifests (fix #3)
+    # Persist deployment manifests
     for d, names in deployed_tracking.items():
         save_deployed(d, names)
 

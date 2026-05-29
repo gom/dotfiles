@@ -55,10 +55,7 @@ done
 
 # Ensure all deployed shell script capabilities are executable in their system runtimes
 echo "🔒 Securing execution permissions on deployed capabilities..."
-find "${HOME_DIR}/.gemini/antigravity-cli/skills" "${HOME_DIR}/.gemini/antigravity-cli/hooks" \
-     "${HOME_DIR}/.claude/skills" "${HOME_DIR}/.claude/hooks" \
-     "${HOME_DIR}/.codex/skills" "${HOME_DIR}/.codex/hooks" \
-     "${HOME_DIR}/.config/opencode/commands" "${HOME_DIR}/.config/opencode/hooks" \
+find "${HOME_DIR}/.agents/skills" "${HOME_DIR}/.agents/hooks" \
      -name "*.sh" -exec chmod +x {} + 2>/dev/null || true
 
 echo ""
@@ -66,6 +63,19 @@ echo ""
 # --- Step 3: Standalone External Skills Sync ---
 echo "📦 [3/3] Synchronizing standalone outer-world skills..."
 if command -v jq &>/dev/null; then
+    # Install global skills once — all agent skill dirs symlink to ~/.agents/skills,
+    # so installing once is sufficient and avoids quadruple network calls (I4 fix).
+    GLOBAL_SKILLS=$(jq -r '(.skills.global // []) | .[]' "${DOTFILES_AGENTS_DIR}/agent/manifest.json" 2>/dev/null || echo "")
+    if [ -n "${GLOBAL_SKILLS}" ]; then
+        echo "  🌐 Installing global skills (shared across all agents):"
+        for skill in ${GLOBAL_SKILLS}; do
+            echo "    ⚙️ Running: npx skills add ${skill} --global --agent antigravity --yes"
+            npx -y skills add "${skill}" --global --agent antigravity --yes || \
+                echo "  ⚠️ Warning: failed to install global skill '${skill}', continuing..."
+        done
+    fi
+
+    # Install agent-specific external skills for each agent
     for agent_key in "antigravity-cli" "claude" "codex" "opencode"; do
         # Map agent keys to the skills CLI agent names
         agent_name=""
@@ -76,13 +86,12 @@ if command -v jq &>/dev/null; then
             "opencode")        agent_name="opencode" ;;
             *)                 agent_name="${agent_key}" ;;
         esac
-        
-        EXTERNAL_SKILLS=$(jq -r "(.skills.global // []) + (.skills.\"${agent_key}\".external // []) | .[]" "${DOTFILES_AGENTS_DIR}/agent/manifest.json" 2>/dev/null || echo "")
-        if [ -n "${EXTERNAL_SKILLS}" ]; then
-            echo "  📥 Installing combined skills manifest for ${agent_key} (${agent_name}):"
-            for skill in ${EXTERNAL_SKILLS}; do
+
+        AGENT_SKILLS=$(jq -r "(.skills.\"${agent_key}\".external // []) | .[]" "${DOTFILES_AGENTS_DIR}/agent/manifest.json" 2>/dev/null || echo "")
+        if [ -n "${AGENT_SKILLS}" ]; then
+            echo "  📥 Installing agent-specific skills for ${agent_key} (${agent_name}):"
+            for skill in ${AGENT_SKILLS}; do
                 echo "    ⚙️ Running: npx skills add ${skill} --global --agent ${agent_name} --yes"
-                # Use || true so a network/package failure does not abort the entire deploy (fix #11)
                 npx -y skills add "${skill}" --global --agent "${agent_name}" --yes || \
                     echo "  ⚠️ Warning: failed to install skill '${skill}' for ${agent_key}, continuing..."
             done
