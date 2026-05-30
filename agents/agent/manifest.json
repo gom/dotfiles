@@ -6,19 +6,7 @@
         "source": "https://github.com/mattpocock/skills",
         "skills": ["grill-me", "grill-with-docs"]
       }
-    ],
-    "antigravity-cli": {
-      "external": []
-    },
-    "claude": {
-      "external": []
-    },
-    "codex": {
-      "external": []
-    },
-    "opencode": {
-      "external": []
-    }
+    ]
   },
   "plugins": []
 }
