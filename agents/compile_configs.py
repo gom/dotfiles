@@ -617,15 +617,105 @@ def main():
 
     # 3.6  OpenCode Configuration
     print("💾 Deploying OpenCode settings...")
+    
+    # Compile OpenCode MCP config
+    opencode_mcp = {}
+    for name, cfg in master.get("mcp_servers", {}).items():
+        if "serverUrl" in cfg:
+            opencode_mcp[name] = {
+                "type": "remote",
+                "url": cfg["serverUrl"],
+                "enabled": True
+            }
+        elif "command" in cfg:
+            cmd_list = [cfg["command"]]
+            if "args" in cfg:
+                cmd_list.extend(cfg["args"])
+            opencode_mcp[name] = {
+                "type": "local",
+                "command": cmd_list,
+                "enabled": True
+            }
+            if "env" in cfg:
+                opencode_mcp[name]["environment"] = cfg["env"]
+
+    # Compile OpenCode permissions block
+    opencode_permission = {
+        "bash": {
+            "*": "ask"
+        }
+    }
+    raw_permissions = master.get("permissions", {})
+    for entry in raw_permissions.get("allow", []):
+        if entry.startswith("command(") and entry.endswith(")"):
+            cmd = entry[len("command("):-1].strip()
+            opencode_permission["bash"][cmd] = "allow"
+            opencode_permission["bash"][cmd + " *"] = "allow"
+    for entry in raw_permissions.get("ask", []):
+        if entry.startswith("command(") and entry.endswith(")"):
+            cmd = entry[len("command("):-1].strip()
+            opencode_permission["bash"][cmd] = "ask"
+            opencode_permission["bash"][cmd + " *"] = "ask"
+
+    # Clean up legacy deprecated keys from opencode.jsonc if it exists.
+    # Also migrate/delete the old opencode.json if present.
+    opencode_json_path = os.path.join(opencode_dir, "opencode.json")
+    opencode_path = os.path.join(opencode_dir, "opencode.jsonc")
+    
+    existing_opencode = {}
+    if os.path.exists(opencode_path):
+        try:
+            with open(opencode_path, "r") as f:
+                existing_opencode = json.load(f)
+        except Exception:
+            pass
+            
+    if not existing_opencode and os.path.exists(opencode_json_path):
+        try:
+            with open(opencode_json_path, "r") as f:
+                existing_opencode = json.load(f)
+        except Exception:
+            pass
+
+    if isinstance(existing_opencode, dict):
+        for k in ["theme", "permissions", "mcpServers"]:
+            existing_opencode.pop(k, None)
+
+    os.makedirs(os.path.dirname(opencode_path), exist_ok=True)
+    try:
+        with open(opencode_path, "w") as f:
+            json.dump(existing_opencode, f, indent=2)
+            f.write("\n")
+    except Exception:
+        pass
+
+    if os.path.exists(opencode_json_path):
+        try:
+            os.remove(opencode_json_path)
+            print("  ... Migrated and removed obsolete opencode.json")
+        except Exception:
+            pass
+
     merge_json_file(
-        os.path.join(opencode_dir, "opencode.json"),
+        opencode_path,
         {
-            "theme":       master.get("colorScheme", "tokyo night"),
-            "permissions": master.get("permissions", {}),
-            "mcpServers":  master.get("mcp_servers", {}),
-            "hooks":       custom_hooks,
+            "$schema": "https://opencode.ai/config.json",
+            "permission": opencode_permission,
+            "mcp": opencode_mcp,
+            "hooks": custom_hooks,
         },
-        overwrite_keys=["permissions", "mcpServers", "hooks"],
+        overwrite_keys=["permission", "mcp", "hooks"],
+    )
+
+    # Deploy OpenCode TUI Config (tui.json)
+    theme_name = master.get("colorScheme", "tokyonight").replace(" ", "")
+    merge_json_file(
+        os.path.join(opencode_dir, "tui.json"),
+        {
+            "$schema": "https://opencode.ai/tui.json",
+            "theme": theme_name,
+        },
+        overwrite_keys=["theme"],
     )
 
     print("✨ Deploy-time compilation complete! All configs natively built and written to system folders.")
