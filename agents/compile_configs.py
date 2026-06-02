@@ -696,6 +696,7 @@ def main():
         except Exception:
             pass
 
+    local_cfg = master.get("local", {})
     merge_json_file(
         opencode_path,
         {
@@ -703,9 +704,13 @@ def main():
             "permission": opencode_permission,
             "mcp": opencode_mcp,
             "hooks": custom_hooks,
+            "provider": local_cfg.get("provider", {}),
+            "model": local_cfg.get("model", ""),
+            "small_model": local_cfg.get("small_model", "")
         },
-        overwrite_keys=["permission", "mcp", "hooks"],
+        overwrite_keys=["permission", "mcp", "hooks", "provider", "model", "small_model"],
     )
+
 
     # Deploy OpenCode TUI Config (tui.json)
     theme_name = master.get("colorScheme", "tokyonight").replace(" ", "")
