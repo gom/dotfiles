@@ -31,3 +31,7 @@ export LV='-c -la -Ou8'
 if [ "${PAGER}" != "lv" ]; then
   alias lv="${PAGER}"
 fi
+
+## Ollama
+export OLLAMA_BASE_URL="${OLLAMA_BASE_URL:-http://localhost:11434}"
+

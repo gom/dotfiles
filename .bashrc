@@ -21,3 +21,7 @@ case $TERM in
 esac
 
 alias zj='SHELL=$(which zsh) ~/.local/share/mise/shims/zellij attach -c main'
+
+# Ollama
+export OLLAMA_BASE_URL="${OLLAMA_BASE_URL:-http://localhost:11434}"
+

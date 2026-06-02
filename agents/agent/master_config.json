@@ -1,6 +1,33 @@
 {
   "colorScheme": "tokyo night",
   "trustedWorkspaces": [],
+  "local": {
+    "model": "ollama/qwen3.6:35b-a3b",
+    "small_model": "ollama/gemma4:e4b",
+    "provider": {
+      "ollama": {
+        "npm": "@ai-sdk/openai-compatible",
+        "name": "Ollama (local)",
+        "options": {
+          "baseURL": "{env:OLLAMA_BASE_URL}"
+        },
+        "models": {
+          "qwen3.6:27b": {
+            "name": "Qwen 3.6 27B"
+          },
+          "qwen3.6:35b-a3b": {
+            "name": "Qwen 3.6 35B A3B"
+          },
+          "gemma4:26b": {
+            "name": "Gemma 4 26B"
+          },
+          "gemma4:e4b": {
+            "name": "Gemma 4 E4B"
+          }
+        }
+      }
+    }
+  },
   "permissions": {
     "allow": [
       "command(ls)",
