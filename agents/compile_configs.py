@@ -450,10 +450,10 @@ def compile_opencode_permission(permissions):
     return result
 
 
-def process_plugins(plugins_dir, claude_dir, central_skills, central_hooks, central_subagents):
+def process_plugins(plugins_dir, paths):
     """
     Scan the plugins directory, deploy skills, hooks, and subagent profiles to central folders,
-    update CLAUDE.md global instructions, and write deployment manifests.
+    and write deployment manifests.
     Returns:
         tuple: (custom_skills, custom_hooks, custom_subagents, subagent_blocks)
     """
@@ -472,6 +472,10 @@ def process_plugins(plugins_dir, claude_dir, central_skills, central_hooks, cent
     custom_hooks     = []
     custom_subagents = []
     subagent_blocks  = []   # collected for CLAUDE.md
+
+    central_skills    = paths["central_skills"]
+    central_hooks     = paths["central_hooks"]
+    central_subagents = paths["central_subagents"]
 
     capability_dirs = [central_skills, central_hooks, central_subagents]
     deployed_tracking = {d: set() for d in capability_dirs}
@@ -528,19 +532,6 @@ def process_plugins(plugins_dir, claude_dir, central_skills, central_hooks, cent
                 "system_prompt": system_prompt,
             })
 
-    # Update CLAUDE.md via section markers
-    update_claude_md(
-        os.path.join(claude_dir, "CLAUDE.md"),
-        (
-            "# Claude Code Global Instructions\n\n"
-            "This file is dynamically deployed from your unified plugins.\n\n"
-            "## Core Guidelines\n"
-            "* Prefer standard command line utilities managed via mise.\n"
-            "* Follow clean development guidelines for editing code.\n\n"
-        ),
-        subagent_blocks,
-    )
-
     # Persist deployment manifests
     for d, names in deployed_tracking.items():
         save_deployed(d, names)
@@ -548,8 +539,15 @@ def process_plugins(plugins_dir, claude_dir, central_skills, central_hooks, cent
     return custom_skills, custom_hooks, custom_subagents, subagent_blocks
 
 
-def deploy_antigravity(antigravity_dir, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents):
-    """Deploy Antigravity CLI MCP configuration and settings."""
+def deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents):
+    """Deploy Antigravity CLI MCP configuration, settings, and symlinks."""
+    antigravity_dir = os.path.join(paths["home"], ".gemini", "antigravity-cli")
+    os.makedirs(antigravity_dir, exist_ok=True)
+    
+    # Establish symlinks
+    ensure_symlink(paths["central_skills"], os.path.join(antigravity_dir, "skills"))
+    ensure_symlink(paths["central_hooks"], os.path.join(antigravity_dir, "hooks"))
+
     print("💾 Deploying Antigravity CLI MCP configuration...")
     merge_json_file(
         os.path.join(antigravity_dir, "mcp_config.json"),
@@ -572,8 +570,15 @@ def deploy_antigravity(antigravity_dir, color_scheme, permissions, mcp_servers, 
     )
 
 
-def deploy_claude(home, claude_dir, color_scheme, permissions, mcp_servers, custom_hooks):
-    """Deploy Claude Code Settings and MCP configuration."""
+def deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, subagent_blocks):
+    """Deploy Claude Code Settings, MCP configuration, instructions (CLAUDE.md), and symlinks."""
+    claude_dir = os.path.join(paths["home"], ".claude")
+    os.makedirs(claude_dir, exist_ok=True)
+    
+    # Establish symlinks
+    ensure_symlink(paths["central_skills"], os.path.join(claude_dir, "skills"))
+    ensure_symlink(paths["central_hooks"], os.path.join(claude_dir, "hooks"))
+
     print("💾 Deploying Claude Code settings...")
     merge_json_file(
         os.path.join(claude_dir, "settings.json"),
@@ -587,14 +592,34 @@ def deploy_claude(home, claude_dir, color_scheme, permissions, mcp_servers, cust
 
     print("💾 Deploying Claude Code MCP configuration...")
     merge_json_file(
-        os.path.join(home, ".claude.json"),
+        os.path.join(paths["home"], ".claude.json"),
         {"mcpServers": mcp_servers},
         overwrite_keys=["mcpServers"],
     )
 
+    # Update CLAUDE.md global instructions
+    update_claude_md(
+        os.path.join(claude_dir, "CLAUDE.md"),
+        (
+            "# Claude Code Global Instructions\n\n"
+            "This file is dynamically deployed from your unified plugins.\n\n"
+            "## Core Guidelines\n"
+            "* Prefer standard command line utilities managed via mise.\n"
+            "* Follow clean development guidelines for editing code.\n\n"
+        ),
+        subagent_blocks,
+    )
 
-def deploy_codex(codex_dir, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents):
-    """Deploy Codex Configuration (TOML)."""
+
+def deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents):
+    """Deploy Codex Configuration (TOML) and symlinks."""
+    codex_dir = os.path.join(paths["home"], ".codex")
+    os.makedirs(codex_dir, exist_ok=True)
+    
+    # Establish symlinks
+    ensure_symlink(paths["central_skills"], os.path.join(codex_dir, "skills"))
+    ensure_symlink(paths["central_hooks"], os.path.join(codex_dir, "hooks"))
+
     print("💾 Deploying Codex config...")
     merge_toml_file(
         os.path.join(codex_dir, "config.toml"),
@@ -609,8 +634,22 @@ def deploy_codex(codex_dir, color_scheme, permissions, mcp_servers, custom_hooks
     )
 
 
-def deploy_opencode(opencode_dir, color_scheme, permissions, mcp_servers, local_cfg):
-    """Deploy OpenCode Configuration and TUI Config."""
+def deploy_opencode(paths, color_scheme, permissions, mcp_servers, local_cfg):
+    """Deploy OpenCode Configuration, TUI Config, symlinks, and run obsolete hook cleanup."""
+    opencode_dir = os.path.join(paths["home"], ".config", "opencode")
+    os.makedirs(opencode_dir, exist_ok=True)
+    
+    # Clean up obsolete hooks folder from OpenCode directory if it exists
+    opencode_hooks_path = os.path.join(opencode_dir, "hooks")
+    if os.path.islink(opencode_hooks_path):
+        os.remove(opencode_hooks_path)
+    elif os.path.isdir(opencode_hooks_path):
+        shutil.rmtree(opencode_hooks_path)
+
+    # Establish symlinks
+    ensure_symlink(paths["central_skills"], os.path.join(opencode_dir, "commands"))
+    ensure_symlink(paths["central_subagents"], os.path.join(opencode_dir, "agents"))
+
     print("💾 Deploying OpenCode settings...")
     opencode_mcp = compile_opencode_mcp(mcp_servers)
     opencode_permission = compile_opencode_permission(permissions)
@@ -637,7 +676,6 @@ def deploy_opencode(opencode_dir, color_scheme, permissions, mcp_servers, local_
         for k in ["theme", "permissions", "mcpServers", "hooks"]:
             existing_opencode.pop(k, None)
 
-    os.makedirs(os.path.dirname(opencode_path), exist_ok=True)
     try:
         with open(opencode_path, "w") as f:
             json.dump(existing_opencode, f, indent=2)
@@ -694,57 +732,22 @@ def main():
     with open(master_path, "r") as f:
         master = json.load(f)
 
-    # --- 1. Define Active System Configuration Directories ---
-    antigravity_dir = os.path.join(home, ".gemini", "antigravity-cli")
-    claude_dir      = os.path.join(home, ".claude")
-    codex_dir       = os.path.join(home, ".codex")
-    opencode_dir    = os.path.join(home, ".config", "opencode")
-
-    # Define centralized directories under ~/.agents
-    agents_base_dir   = os.path.join(home, ".agents")
-    central_skills    = os.path.join(agents_base_dir, "skills")
-    central_hooks     = os.path.join(agents_base_dir, "hooks")
-    central_subagents = os.path.join(agents_base_dir, "subagents")
-
-    os.makedirs(central_skills, exist_ok=True)
-    os.makedirs(central_hooks, exist_ok=True)
-    os.makedirs(central_subagents, exist_ok=True)
-
-    # Establish the symlinks map from active dirs to the centralized store.
-    # Only OpenCode has a first-class "agents" directory concept — Antigravity,
-    # Claude Code, and Codex read subagent definitions from settings.json
-    # (injected by the compiler), so no subagents symlink is needed for them.
-    symlinks_map = {
-        os.path.join(antigravity_dir, "skills"):   central_skills,
-        os.path.join(antigravity_dir, "hooks"):    central_hooks,
-        os.path.join(claude_dir,      "skills"):   central_skills,
-        os.path.join(claude_dir,      "hooks"):    central_hooks,
-        os.path.join(codex_dir,       "skills"):   central_skills,
-        os.path.join(codex_dir,       "hooks"):    central_hooks,
-        os.path.join(opencode_dir,    "commands"): central_skills,
-        os.path.join(opencode_dir,    "agents"):   central_subagents,
+    # --- 1. Define Common System Configuration Paths ---
+    paths = {
+        "home":              home,
+        "central_skills":    os.path.join(home, ".agents", "skills"),
+        "central_hooks":     os.path.join(home, ".agents", "hooks"),
+        "central_subagents": os.path.join(home, ".agents", "subagents"),
     }
 
-    # Clean up obsolete hooks folder from OpenCode directory if it exists
-    opencode_hooks_path = os.path.join(opencode_dir, "hooks")
-    if os.path.islink(opencode_hooks_path):
-        os.remove(opencode_hooks_path)
-    elif os.path.isdir(opencode_hooks_path):
-        shutil.rmtree(opencode_hooks_path)
-
-    # Ensure all symlinks are created and point to the centralized store
-    for link_name, target in symlinks_map.items():
-        ensure_symlink(target, link_name)
-
-    # Clean only previously compiler-owned files from the central directories
-    capability_dirs = [central_skills, central_hooks, central_subagents]
-    for d in capability_dirs:
-        clean_compiler_owned(d)
+    for d in ["central_skills", "central_hooks", "central_subagents"]:
+        os.makedirs(paths[d], exist_ok=True)
+        clean_compiler_owned(paths[d])
 
     # --- 2. Scan and Process Plugins ---
     plugins_dir = os.path.join(script_dir, "plugins")
     custom_skills, custom_hooks, custom_subagents, subagent_blocks = process_plugins(
-        plugins_dir, claude_dir, central_skills, central_hooks, central_subagents
+        plugins_dir, paths
     )
 
     # --- 3. Compile & Deploy Active System Configurations ---
@@ -754,16 +757,16 @@ def main():
     trusted_workspaces = master.get("trustedWorkspaces", [])
     local_cfg          = master.get("local", {})
 
-    deploy_antigravity(antigravity_dir, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents)
+    deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents)
     
     # Claude uses theme color_scheme mapping, but if master specifies "tokyo night", we fall back to "dark" theme format
     claude_theme = master.get("colorScheme", "dark")
     if "tokyo" in claude_theme.lower():
         claude_theme = "dark"
-    deploy_claude(home, claude_dir, claude_theme, permissions, mcp_servers, custom_hooks)
+    deploy_claude(paths, claude_theme, permissions, mcp_servers, custom_hooks, subagent_blocks)
     
-    deploy_codex(codex_dir, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents)
-    deploy_opencode(opencode_dir, color_scheme, permissions, mcp_servers, local_cfg)
+    deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents)
+    deploy_opencode(paths, color_scheme, permissions, mcp_servers, local_cfg)
 
     print("✨ Deploy-time compilation complete! All configs natively built and written to system folders.")
     return 0
