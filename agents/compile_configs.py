@@ -408,6 +408,49 @@ def ensure_symlink(target, link_name):
 
 
 # ---------------------------------------------------------------------------
+# OpenCode config translators
+# ---------------------------------------------------------------------------
+
+def compile_opencode_mcp(mcp_servers):
+    """
+    Translates the unified mcp_servers schema into the OpenCode-specific
+    'mcp' block format.
+      - Entries with 'serverUrl' → type: remote
+      - Entries with 'command'   → type: local (with optional 'env')
+    """
+    result = {}
+    for name, cfg in mcp_servers.items():
+        if "serverUrl" in cfg:
+            result[name] = {"type": "remote", "url": cfg["serverUrl"], "enabled": True}
+        elif "command" in cfg:
+            cmd_list = [cfg["command"]] + cfg.get("args", [])
+            result[name] = {"type": "local", "command": cmd_list, "enabled": True}
+            if "env" in cfg:
+                result[name]["environment"] = cfg["env"]
+    return result
+
+
+def compile_opencode_permission(permissions):
+    """
+    Translates the unified permissions schema into OpenCode's bash
+    permission map. The catch-all '*' key defaults to 'ask'.
+    Each command(X) entry in 'allow'/'ask' produces two keys: X and 'X *'.
+    """
+    result = {"bash": {"*": "ask"}}
+    for entry in permissions.get("allow", []):
+        if entry.startswith("command(") and entry.endswith(")"):
+            cmd = entry[len("command("):-1].strip()
+            result["bash"][cmd] = "allow"
+            result["bash"][cmd + " *"] = "allow"
+    for entry in permissions.get("ask", []):
+        if entry.startswith("command(") and entry.endswith(")"):
+            cmd = entry[len("command("):-1].strip()
+            result["bash"][cmd] = "ask"
+            result["bash"][cmd + " *"] = "ask"
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -624,44 +667,9 @@ def main():
     # 3.6  OpenCode Configuration
     print("💾 Deploying OpenCode settings...")
     
-    # Compile OpenCode MCP config
-    opencode_mcp = {}
-    for name, cfg in master.get("mcp_servers", {}).items():
-        if "serverUrl" in cfg:
-            opencode_mcp[name] = {
-                "type": "remote",
-                "url": cfg["serverUrl"],
-                "enabled": True
-            }
-        elif "command" in cfg:
-            cmd_list = [cfg["command"]]
-            if "args" in cfg:
-                cmd_list.extend(cfg["args"])
-            opencode_mcp[name] = {
-                "type": "local",
-                "command": cmd_list,
-                "enabled": True
-            }
-            if "env" in cfg:
-                opencode_mcp[name]["environment"] = cfg["env"]
+    opencode_mcp = compile_opencode_mcp(master.get("mcp_servers", {}))
 
-    # Compile OpenCode permissions block
-    opencode_permission = {
-        "bash": {
-            "*": "ask"
-        }
-    }
-    raw_permissions = master.get("permissions", {})
-    for entry in raw_permissions.get("allow", []):
-        if entry.startswith("command(") and entry.endswith(")"):
-            cmd = entry[len("command("):-1].strip()
-            opencode_permission["bash"][cmd] = "allow"
-            opencode_permission["bash"][cmd + " *"] = "allow"
-    for entry in raw_permissions.get("ask", []):
-        if entry.startswith("command(") and entry.endswith(")"):
-            cmd = entry[len("command("):-1].strip()
-            opencode_permission["bash"][cmd] = "ask"
-            opencode_permission["bash"][cmd + " *"] = "ask"
+    opencode_permission = compile_opencode_permission(master.get("permissions", {}))
 
     # Clean up legacy deprecated keys from opencode.jsonc if it exists.
     # Also migrate/delete the old opencode.json if present.
