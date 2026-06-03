@@ -450,6 +450,104 @@ def compile_opencode_permission(permissions):
     return result
 
 
+def process_plugins(plugins_dir, claude_dir, central_skills, central_hooks, central_subagents):
+    """
+    Scan the plugins directory, deploy skills, hooks, and subagent profiles to central folders,
+    update CLAUDE.md global instructions, and write deployment manifests.
+    Returns:
+        tuple: (custom_skills, custom_hooks, custom_subagents, subagent_blocks)
+    """
+    plugins_data = []
+    if os.path.exists(plugins_dir):
+        for root, dirs, files in os.walk(plugins_dir):
+            if "plugin.json" in files:
+                manifest_path = os.path.join(root, "plugin.json")
+                print(f"🔌 Found plugin manifest: {manifest_path}")
+                with open(manifest_path, "r") as f:
+                    plugin = json.load(f)
+                    plugin["_dir"] = root
+                    plugins_data.append(plugin)
+
+    custom_skills    = []
+    custom_hooks     = []
+    custom_subagents = []
+    subagent_blocks  = []   # collected for CLAUDE.md
+
+    capability_dirs = [central_skills, central_hooks, central_subagents]
+    deployed_tracking = {d: set() for d in capability_dirs}
+
+    for plugin in sorted(plugins_data, key=lambda x: x.get("name", "")):
+        p_dir = plugin["_dir"]
+
+        # Skills
+        for skill in plugin.get("skills", []):
+            skill_name = skill["name"]
+            src_script = os.path.join(p_dir, skill["script"])
+            if os.path.exists(src_script):
+                print(f"  ⚡ Deploying skill: {skill_name}")
+                safe_copy_file(src_script, os.path.join(central_skills, skill_name))
+                deployed_tracking[central_skills].add(skill_name)
+                custom_skills.append({
+                    "name":        skill_name,
+                    "description": skill.get("description", ""),
+                })
+
+        # Hooks
+        for hook in plugin.get("hooks", []):
+            src_script = os.path.join(p_dir, hook["script"])
+            if os.path.exists(src_script):
+                hook_name = os.path.basename(hook["script"])
+                print(f"  🪝 Deploying hook: {hook_name} ({hook.get('event')})")
+                safe_copy_file(src_script, os.path.join(central_hooks, hook_name))
+                deployed_tracking[central_hooks].add(hook_name)
+                custom_hooks.append({
+                    "event": hook.get("event", "pre-command"),
+                    "name":  hook_name,
+                })
+
+        # Subagents
+        for agent in plugin.get("agents", []):
+            agent_name    = agent["name"]
+            system_prompt = agent["system_prompt"]
+            print(f"  🤖 Deploying subagent profile: {agent_name}")
+
+            subagent_blocks.append(
+                f"## Subagent Profile: {agent_name}\n"
+                f"> {system_prompt}\n\n"
+            )
+
+            agent_filename = f"{agent_name}.md"
+            write_text_file(
+                os.path.join(central_subagents, agent_filename),
+                f"# {agent_name} Subagent Profile\n\n{system_prompt}\n",
+            )
+            deployed_tracking[central_subagents].add(agent_filename)
+
+            custom_subagents.append({
+                "name":          agent_name,
+                "system_prompt": system_prompt,
+            })
+
+    # Update CLAUDE.md via section markers
+    update_claude_md(
+        os.path.join(claude_dir, "CLAUDE.md"),
+        (
+            "# Claude Code Global Instructions\n\n"
+            "This file is dynamically deployed from your unified plugins.\n\n"
+            "## Core Guidelines\n"
+            "* Prefer standard command line utilities managed via mise.\n"
+            "* Follow clean development guidelines for editing code.\n\n"
+        ),
+        subagent_blocks,
+    )
+
+    # Persist deployment manifests
+    for d, names in deployed_tracking.items():
+        save_deployed(d, names)
+
+    return custom_skills, custom_hooks, custom_subagents, subagent_blocks
+
+
 def deploy_antigravity(antigravity_dir, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents):
     """Deploy Antigravity CLI MCP configuration and settings."""
     print("💾 Deploying Antigravity CLI MCP configuration...")
@@ -644,94 +742,10 @@ def main():
         clean_compiler_owned(d)
 
     # --- 2. Scan and Process Plugins ---
-    plugins_dir  = os.path.join(script_dir, "plugins")
-    plugins_data = []
-    if os.path.exists(plugins_dir):
-        for root, dirs, files in os.walk(plugins_dir):
-            if "plugin.json" in files:
-                manifest_path = os.path.join(root, "plugin.json")
-                print(f"🔌 Found plugin manifest: {manifest_path}")
-                with open(manifest_path, "r") as f:
-                    plugin = json.load(f)
-                    plugin["_dir"] = root
-                    plugins_data.append(plugin)
-
-    custom_skills    = []
-    custom_hooks     = []
-    custom_subagents = []
-    subagent_blocks  = []   # collected for CLAUDE.md
-
-    # Track files deployed per directory so we can persist .deployed
-    deployed_tracking = {d: set() for d in capability_dirs}
-
-    for plugin in sorted(plugins_data, key=lambda x: x.get("name", "")):
-        p_dir = plugin["_dir"]
-
-        # Skills
-        for skill in plugin.get("skills", []):
-            skill_name = skill["name"]
-            src_script = os.path.join(p_dir, skill["script"])
-            if os.path.exists(src_script):
-                print(f"  ⚡ Deploying skill: {skill_name}")
-                safe_copy_file(src_script, os.path.join(central_skills, skill_name))
-                deployed_tracking[central_skills].add(skill_name)
-                custom_skills.append({
-                    "name":        skill_name,
-                    "description": skill.get("description", ""),
-                })
-
-        # Hooks
-        for hook in plugin.get("hooks", []):
-            src_script = os.path.join(p_dir, hook["script"])
-            if os.path.exists(src_script):
-                hook_name = os.path.basename(hook["script"])
-                print(f"  🪝 Deploying hook: {hook_name} ({hook.get('event')})")
-                safe_copy_file(src_script, os.path.join(central_hooks, hook_name))
-                deployed_tracking[central_hooks].add(hook_name)
-                custom_hooks.append({
-                    "event": hook.get("event", "pre-command"),
-                    "name":  hook_name,
-                })
-
-        # Subagents
-        for agent in plugin.get("agents", []):
-            agent_name    = agent["name"]
-            system_prompt = agent["system_prompt"]
-            print(f"  🤖 Deploying subagent profile: {agent_name}")
-
-            subagent_blocks.append(
-                f"## Subagent Profile: {agent_name}\n"
-                f"> {system_prompt}\n\n"
-            )
-
-            agent_filename = f"{agent_name}.md"
-            write_text_file(
-                os.path.join(central_subagents, agent_filename),
-                f"# {agent_name} Subagent Profile\n\n{system_prompt}\n",
-            )
-            deployed_tracking[central_subagents].add(agent_filename)
-
-            custom_subagents.append({
-                "name":          agent_name,
-                "system_prompt": system_prompt,
-            })
-
-    # Update CLAUDE.md via section markers (fix #2)
-    update_claude_md(
-        os.path.join(claude_dir, "CLAUDE.md"),
-        (
-            "# Claude Code Global Instructions\n\n"
-            "This file is dynamically deployed from your unified plugins.\n\n"
-            "## Core Guidelines\n"
-            "* Prefer standard command line utilities managed via mise.\n"
-            "* Follow clean development guidelines for editing code.\n\n"
-        ),
-        subagent_blocks,
+    plugins_dir = os.path.join(script_dir, "plugins")
+    custom_skills, custom_hooks, custom_subagents, subagent_blocks = process_plugins(
+        plugins_dir, claude_dir, central_skills, central_hooks, central_subagents
     )
-
-    # Persist deployment manifests
-    for d, names in deployed_tracking.items():
-        save_deployed(d, names)
 
     # --- 3. Compile & Deploy Active System Configurations ---
     color_scheme       = master.get("colorScheme", "tokyo night")
