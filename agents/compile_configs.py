@@ -579,11 +579,16 @@ def deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, s
     ensure_symlink(paths["central_skills"], os.path.join(claude_dir, "skills"))
     ensure_symlink(paths["central_hooks"], os.path.join(claude_dir, "hooks"))
 
+    # Normalise color scheme for Claude (falls back to dark if Tokyo Night is used)
+    claude_theme = color_scheme
+    if "tokyo" in claude_theme.lower():
+        claude_theme = "dark"
+
     print("💾 Deploying Claude Code settings...")
     merge_json_file(
         os.path.join(claude_dir, "settings.json"),
         {
-            "theme":       color_scheme,
+            "theme":       claude_theme,
             "permissions": permissions,
             "hooks":       custom_hooks,
         },
@@ -654,41 +659,7 @@ def deploy_opencode(paths, color_scheme, permissions, mcp_servers, local_cfg):
     opencode_mcp = compile_opencode_mcp(mcp_servers)
     opencode_permission = compile_opencode_permission(permissions)
 
-    opencode_json_path = os.path.join(opencode_dir, "opencode.json")
     opencode_path = os.path.join(opencode_dir, "opencode.jsonc")
-
-    existing_opencode = {}
-    if os.path.exists(opencode_path):
-        try:
-            with open(opencode_path, "r") as f:
-                existing_opencode = json.load(f)
-        except Exception:
-            pass
-
-    if not existing_opencode and os.path.exists(opencode_json_path):
-        try:
-            with open(opencode_json_path, "r") as f:
-                existing_opencode = json.load(f)
-        except Exception:
-            pass
-
-    if isinstance(existing_opencode, dict):
-        for k in ["theme", "permissions", "mcpServers", "hooks"]:
-            existing_opencode.pop(k, None)
-
-    try:
-        with open(opencode_path, "w") as f:
-            json.dump(existing_opencode, f, indent=2)
-            f.write("\n")
-    except Exception:
-        pass
-
-    if os.path.exists(opencode_json_path):
-        try:
-            os.remove(opencode_json_path)
-            print("  ... Migrated and removed obsolete opencode.json")
-        except Exception:
-            pass
 
     merge_json_file(
         opencode_path,
@@ -759,11 +730,7 @@ def main():
 
     deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents)
     
-    # Claude uses theme color_scheme mapping, but if master specifies "tokyo night", we fall back to "dark" theme format
-    claude_theme = master.get("colorScheme", "dark")
-    if "tokyo" in claude_theme.lower():
-        claude_theme = "dark"
-    deploy_claude(paths, claude_theme, permissions, mcp_servers, custom_hooks, subagent_blocks)
+    deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, subagent_blocks)
     
     deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents)
     deploy_opencode(paths, color_scheme, permissions, mcp_servers, local_cfg)
