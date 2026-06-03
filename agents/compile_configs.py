@@ -452,9 +452,15 @@ def main():
         os.path.join(codex_dir,       "skills"):   central_skills,
         os.path.join(codex_dir,       "hooks"):    central_hooks,
         os.path.join(opencode_dir,    "commands"): central_skills,
-        os.path.join(opencode_dir,    "hooks"):    central_hooks,
         os.path.join(opencode_dir,    "agents"):   central_subagents,
     }
+
+    # Clean up obsolete hooks folder from OpenCode directory if it exists
+    opencode_hooks_path = os.path.join(opencode_dir, "hooks")
+    if os.path.islink(opencode_hooks_path):
+        os.remove(opencode_hooks_path)
+    elif os.path.isdir(opencode_hooks_path):
+        shutil.rmtree(opencode_hooks_path)
 
     # Ensure all symlinks are created and point to the centralized store
     for link_name, target in symlinks_map.items():
@@ -678,7 +684,7 @@ def main():
             pass
 
     if isinstance(existing_opencode, dict):
-        for k in ["theme", "permissions", "mcpServers"]:
+        for k in ["theme", "permissions", "mcpServers", "hooks"]:
             existing_opencode.pop(k, None)
 
     os.makedirs(os.path.dirname(opencode_path), exist_ok=True)
@@ -703,12 +709,11 @@ def main():
             "$schema": "https://opencode.ai/config.json",
             "permission": opencode_permission,
             "mcp": opencode_mcp,
-            "hooks": custom_hooks,
             "provider": local_cfg.get("provider", {}),
             "model": local_cfg.get("model", ""),
             "small_model": local_cfg.get("small_model", "")
         },
-        overwrite_keys=["permission", "mcp", "hooks", "provider", "model", "small_model"],
+        overwrite_keys=["permission", "mcp", "provider", "model", "small_model"],
     )
 
 
