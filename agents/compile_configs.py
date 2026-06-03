@@ -450,6 +450,135 @@ def compile_opencode_permission(permissions):
     return result
 
 
+def deploy_antigravity(antigravity_dir, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents):
+    """Deploy Antigravity CLI MCP configuration and settings."""
+    print("💾 Deploying Antigravity CLI MCP configuration...")
+    merge_json_file(
+        os.path.join(antigravity_dir, "mcp_config.json"),
+        {"mcpServers": mcp_servers},
+        overwrite_keys=["mcpServers"],
+    )
+
+    print("💾 Deploying Antigravity CLI settings...")
+    merge_json_file(
+        os.path.join(antigravity_dir, "settings.json"),
+        {
+            "colorScheme":       color_scheme,
+            "permissions":       permissions,
+            "statusLine":        {"type": "", "command": "", "enabled": True},
+            "trustedWorkspaces": trusted_workspaces,
+            "hooks":             custom_hooks,
+            "subagents":         custom_subagents,
+        },
+        overwrite_keys=["permissions", "hooks", "subagents"],
+    )
+
+
+def deploy_claude(home, claude_dir, color_scheme, permissions, mcp_servers, custom_hooks):
+    """Deploy Claude Code Settings and MCP configuration."""
+    print("💾 Deploying Claude Code settings...")
+    merge_json_file(
+        os.path.join(claude_dir, "settings.json"),
+        {
+            "theme":       color_scheme,
+            "permissions": permissions,
+            "hooks":       custom_hooks,
+        },
+        overwrite_keys=["permissions", "hooks"],
+    )
+
+    print("💾 Deploying Claude Code MCP configuration...")
+    merge_json_file(
+        os.path.join(home, ".claude.json"),
+        {"mcpServers": mcp_servers},
+        overwrite_keys=["mcpServers"],
+    )
+
+
+def deploy_codex(codex_dir, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents):
+    """Deploy Codex Configuration (TOML)."""
+    print("💾 Deploying Codex config...")
+    merge_toml_file(
+        os.path.join(codex_dir, "config.toml"),
+        {
+            "color_scheme": color_scheme,
+            "permissions":  permissions,
+            "mcp_servers":  mcp_servers,
+            "hooks":        custom_hooks,
+            "subagents":    custom_subagents,
+        },
+        overwrite_keys=["permissions", "mcp_servers", "hooks", "subagents"],
+    )
+
+
+def deploy_opencode(opencode_dir, color_scheme, permissions, mcp_servers, local_cfg):
+    """Deploy OpenCode Configuration and TUI Config."""
+    print("💾 Deploying OpenCode settings...")
+    opencode_mcp = compile_opencode_mcp(mcp_servers)
+    opencode_permission = compile_opencode_permission(permissions)
+
+    opencode_json_path = os.path.join(opencode_dir, "opencode.json")
+    opencode_path = os.path.join(opencode_dir, "opencode.jsonc")
+
+    existing_opencode = {}
+    if os.path.exists(opencode_path):
+        try:
+            with open(opencode_path, "r") as f:
+                existing_opencode = json.load(f)
+        except Exception:
+            pass
+
+    if not existing_opencode and os.path.exists(opencode_json_path):
+        try:
+            with open(opencode_json_path, "r") as f:
+                existing_opencode = json.load(f)
+        except Exception:
+            pass
+
+    if isinstance(existing_opencode, dict):
+        for k in ["theme", "permissions", "mcpServers", "hooks"]:
+            existing_opencode.pop(k, None)
+
+    os.makedirs(os.path.dirname(opencode_path), exist_ok=True)
+    try:
+        with open(opencode_path, "w") as f:
+            json.dump(existing_opencode, f, indent=2)
+            f.write("\n")
+    except Exception:
+        pass
+
+    if os.path.exists(opencode_json_path):
+        try:
+            os.remove(opencode_json_path)
+            print("  ... Migrated and removed obsolete opencode.json")
+        except Exception:
+            pass
+
+    merge_json_file(
+        opencode_path,
+        {
+            "$schema": "https://opencode.ai/config.json",
+            "permission": opencode_permission,
+            "mcp": opencode_mcp,
+            "provider": local_cfg.get("provider", {}),
+            "model": local_cfg.get("model", ""),
+            "small_model": local_cfg.get("small_model", "")
+        },
+        overwrite_keys=["permission", "mcp", "provider", "model", "small_model"],
+    )
+
+    theme_name = color_scheme.replace(" ", "")
+    merge_json_file(
+        os.path.join(opencode_dir, "tui.json"),
+        {
+            "$schema": "https://opencode.ai/tui.json",
+            "theme": theme_name,
+        },
+        overwrite_keys=["theme"],
+    )
+
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -605,136 +734,22 @@ def main():
         save_deployed(d, names)
 
     # --- 3. Compile & Deploy Active System Configurations ---
-    mcp_config = {"mcpServers": master.get("mcp_servers", {})}
+    color_scheme       = master.get("colorScheme", "tokyo night")
+    permissions        = master.get("permissions", {})
+    mcp_servers        = master.get("mcp_servers", {})
+    trusted_workspaces = master.get("trustedWorkspaces", [])
+    local_cfg          = master.get("local", {})
 
-    # 3.1  Antigravity CLI MCP
-    print("💾 Deploying Antigravity CLI MCP configuration...")
-    merge_json_file(
-        os.path.join(antigravity_dir, "mcp_config.json"),
-        mcp_config,
-        overwrite_keys=["mcpServers"],
-    )
-
-    # 3.2  Antigravity CLI Settings
-    print("💾 Deploying Antigravity CLI settings...")
-    merge_json_file(
-        os.path.join(antigravity_dir, "settings.json"),
-        {
-            "colorScheme":       master.get("colorScheme", "tokyo night"),
-            "permissions":       master.get("permissions", {}),
-            "statusLine":        {"type": "", "command": "", "enabled": True},
-            "trustedWorkspaces": master.get("trustedWorkspaces", []),
-            "hooks":             custom_hooks,
-            "subagents":         custom_subagents,
-        },
-        overwrite_keys=["permissions", "hooks", "subagents"],
-    )
-
-    # 3.3  Claude Code Settings
-    print("💾 Deploying Claude Code settings...")
-    merge_json_file(
-        os.path.join(claude_dir, "settings.json"),
-        {
-            "theme":       master.get("colorScheme", "dark"),
-            "permissions": master.get("permissions", {}),
-            "hooks":       custom_hooks,
-        },
-        overwrite_keys=["permissions", "hooks"],
-    )
-
-    # 3.4  Claude Code MCP (~/.claude.json)
-    print("💾 Deploying Claude Code MCP configuration...")
-    merge_json_file(
-        os.path.join(home, ".claude.json"),
-        mcp_config,
-        overwrite_keys=["mcpServers"],
-    )
-
-    # 3.5  Codex Configuration (TOML)
-    print("💾 Deploying Codex config...")
-    merge_toml_file(
-        os.path.join(codex_dir, "config.toml"),
-        {
-            "color_scheme": master.get("colorScheme", "tokyo night"),
-            "permissions":  master.get("permissions", {}),
-            "mcp_servers":  master.get("mcp_servers", {}),
-            "hooks":        custom_hooks,
-            "subagents":    custom_subagents,
-        },
-        overwrite_keys=["permissions", "mcp_servers", "hooks", "subagents"],
-    )
-
-    # 3.6  OpenCode Configuration
-    print("💾 Deploying OpenCode settings...")
+    deploy_antigravity(antigravity_dir, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents)
     
-    opencode_mcp = compile_opencode_mcp(master.get("mcp_servers", {}))
-
-    opencode_permission = compile_opencode_permission(master.get("permissions", {}))
-
-    # Clean up legacy deprecated keys from opencode.jsonc if it exists.
-    # Also migrate/delete the old opencode.json if present.
-    opencode_json_path = os.path.join(opencode_dir, "opencode.json")
-    opencode_path = os.path.join(opencode_dir, "opencode.jsonc")
+    # Claude uses theme color_scheme mapping, but if master specifies "tokyo night", we fall back to "dark" theme format
+    claude_theme = master.get("colorScheme", "dark")
+    if "tokyo" in claude_theme.lower():
+        claude_theme = "dark"
+    deploy_claude(home, claude_dir, claude_theme, permissions, mcp_servers, custom_hooks)
     
-    existing_opencode = {}
-    if os.path.exists(opencode_path):
-        try:
-            with open(opencode_path, "r") as f:
-                existing_opencode = json.load(f)
-        except Exception:
-            pass
-            
-    if not existing_opencode and os.path.exists(opencode_json_path):
-        try:
-            with open(opencode_json_path, "r") as f:
-                existing_opencode = json.load(f)
-        except Exception:
-            pass
-
-    if isinstance(existing_opencode, dict):
-        for k in ["theme", "permissions", "mcpServers", "hooks"]:
-            existing_opencode.pop(k, None)
-
-    os.makedirs(os.path.dirname(opencode_path), exist_ok=True)
-    try:
-        with open(opencode_path, "w") as f:
-            json.dump(existing_opencode, f, indent=2)
-            f.write("\n")
-    except Exception:
-        pass
-
-    if os.path.exists(opencode_json_path):
-        try:
-            os.remove(opencode_json_path)
-            print("  ... Migrated and removed obsolete opencode.json")
-        except Exception:
-            pass
-
-    local_cfg = master.get("local", {})
-    merge_json_file(
-        opencode_path,
-        {
-            "$schema": "https://opencode.ai/config.json",
-            "permission": opencode_permission,
-            "mcp": opencode_mcp,
-            "provider": local_cfg.get("provider", {}),
-            "model": local_cfg.get("model", ""),
-            "small_model": local_cfg.get("small_model", "")
-        },
-        overwrite_keys=["permission", "mcp", "provider", "model", "small_model"],
-    )
-
-
-    # Deploy OpenCode TUI Config (tui.json)
-    theme_name = master.get("colorScheme", "tokyonight").replace(" ", "")
-    merge_json_file(
-        os.path.join(opencode_dir, "tui.json"),
-        {
-            "$schema": "https://opencode.ai/tui.json",
-            "theme": theme_name,
-        },
-        overwrite_keys=["theme"],
-    )
+    deploy_codex(codex_dir, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents)
+    deploy_opencode(opencode_dir, color_scheme, permissions, mcp_servers, local_cfg)
 
     print("✨ Deploy-time compilation complete! All configs natively built and written to system folders.")
     return 0
