@@ -219,6 +219,23 @@ class Config:
             f.write(Toml.dict_to_toml(merged))
             f.write("\n")
 
+    @staticmethod
+    def backup(backup_dir, file_paths):
+        """
+        Copies each existing file in file_paths into backup_dir with a flat filename.
+        Silently skips files that do not exist (safe for first-time deploys).
+        Returns the list of filenames that were backed up.
+        """
+        backed_up = []
+        for src in file_paths:
+            if os.path.isfile(src):
+                flat_name = os.path.basename(src)
+                dst = os.path.join(backup_dir, flat_name)
+                os.makedirs(backup_dir, exist_ok=True)
+                Files.safe_copy_file(src, dst)
+                backed_up.append(flat_name)
+        return backed_up
+
 
 # ---------------------------------------------------------------------------
 # File helpers
@@ -497,11 +514,17 @@ def process_plugins(plugins_dir, paths):
     return custom_skills, custom_hooks, custom_subagents
 
 
-def deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents):
+def deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents, agent_cfg={}, backup_dir=None):
     """Deploy Antigravity CLI MCP configuration, settings, and symlinks."""
     antigravity_dir = os.path.join(paths["home"], ".gemini", "antigravity-cli")
     os.makedirs(antigravity_dir, exist_ok=True)
-    
+
+    if backup_dir:
+        Config.backup(backup_dir, [
+            os.path.join(antigravity_dir, "settings.json"),
+            os.path.join(antigravity_dir, "mcp_config.json"),
+        ])
+
     # Establish symlinks
     Symlinks.ensure(paths["central_skills"], os.path.join(antigravity_dir, "skills"))
     Symlinks.ensure(paths["central_hooks"], os.path.join(antigravity_dir, "hooks"))
@@ -528,11 +551,17 @@ def deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_wo
     )
 
 
-def deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks):
+def deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, agent_cfg={}, backup_dir=None):
     """Deploy Claude Code Settings, MCP configuration, and symlinks."""
     claude_dir = os.path.join(paths["home"], ".claude")
     os.makedirs(claude_dir, exist_ok=True)
-    
+
+    if backup_dir:
+        Config.backup(backup_dir, [
+            os.path.join(claude_dir, "settings.json"),
+            os.path.join(paths["home"], ".claude.json"),
+        ])
+
     # Establish symlinks
     Symlinks.ensure(paths["central_skills"], os.path.join(claude_dir, "skills"))
     Symlinks.ensure(paths["central_hooks"], os.path.join(claude_dir, "hooks"))
@@ -549,8 +578,9 @@ def deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks):
             "theme":       claude_theme,
             "permissions": permissions,
             "hooks":       custom_hooks,
+            "env":         agent_cfg.get("env", {}),
         },
-        overwrite_keys=["permissions", "hooks"],
+        overwrite_keys=["permissions", "hooks", "env"],
     )
 
     print("💾 Deploying Claude Code MCP configuration...")
@@ -561,11 +591,16 @@ def deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks):
     )
 
 
-def deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents):
+def deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents, agent_cfg={}, backup_dir=None):
     """Deploy Codex Configuration (TOML) and symlinks."""
     codex_dir = os.path.join(paths["home"], ".codex")
     os.makedirs(codex_dir, exist_ok=True)
-    
+
+    if backup_dir:
+        Config.backup(backup_dir, [
+            os.path.join(codex_dir, "config.toml"),
+        ])
+
     # Establish symlinks
     Symlinks.ensure(paths["central_skills"], os.path.join(codex_dir, "skills"))
     Symlinks.ensure(paths["central_hooks"], os.path.join(codex_dir, "hooks"))
@@ -575,20 +610,27 @@ def deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, cu
         os.path.join(codex_dir, "config.toml"),
         {
             "color_scheme": color_scheme,
+            "model":        agent_cfg.get("model", ""),
             "permissions":  permissions,
             "mcp_servers":  mcp_servers,
             "hooks":        custom_hooks,
             "subagents":    custom_subagents,
         },
-        overwrite_keys=["permissions", "mcp_servers", "hooks", "subagents"],
+        overwrite_keys=["permissions", "mcp_servers", "hooks", "subagents", "model"],
     )
 
 
-def deploy_opencode(paths, color_scheme, permissions, mcp_servers, local_cfg):
+def deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg={}, backup_dir=None):
     """Deploy OpenCode Configuration, TUI Config, symlinks, and run obsolete hook cleanup."""
     opencode_dir = os.path.join(paths["home"], ".config", "opencode")
     os.makedirs(opencode_dir, exist_ok=True)
-    
+
+    if backup_dir:
+        Config.backup(backup_dir, [
+            os.path.join(opencode_dir, "opencode.jsonc"),
+            os.path.join(opencode_dir, "tui.json"),
+        ])
+
     # Clean up obsolete hooks folder from OpenCode directory if it exists
     opencode_hooks_path = os.path.join(opencode_dir, "hooks")
     if os.path.islink(opencode_hooks_path):
@@ -609,12 +651,12 @@ def deploy_opencode(paths, color_scheme, permissions, mcp_servers, local_cfg):
     Config.merge_json_file(
         opencode_path,
         {
-            "$schema": "https://opencode.ai/config.json",
-            "permission": opencode_permission,
-            "mcp": opencode_mcp,
-            "provider": local_cfg.get("provider", {}),
-            "model": local_cfg.get("model", ""),
-            "small_model": local_cfg.get("small_model", "")
+            "$schema":     "https://opencode.ai/config.json",
+            "permission":  opencode_permission,
+            "mcp":         opencode_mcp,
+            "provider":    agent_cfg.get("provider", {}),
+            "model":       agent_cfg.get("model", ""),
+            "small_model": agent_cfg.get("small_model", ""),
         },
         overwrite_keys=["permission", "mcp", "provider", "model", "small_model"],
     )
@@ -628,6 +670,8 @@ def deploy_opencode(paths, color_scheme, permissions, mcp_servers, local_cfg):
         },
         overwrite_keys=["theme"],
     )
+
+
 
 
 
@@ -683,14 +727,21 @@ def main():
     permissions        = master.get("permissions", {})
     mcp_servers        = master.get("mcp_servers", {})
     trusted_workspaces = master.get("trustedWorkspaces", [])
-    local_cfg          = master.get("local", {})
+    import datetime
+    agents_cfg  = master.get("agents", {})
+    backup_dir  = os.path.join(home, ".agents", "backups",
+                               datetime.datetime.now().strftime("%Y%m%dT%H%M%S"))
 
-    deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents)
-    
-    deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks)
-    
-    deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents)
-    deploy_opencode(paths, color_scheme, permissions, mcp_servers, local_cfg)
+    deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents, agent_cfg=agents_cfg.get("antigravity", {}), backup_dir=backup_dir)
+    deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, agent_cfg=agents_cfg.get("claude", {}), backup_dir=backup_dir)
+    deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents, agent_cfg=agents_cfg.get("codex", {}), backup_dir=backup_dir)
+    deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg=agents_cfg.get("opencode", {}), backup_dir=backup_dir)
+
+    if os.path.isdir(backup_dir):
+        backed = os.listdir(backup_dir)
+        print(f"💾 Backed up {len(backed)} config file(s) to: {backup_dir}")
+    else:
+        print("💾 No existing config files to back up (first-time deploy).")
 
     print("✨ Deploy-time compilation complete! All configs natively built and written to system folders.")
     return 0

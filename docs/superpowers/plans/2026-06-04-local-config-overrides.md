@@ -85,7 +85,7 @@ git commit -m "refactor: load and merge master_config.local.json overrides"
 **Files:**
 - Test/Run: `bash agents/deploy.sh`
 
-- [ ] **Step 1: Create a mock local override file**
+- [x] **Step 1: Create a mock local override file**
 Create `agents/agent/master_config.local.json` with the following content:
 ```json
 {
@@ -93,20 +93,20 @@ Create `agents/agent/master_config.local.json` with the following content:
 }
 ```
 
-- [ ] **Step 2: Run deployment**
+- [x] **Step 2: Run deployment**
 Run: `bash agents/deploy.sh`
 Expected: Passes successfully.
 
-- [ ] **Step 3: Verify color scheme was overridden**
+- [x] **Step 3: Verify color scheme was overridden**
 Inspect the deployed OpenCode TUI settings:
 Run: `cat ~/.config/opencode/tui.json`
 Expected: The file contains `"theme": "monokai"` (overriding `"tokyonight"` or other defaults).
 
-- [ ] **Step 4: Verify git status ignores the local config**
+- [x] **Step 4: Verify git status ignores the local config**
 Run: `git status`
 Expected: Only showing untracked `__pycache__` if any, no mention of `master_config.local.json` (meaning it's successfully ignored).
 
-- [ ] **Step 5: Clean up mock file and restore default**
+- [x] **Step 5: Clean up mock file and restore default**
 Delete the mock local override file and redeploy:
 ```bash
 rm agents/agent/master_config.local.json
