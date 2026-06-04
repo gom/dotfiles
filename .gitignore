@@ -1,3 +1,4 @@
 .antigravitycli
 .serena
 agents/plugins/external/
+agents/agent/master_config.local.json

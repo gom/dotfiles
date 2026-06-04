@@ -648,6 +648,18 @@ def main():
     with open(master_path, "r") as f:
         master = json.load(f)
 
+    # Load machine-specific local overrides if present
+    local_path = os.path.join(script_dir, "agent", "master_config.local.json")
+    if os.path.exists(local_path):
+        print(f"🔄 Found local overrides at {local_path}, merging...")
+        try:
+            with open(local_path, "r") as f:
+                local_master = json.load(f)
+                if isinstance(local_master, dict):
+                    master = Config.deep_merge(master, local_master)
+        except Exception as exc:
+            print(f"⚠️ Warning: Failed to read local overrides: {exc}")
+
     # --- 1. Define Common System Configuration Paths ---
     paths = {
         "home":              home,
