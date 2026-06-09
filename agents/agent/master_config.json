@@ -16,7 +16,7 @@
           "npm": "@ai-sdk/openai-compatible",
           "name": "Ollama (local)",
           "options": {
-            "baseURL": "{env:OLLAMA_BASE_URL}"
+            "baseURL": "{env:OLLAMA_BASE_URL}/v1"
           },
           "models": {
             "qwen3.6:27b": {
