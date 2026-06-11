@@ -1,6 +1,9 @@
+import shutil
 from pathlib import Path
+
 from utils.config import Config, PullEngine
 from utils.fs import Symlinks
+
 
 class AgentDeployer:
     @staticmethod
@@ -10,13 +13,25 @@ class AgentDeployer:
         Symlinks.ensure(central_hooks, target_dir / "hooks")
 
     @staticmethod
-    def deploy_json(label: str, path: Path, new_data: dict, local_filename: str, overwrite_keys: list[str]):
+    def deploy_json(
+        label: str,
+        path: Path,
+        new_data: dict,
+        local_filename: str,
+        overwrite_keys: list[str],
+    ):
         generated = PullEngine.handle_json(path, new_data, local_filename)
-        print(f"💾 Deploying {label} to {path}...")
+        print(f"💾 Deploying {label}...")
         Config.merge_json_file(path, generated, overwrite_keys=overwrite_keys)
 
     @staticmethod
-    def deploy_toml(label: str, path: Path, new_data: dict, local_filename: str, overwrite_keys: list[str]):
+    def deploy_toml(
+        label: str,
+        path: Path,
+        new_data: dict,
+        local_filename: str,
+        overwrite_keys: list[str],
+    ):
         generated = PullEngine.handle_toml(path, new_data, local_filename)
-        print(f"💾 Deploying {label} to {path}...")
+        print(f"💾 Deploying {label}...")
         Config.merge_toml_file(path, generated, overwrite_keys=overwrite_keys)

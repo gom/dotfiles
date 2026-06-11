@@ -1,9 +1,9 @@
 import json
-import os
 import shutil
 from pathlib import Path
 
 DEPLOYED_MANIFEST = ".deployed"
+
 
 class Files:
     @staticmethod
@@ -75,17 +75,24 @@ class Files:
             elif p.is_dir():
                 shutil.rmtree(p)
 
+
 class Symlinks:
     @staticmethod
     def ensure(target: str | Path, link_name: str | Path):
         """
         Ensures that a symlink at `link_name` points to `target`.
+
+        Handles all pre-existing states at link_name:
+          - Correct symlink → no-op (idempotent).
+          - Wrong symlink   → remove and re-create.
+          - Physical dir    → migrate contents to target (best-effort), then replace.
+          - Physical file   → warn and remove.
         """
         p_link = Path(link_name)
         p_target = Path(target)
-        
+
         if p_link.is_symlink():
-            existing_target = Path(os.readlink(p_link))
+            existing_target = Path(p_link.readlink())
             if not existing_target.is_absolute():
                 existing_target = p_link.parent.resolve() / existing_target
             if existing_target.resolve() == p_target.resolve():
@@ -107,7 +114,7 @@ class Symlinks:
 
         p_link.parent.mkdir(parents=True, exist_ok=True)
         try:
-            os.symlink(p_target, p_link)
+            p_link.symlink_to(p_target)
         except OSError as exc:
             raise RuntimeError(
                 f"Failed to create symlink {p_link} → {p_target}: {exc}"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json
 import sys
-import datetime
+from datetime import datetime
 from pathlib import Path
 
 from utils.config import Config
@@ -13,9 +13,10 @@ from deployers.manifests import (
     deploy_opencode,
 )
 
-def process_plugins(plugins_dir: Path, paths: dict[str, Path]):
+
+def process_plugins(plugins_dir: Path, paths: dict[str, Path]) -> tuple[list, list, list]:
     """
-    Scan the plugins directory, deploy skills, hooks, and subagent profiles to central folders,
+    Scan the plugins directory, deploy hooks and subagent profiles to central folders,
     and write deployment manifests.
     Returns:
         tuple: (custom_skills, custom_hooks, custom_subagents)
@@ -29,19 +30,22 @@ def process_plugins(plugins_dir: Path, paths: dict[str, Path]):
                 plugin["_dir"] = manifest_path.parent
                 plugins_data.append(plugin)
 
-    custom_skills    = []
-    custom_hooks     = []
-    custom_subagents = []
+    custom_skills:    list = []
+    custom_hooks:     list = []
+    custom_subagents: list = []
 
     central_skills    = paths["central_skills"]
     central_hooks     = paths["central_hooks"]
     central_subagents = paths["central_subagents"]
 
-    capability_dirs = [central_skills, central_hooks, central_subagents]
-    deployed_tracking = {d: set() for d in capability_dirs}
+    deployed_tracking: dict[Path, set] = {
+        central_skills: set(),
+        central_hooks: set(),
+        central_subagents: set(),
+    }
 
     for plugin in sorted(plugins_data, key=lambda x: x.get("name", "")):
-        p_dir = plugin["_dir"]
+        p_dir: Path = plugin["_dir"]
 
         # Skills
         for skill in plugin.get("skills", []):
@@ -74,27 +78,24 @@ def process_plugins(plugins_dir: Path, paths: dict[str, Path]):
             agent_name    = agent["name"]
             system_prompt = agent["system_prompt"]
             print(f"  🤖 Deploying subagent profile: {agent_name}")
-
             agent_filename = f"{agent_name}.md"
             Files.write_text_file(
                 central_subagents / agent_filename,
                 f"# {agent_name} Subagent Profile\n\n{system_prompt}\n",
             )
             deployed_tracking[central_subagents].add(agent_filename)
-
             custom_subagents.append({
                 "name":          agent_name,
                 "system_prompt": system_prompt,
             })
 
-    # Persist deployment manifests
     for d, names in deployed_tracking.items():
         Files.save_deployed(d, names)
 
     return custom_skills, custom_hooks, custom_subagents
 
 
-def main():
+def main() -> int:
     home       = Path.home()
     script_dir = Path(__file__).resolve().parent.parent
     master_path = script_dir / "agent" / "master_config.json"
@@ -105,7 +106,7 @@ def main():
 
     print(f"🔄 Reading master configuration from {master_path}...")
     with open(master_path, "r") as f:
-        master = json.load(f)
+        master: dict = json.load(f)
 
     # Load machine-specific local overrides if present
     local_path = script_dir / "agent" / "master_config.local.json"
@@ -120,21 +121,20 @@ def main():
             print(f"⚠️ Warning: Failed to read local overrides: {exc}")
 
     # --- 1. Define Common System Configuration Paths ---
-    paths = {
+    paths: dict[str, Path] = {
         "home":              home,
         "central_skills":    home / ".agents" / "skills",
         "central_hooks":     home / ".agents" / "hooks",
         "central_subagents": home / ".agents" / "subagents",
     }
 
-    for d in ["central_skills", "central_hooks", "central_subagents"]:
-        paths[d].mkdir(parents=True, exist_ok=True)
-        Files.clean_compiler_owned(paths[d])
+    for key in ["central_skills", "central_hooks", "central_subagents"]:
+        paths[key].mkdir(parents=True, exist_ok=True)
+        Files.clean_compiler_owned(paths[key])
 
     # --- 2. Scan and Process Plugins ---
-    plugins_dir = script_dir / "plugins"
-    custom_skills, custom_hooks, custom_subagents = process_plugins(
-        plugins_dir, paths
+    _custom_skills, custom_hooks, custom_subagents = process_plugins(
+        script_dir / "plugins", paths
     )
 
     # --- 3. Compile & Deploy Active System Configurations ---
@@ -143,24 +143,24 @@ def main():
     mcp_servers        = master.get("mcp_servers", {})
     trusted_workspaces = master.get("trustedWorkspaces", [])
     agents_cfg         = master.get("agents", {})
-    backup_dir         = home / ".agents" / "backups" / datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
+    backup_dir         = home / ".agents" / "backups" / datetime.now().strftime("%Y%m%dT%H%M%S")
 
-    # Run the deployments (with auto-sync)
     deploy_antigravity(
-        paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents,
-        agent_cfg=agents_cfg.get("antigravity", {}), backup_dir=backup_dir
+        paths, color_scheme, permissions, mcp_servers,
+        trusted_workspaces, custom_hooks, custom_subagents,
+        agent_cfg=agents_cfg.get("antigravity"), backup_dir=backup_dir,
     )
     deploy_claude(
         paths, color_scheme, permissions, mcp_servers, custom_hooks,
-        agent_cfg=agents_cfg.get("claude", {}), backup_dir=backup_dir
+        agent_cfg=agents_cfg.get("claude"), backup_dir=backup_dir,
     )
     deploy_codex(
         paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents,
-        agent_cfg=agents_cfg.get("codex", {}), backup_dir=backup_dir
+        agent_cfg=agents_cfg.get("codex"), backup_dir=backup_dir,
     )
     deploy_opencode(
         paths, color_scheme, permissions, mcp_servers,
-        agent_cfg=agents_cfg.get("opencode", {}), backup_dir=backup_dir
+        agent_cfg=agents_cfg.get("opencode"), backup_dir=backup_dir,
     )
 
     if backup_dir.is_dir():
