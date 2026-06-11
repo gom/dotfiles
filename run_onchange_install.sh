@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -e
 
@@ -6,18 +6,31 @@ set -e
 CONFIG_DIR=${XDG_CONFIG_HOME:-"${HOME}/.config"}
 mkdir -p "${CONFIG_DIR}"
 
-# --- Font Installation ---
-echo "Checking and installing necessary fonts..."
+# --- Declarative Dependencies ---
+BREW_PACKAGES=(bash zsh)
+BREW_CASKS=(font-noto-nerd-font font-noto-sans-cjk-jp)
+
+ARCH_PACKAGES=(base-devel zsh ttf-noto-nerd noto-fonts-cjk)
+APT_PACKAGES=(build-essential zsh fonts-noto-cjk)
+
+# --- System Package Installation ---
+echo "Checking and installing system dependencies and fonts..."
 if command -v brew &>/dev/null; then
-    # macOS (and Linux running Homebrew)
-    # Use || true to prevent the script from exiting if the user already has them installed and brew complains
-    brew install --cask font-noto-nerd-font font-noto-sans-cjk-jp || true
+    echo "Using Homebrew..."
+    brew install "${BREW_PACKAGES[@]}" || true
+    brew install --cask "${BREW_CASKS[@]}" || true
 elif command -v paru &>/dev/null; then
-    # Arch Linux with paru AUR helper
-    paru -S --needed --noconfirm ttf-noto-nerd noto-fonts-cjk
+    echo "Using paru..."
+    paru -S --needed --noconfirm "${ARCH_PACKAGES[@]}"
 elif command -v pacman &>/dev/null; then
-    # Arch Linux default
-    sudo pacman -S --needed --noconfirm ttf-noto-nerd noto-fonts-cjk
+    echo "Using pacman..."
+    sudo pacman -S --needed --noconfirm "${ARCH_PACKAGES[@]}"
+elif command -v apt-get &>/dev/null; then
+    echo "Using apt..."
+    sudo apt-get update
+    sudo apt-get install -y "${APT_PACKAGES[@]}"
+else
+    echo "⚠️ No supported package manager found. Skipping system dependencies."
 fi
 
 # --- Mise Installation ---
