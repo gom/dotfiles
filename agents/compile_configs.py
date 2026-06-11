@@ -140,6 +140,8 @@ CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "agent", ".
 class PullEngine:
     @staticmethod
     def handle_json(path, generated_data, local_filename, allowed_keys=None):
+        if allowed_keys is None:
+            allowed_keys = [k for k in generated_data.keys() if not k.startswith('$')]
         local_path = os.path.join(LOCAL_CONFIGS_DIR, local_filename)
         cache_path = os.path.join(CACHE_DIR, local_filename)
 
@@ -213,6 +215,8 @@ class PullEngine:
 
     @staticmethod
     def handle_toml(path, generated_data, local_filename, allowed_keys=None):
+        if allowed_keys is None:
+            allowed_keys = [k for k in generated_data.keys() if not k.startswith('$')]
         local_path = os.path.join(LOCAL_CONFIGS_DIR, local_filename)
         cache_path = os.path.join(CACHE_DIR, local_filename)
 
@@ -713,7 +717,7 @@ def deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_wo
 
     ag_mcp = {"mcpServers": mcp_servers}
     ag_mcp_path = os.path.join(antigravity_dir, "mcp_config.json")
-    ag_mcp = PullEngine.handle_json(ag_mcp_path, ag_mcp, "antigravity_mcp.json", ["mcpServers"])
+    ag_mcp = PullEngine.handle_json(ag_mcp_path, ag_mcp, "antigravity_mcp.json")
     print("💾 Deploying Antigravity CLI MCP configuration...")
     Config.merge_json_file(ag_mcp_path, ag_mcp, overwrite_keys=["mcpServers"])
 
@@ -726,7 +730,7 @@ def deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_wo
         "subagents":         custom_subagents,
     }
     ag_settings_path = os.path.join(antigravity_dir, "settings.json")
-    ag_settings = PullEngine.handle_json(ag_settings_path, ag_settings, "antigravity_settings.json", ["permissions", "trustedWorkspaces", "hooks", "subagents", "colorScheme"])
+    ag_settings = PullEngine.handle_json(ag_settings_path, ag_settings, "antigravity_settings.json")
     print("💾 Deploying Antigravity CLI settings...")
     Config.merge_json_file(ag_settings_path, ag_settings, overwrite_keys=["permissions", "hooks", "subagents"])
 
@@ -757,13 +761,13 @@ def deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, a
         "env":         agent_cfg.get("env", {}),
     }
     c_settings_path = os.path.join(claude_dir, "settings.json")
-    c_settings = PullEngine.handle_json(c_settings_path, c_settings, "claude_settings.json", ["theme", "permissions", "hooks", "env"])
+    c_settings = PullEngine.handle_json(c_settings_path, c_settings, "claude_settings.json")
     print("💾 Deploying Claude Code settings...")
     Config.merge_json_file(c_settings_path, c_settings, overwrite_keys=["permissions", "hooks", "env"])
 
     c_mcp = {"mcpServers": mcp_servers}
     c_mcp_path = os.path.join(paths["home"], ".claude.json")
-    c_mcp = PullEngine.handle_json(c_mcp_path, c_mcp, "claude_mcp.json", ["mcpServers"])
+    c_mcp = PullEngine.handle_json(c_mcp_path, c_mcp, "claude_mcp.json")
     print("💾 Deploying Claude Code MCP configuration...")
     Config.merge_json_file(c_mcp_path, c_mcp, overwrite_keys=["mcpServers"])
 
@@ -791,7 +795,7 @@ def deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, cu
         "subagents":    custom_subagents,
     }
     codex_cfg_path = os.path.join(codex_dir, "config.toml")
-    codex_cfg = PullEngine.handle_toml(codex_cfg_path, codex_cfg, "codex_config.toml", ["color_scheme", "model", "permissions", "mcp_servers", "hooks", "subagents"])
+    codex_cfg = PullEngine.handle_toml(codex_cfg_path, codex_cfg, "codex_config.toml")
     print("💾 Deploying Codex config...")
     Config.merge_toml_file(codex_cfg_path, codex_cfg, overwrite_keys=["permissions", "mcp_servers", "hooks", "subagents", "model"])
 
@@ -803,7 +807,7 @@ def deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg={},
 
     if backup_dir:
         Config.backup(backup_dir, [
-            os.path.join(opencode_dir, "opencode.jsonc"),
+            os.path.join(opencode_dir, "opencode.json"),
             os.path.join(opencode_dir, "tui.json"),
         ])
 
@@ -826,8 +830,8 @@ def deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg={},
         "model":       agent_cfg.get("model", ""),
         "small_model": agent_cfg.get("small_model", ""),
     }
-    oc_path = os.path.join(opencode_dir, "opencode.jsonc")
-    oc_cfg = PullEngine.handle_json(oc_path, oc_cfg, "opencode.json", ["permission", "mcp", "provider", "model", "small_model"])
+    oc_path = os.path.join(opencode_dir, "opencode.json")
+    oc_cfg = PullEngine.handle_json(oc_path, oc_cfg, "opencode.json")
     print("💾 Deploying OpenCode settings...")
     Config.merge_json_file(oc_path, oc_cfg, overwrite_keys=["permission", "mcp", "provider", "model", "small_model"])
 
@@ -837,7 +841,7 @@ def deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg={},
         "theme": theme_name,
     }
     oc_tui_path = os.path.join(opencode_dir, "tui.json")
-    oc_tui = PullEngine.handle_json(oc_tui_path, oc_tui, "opencode_tui.json", ["theme"])
+    oc_tui = PullEngine.handle_json(oc_tui_path, oc_tui, "opencode_tui.json")
     Config.merge_json_file(oc_tui_path, oc_tui, overwrite_keys=["theme"])
 
 
