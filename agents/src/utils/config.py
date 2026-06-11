@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 from pathlib import Path
+import re
 from utils.toml import Toml
 from utils.fs import Files
 
@@ -67,7 +68,7 @@ class Config:
         copies of the original new_data values.
         """
         p = Path(path)
-        if p.is_symlink() or p.is_file():
+        if p.is_symlink():
             p.unlink(missing_ok=True)
         elif p.is_dir():
             shutil.rmtree(p)
@@ -103,7 +104,7 @@ class Config:
         then hard-replaces overwrite_keys with pristine new_data values.
         """
         p = Path(path)
-        if p.is_symlink() or p.is_file():
+        if p.is_symlink():
             p.unlink(missing_ok=True)
         elif p.is_dir():
             shutil.rmtree(p)
@@ -162,7 +163,6 @@ class PullEngine:
         if p.exists():
             try:
                 with open(p, "r") as f:
-                    import re
                     c = re.sub(r'(?<!:)\/\/.*', '', f.read())
                     active = json.loads(c)
             except Exception: pass
@@ -190,7 +190,7 @@ class PullEngine:
             if local_path.exists():
                 try:
                     with open(local_path) as f: existing = json.load(f)
-                except: pass
+                except Exception: pass
             merged = Config.deep_merge(existing, diff)
             if deleted_keys:
                 merged["_deleted_keys"] = list(set(merged.get("_deleted_keys", []) + deleted_keys))
@@ -217,7 +217,7 @@ class PullEngine:
                                 curr = curr[part]
                             else:
                                 break
-            except: pass
+            except Exception: pass
 
         CACHE_DIR.mkdir(parents=True, exist_ok=True)
         with open(cache_path, "w") as f:
@@ -264,7 +264,7 @@ class PullEngine:
             if local_path.exists():
                 try:
                     with open(local_path) as f: existing = Toml.parse_toml(f.read())
-                except: pass
+                except Exception: pass
             merged = Config.deep_merge(existing, diff)
             if deleted_keys:
                 merged["_deleted_keys"] = list(set(merged.get("_deleted_keys", []) + deleted_keys))
@@ -291,7 +291,7 @@ class PullEngine:
                                 curr = curr[part]
                             else:
                                 break
-            except: pass
+            except Exception: pass
 
         CACHE_DIR.mkdir(parents=True, exist_ok=True)
         with open(cache_path, "w") as f:

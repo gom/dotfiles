@@ -45,7 +45,7 @@ def deploy_antigravity(paths: dict[str, Path], color_scheme, permissions, mcp_se
     AgentDeployer.setup_symlinks(antigravity_dir, paths["central_skills"], paths["central_hooks"])
 
     ag_mcp = {"mcpServers": mcp_servers}
-    AgentDeployer.deploy_json(antigravity_dir / "mcp_config.json", ag_mcp, "antigravity_mcp.json", ["mcpServers"])
+    AgentDeployer.deploy_json("Antigravity MCP config", antigravity_dir / "mcp_config.json", ag_mcp, "antigravity_mcp.json", ["mcpServers"])
 
     ag_settings = {
         "colorScheme":       color_scheme,
@@ -55,7 +55,7 @@ def deploy_antigravity(paths: dict[str, Path], color_scheme, permissions, mcp_se
         "hooks":             custom_hooks,
         "subagents":         custom_subagents,
     }
-    AgentDeployer.deploy_json(antigravity_dir / "settings.json", ag_settings, "antigravity_settings.json", ["permissions", "hooks", "subagents"])
+    AgentDeployer.deploy_json("Antigravity settings", antigravity_dir / "settings.json", ag_settings, "antigravity_settings.json", ["permissions", "hooks", "subagents"])
 
 
 def deploy_claude(paths: dict[str, Path], color_scheme, permissions, mcp_servers, custom_hooks, agent_cfg={}, backup_dir: Path = None):
@@ -80,10 +80,10 @@ def deploy_claude(paths: dict[str, Path], color_scheme, permissions, mcp_servers
         "hooks":       custom_hooks,
         "env":         agent_cfg.get("env", {}),
     }
-    AgentDeployer.deploy_json(claude_dir / "settings.json", c_settings, "claude_settings.json", ["permissions", "hooks", "env"])
+    AgentDeployer.deploy_json("Claude settings", claude_dir / "settings.json", c_settings, "claude_settings.json", ["permissions", "hooks", "env"])
 
     c_mcp = {"mcpServers": mcp_servers}
-    AgentDeployer.deploy_json(paths["home"] / ".claude.json", c_mcp, "claude_mcp.json", ["mcpServers"])
+    AgentDeployer.deploy_json("Claude MCP config", paths["home"] / ".claude.json", c_mcp, "claude_mcp.json", ["mcpServers"])
 
 
 def deploy_codex(paths: dict[str, Path], color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents, agent_cfg={}, backup_dir: Path = None):
@@ -105,7 +105,7 @@ def deploy_codex(paths: dict[str, Path], color_scheme, permissions, mcp_servers,
         "hooks":        custom_hooks,
         "subagents":    custom_subagents,
     }
-    AgentDeployer.deploy_toml(codex_dir / "config.toml", codex_cfg, "codex_config.toml", ["permissions", "mcp_servers", "hooks", "subagents", "model"])
+    AgentDeployer.deploy_toml("Codex config", codex_dir / "config.toml", codex_cfg, "codex_config.toml", ["permissions", "mcp_servers", "hooks", "subagents", "model"])
 
 
 def deploy_opencode(paths: dict[str, Path], color_scheme, permissions, mcp_servers, agent_cfg={}, backup_dir: Path = None):
@@ -139,11 +139,11 @@ def deploy_opencode(paths: dict[str, Path], color_scheme, permissions, mcp_serve
         "model":       agent_cfg.get("model", ""),
         "small_model": agent_cfg.get("small_model", ""),
     }
-    AgentDeployer.deploy_json(opencode_dir / "opencode.json", oc_cfg, "opencode.json", ["permission", "mcp", "provider", "model", "small_model"])
+    AgentDeployer.deploy_json("OpenCode config", opencode_dir / "opencode.json", oc_cfg, "opencode.json", ["permission", "mcp", "provider", "model", "small_model"])
 
     theme_name = color_scheme.replace(" ", "")
     oc_tui = {
         "$schema": "https://opencode.ai/tui.json",
         "theme": theme_name,
     }
-    AgentDeployer.deploy_json(opencode_dir / "tui.json", oc_tui, "opencode_tui.json", ["theme"])
+    AgentDeployer.deploy_json("OpenCode TUI config", opencode_dir / "tui.json", oc_tui, "opencode_tui.json", ["theme"])

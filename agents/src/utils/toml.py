@@ -58,60 +58,7 @@ class Toml:
     def parse_toml(content):
         """
         Lightweight line-by-line TOML parser for basic flat/nested configs.
-        Limitations (fix #5 documented): no inline tables, no multi-line strings,
-        no array-of-tables (lines starting with [[) — sufficient for Codex
-        config.toml round-trips on keys produced by dict_to_toml.
+        Replaced with native tomllib for Python 3.11+ support.
         """
-        data = {}
-        current_table = data
-
-        for line in content.splitlines():
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-
-            # Standard table header (skip [[...]] array-of-tables lines)
-            if line.startswith("[") and line.endswith("]") and not line.startswith("[["):
-                table_name = line[1:-1].strip()
-                current_table = data
-                for part in table_name.split("."):
-                    part = part.strip()
-                    if part not in current_table or not isinstance(current_table[part], dict):
-                        current_table[part] = {}
-                    current_table = current_table[part]
-            elif "=" in line:
-                key, val_str = line.split("=", 1)
-                key = key.strip()
-                val_str = val_str.strip()
-
-                if val_str.startswith("[") and val_str.endswith("]"):
-                    items = []
-                    inner = val_str[1:-1].strip()
-                    if inner:
-                        for x in inner.split(","):
-                            x = x.strip()
-                            if x.startswith('"') and x.endswith('"'):
-                                items.append(x[1:-1].replace('\\"', '"'))
-                            elif x == "true":
-                                items.append(True)
-                            elif x == "false":
-                                items.append(False)
-                            else:
-                                try:
-                                    items.append(int(x))
-                                except ValueError:
-                                    items.append(x)
-                    current_table[key] = items
-                elif val_str.startswith('"') and val_str.endswith('"'):
-                    current_table[key] = val_str[1:-1].replace('\\"', '"')
-                elif val_str == "true":
-                    current_table[key] = True
-                elif val_str == "false":
-                    current_table[key] = False
-                else:
-                    try:
-                        current_table[key] = int(val_str)
-                    except ValueError:
-                        current_table[key] = val_str
-
-        return data
+        import tomllib
+        return tomllib.loads(content)

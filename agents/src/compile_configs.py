@@ -4,6 +4,7 @@ import sys
 import datetime
 from pathlib import Path
 
+from utils.config import Config
 from utils.fs import Files
 from deployers.manifests import (
     deploy_antigravity,
@@ -114,7 +115,6 @@ def main():
             with open(local_path, "r") as f:
                 local_master = json.load(f)
                 if isinstance(local_master, dict):
-                    from utils.config import Config
                     master = Config.deep_merge(master, local_master)
         except Exception as exc:
             print(f"⚠️ Warning: Failed to read local overrides: {exc}")
@@ -146,10 +146,22 @@ def main():
     backup_dir         = home / ".agents" / "backups" / datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
 
     # Run the deployments (with auto-sync)
-    deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents, agent_cfg=agents_cfg.get("antigravity", {}), backup_dir=backup_dir)
-    deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, agent_cfg=agents_cfg.get("claude", {}), backup_dir=backup_dir)
-    deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents, agent_cfg=agents_cfg.get("codex", {}), backup_dir=backup_dir)
-    deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg=agents_cfg.get("opencode", {}), backup_dir=backup_dir)
+    deploy_antigravity(
+        paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents,
+        agent_cfg=agents_cfg.get("antigravity", {}), backup_dir=backup_dir
+    )
+    deploy_claude(
+        paths, color_scheme, permissions, mcp_servers, custom_hooks,
+        agent_cfg=agents_cfg.get("claude", {}), backup_dir=backup_dir
+    )
+    deploy_codex(
+        paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents,
+        agent_cfg=agents_cfg.get("codex", {}), backup_dir=backup_dir
+    )
+    deploy_opencode(
+        paths, color_scheme, permissions, mcp_servers,
+        agent_cfg=agents_cfg.get("opencode", {}), backup_dir=backup_dir
+    )
 
     if backup_dir.is_dir():
         backed = [f for f in backup_dir.iterdir() if f.is_file()]
