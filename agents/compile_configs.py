@@ -135,79 +135,152 @@ class Toml:
 # ---------------------------------------------------------------------------
 
 LOCAL_CONFIGS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "agent", ".local_configs")
+CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "agent", ".cache", "last_deployed")
 
 class PullEngine:
     @staticmethod
-    def handle_json(path, generated_data, local_filename, pull_mode, allowed_keys=None):
+    def handle_json(path, generated_data, local_filename, allowed_keys=None):
         local_path = os.path.join(LOCAL_CONFIGS_DIR, local_filename)
-        if pull_mode:
-            active = {}
-            if os.path.exists(path):
-                try:
-                    with open(path, "r") as f:
-                        import re
-                        c = re.sub(r'//.*', '', f.read())
-                        active = json.loads(c)
-                except Exception: pass
-            diff = Config.dict_diff(generated_data, active)
-            if allowed_keys:
-                diff = {k: v for k, v in diff.items() if k in allowed_keys}
-            if diff:
-                os.makedirs(LOCAL_CONFIGS_DIR, exist_ok=True)
-                existing = {}
-                if os.path.exists(local_path):
-                    try:
-                        with open(local_path) as f: existing = json.load(f)
-                    except: pass
-                merged = Config.deep_merge(existing, diff)
-                with open(local_path, "w") as f:
-                    json.dump(merged, f, indent=2)
-                    f.write("\n")
-                print(f"📥 Pulled differences to {local_path}")
-            return generated_data
+        cache_path = os.path.join(CACHE_DIR, local_filename)
+
+        active = {}
+        if os.path.exists(path):
+            try:
+                with open(path, "r") as f:
+                    import re
+                    c = re.sub(r'(?<!:)\/\/.*', '', f.read())
+                    active = json.loads(c)
+            except Exception: pass
+
+        last_deployed = {}
+        if os.path.exists(cache_path):
+            try:
+                with open(cache_path, "r") as f:
+                    last_deployed = json.load(f)
+            except Exception: pass
+
+        if last_deployed:
+            diff, deleted_keys = Config.dict_diff_with_deletions(last_deployed, active)
         else:
+            diff = {}
+            deleted_keys = []
+
+        if allowed_keys:
+            diff = {k: v for k, v in diff.items() if k in allowed_keys}
+            deleted_keys = [k for k in deleted_keys if k.split('.')[0] in allowed_keys]
+
+        if diff or deleted_keys:
+            os.makedirs(LOCAL_CONFIGS_DIR, exist_ok=True)
+            existing = {}
             if os.path.exists(local_path):
                 try:
-                    with open(local_path) as f:
-                        override = json.load(f)
-                        generated_data = Config.deep_merge(generated_data, override)
+                    with open(local_path) as f: existing = json.load(f)
                 except: pass
-            return generated_data
+            merged = Config.deep_merge(existing, diff)
+            if deleted_keys:
+                merged["_deleted_keys"] = list(set(merged.get("_deleted_keys", []) + deleted_keys))
+            with open(local_path, "w") as f:
+                json.dump(merged, f, indent=2)
+                f.write("\n")
+            print(f"📥 Sync: Updated local overrides in {local_path}")
+
+        if os.path.exists(local_path):
+            try:
+                with open(local_path) as f:
+                    override = json.load(f)
+                deleted = override.pop("_deleted_keys", [])
+                generated_data = Config.deep_merge(generated_data, override)
+                for dk in deleted:
+                    parts = dk.split('.')
+                    curr = generated_data
+                    for i, part in enumerate(parts):
+                        if i == len(parts) - 1:
+                            if isinstance(curr, dict) and part in curr:
+                                del curr[part]
+                        else:
+                            if isinstance(curr, dict) and part in curr:
+                                curr = curr[part]
+                            else:
+                                break
+            except: pass
+
+        os.makedirs(CACHE_DIR, exist_ok=True)
+        with open(cache_path, "w") as f:
+            json.dump(generated_data, f, indent=2)
+            f.write("\n")
+
+        return generated_data
 
     @staticmethod
-    def handle_toml(path, generated_data, local_filename, pull_mode, allowed_keys=None):
+    def handle_toml(path, generated_data, local_filename, allowed_keys=None):
         local_path = os.path.join(LOCAL_CONFIGS_DIR, local_filename)
-        if pull_mode:
-            active = {}
-            if os.path.exists(path):
-                try:
-                    with open(path, "r") as f:
-                        active = Toml.parse_toml(f.read())
-                except Exception: pass
-            diff = Config.dict_diff(generated_data, active)
-            if allowed_keys:
-                diff = {k: v for k, v in diff.items() if k in allowed_keys}
-            if diff:
-                os.makedirs(LOCAL_CONFIGS_DIR, exist_ok=True)
-                existing = {}
-                if os.path.exists(local_path):
-                    try:
-                        with open(local_path) as f: existing = Toml.parse_toml(f.read())
-                    except: pass
-                merged = Config.deep_merge(existing, diff)
-                with open(local_path, "w") as f:
-                    f.write(Toml.dict_to_toml(merged))
-                    f.write("\n")
-                print(f"📥 Pulled differences to {local_path}")
-            return generated_data
+        cache_path = os.path.join(CACHE_DIR, local_filename)
+
+        active = {}
+        if os.path.exists(path):
+            try:
+                with open(path, "r") as f:
+                    active = Toml.parse_toml(f.read())
+            except Exception: pass
+
+        last_deployed = {}
+        if os.path.exists(cache_path):
+            try:
+                with open(cache_path, "r") as f:
+                    last_deployed = Toml.parse_toml(f.read())
+            except Exception: pass
+
+        if last_deployed:
+            diff, deleted_keys = Config.dict_diff_with_deletions(last_deployed, active)
         else:
+            diff = {}
+            deleted_keys = []
+
+        if allowed_keys:
+            diff = {k: v for k, v in diff.items() if k in allowed_keys}
+            deleted_keys = [k for k in deleted_keys if k.split('.')[0] in allowed_keys]
+
+        if diff or deleted_keys:
+            os.makedirs(LOCAL_CONFIGS_DIR, exist_ok=True)
+            existing = {}
             if os.path.exists(local_path):
                 try:
-                    with open(local_path) as f:
-                        override = Toml.parse_toml(f.read())
-                        generated_data = Config.deep_merge(generated_data, override)
+                    with open(local_path) as f: existing = Toml.parse_toml(f.read())
                 except: pass
-            return generated_data
+            merged = Config.deep_merge(existing, diff)
+            if deleted_keys:
+                merged["_deleted_keys"] = list(set(merged.get("_deleted_keys", []) + deleted_keys))
+            with open(local_path, "w") as f:
+                f.write(Toml.dict_to_toml(merged))
+                f.write("\n")
+            print(f"📥 Sync: Updated local overrides in {local_path}")
+
+        if os.path.exists(local_path):
+            try:
+                with open(local_path) as f:
+                    override = Toml.parse_toml(f.read())
+                deleted = override.pop("_deleted_keys", [])
+                generated_data = Config.deep_merge(generated_data, override)
+                for dk in deleted:
+                    parts = dk.split('.')
+                    curr = generated_data
+                    for i, part in enumerate(parts):
+                        if i == len(parts) - 1:
+                            if isinstance(curr, dict) and part in curr:
+                                del curr[part]
+                        else:
+                            if isinstance(curr, dict) and part in curr:
+                                curr = curr[part]
+                            else:
+                                break
+            except: pass
+
+        os.makedirs(CACHE_DIR, exist_ok=True)
+        with open(cache_path, "w") as f:
+            f.write(Toml.dict_to_toml(generated_data))
+            f.write("\n")
+
+        return generated_data
 
 class Config:
     @staticmethod
@@ -227,20 +300,36 @@ class Config:
     @staticmethod
     def dict_diff(base, active):
         """Recursively compute the diff between base and active."""
+        diff, _ = Config.dict_diff_with_deletions(base, active)
+        return diff
+
+    @staticmethod
+    def dict_diff_with_deletions(base, active, prefix=""):
+        """Recursively compute diff and deleted keys."""
         diff = {}
+        deleted = []
+
+        # Check for additions and modifications
         for k, v in active.items():
+            current_path = f"{prefix}{k}"
             if k not in base:
                 diff[k] = __import__("copy").deepcopy(v)
             elif isinstance(v, dict) and isinstance(base[k], dict):
-                sub_diff = Config.dict_diff(base[k], v)
-                if sub_diff:
-                    diff[k] = sub_diff
+                sub_diff, sub_del = Config.dict_diff_with_deletions(base[k], v, current_path + ".")
+                if sub_diff: diff[k] = sub_diff
+                deleted.extend(sub_del)
             elif isinstance(v, list) and isinstance(base[k], list):
                 if v != base[k]:
                     diff[k] = __import__("copy").deepcopy(v)
             elif v != base[k]:
                 diff[k] = __import__("copy").deepcopy(v)
-        return diff
+
+        # Check for deletions
+        for k in base:
+            if k not in active:
+                deleted.append(f"{prefix}{k}")
+
+        return diff, deleted
 
     @staticmethod
     def merge_json_file(path, new_data, overwrite_keys=None):
@@ -607,28 +696,26 @@ def process_plugins(plugins_dir, paths):
     return custom_skills, custom_hooks, custom_subagents
 
 
-def deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents, agent_cfg={}, backup_dir=None, pull_mode=False):
+def deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents, agent_cfg={}, backup_dir=None):
     """Deploy Antigravity CLI MCP configuration, settings, and symlinks."""
     antigravity_dir = os.path.join(paths["home"], ".gemini", "antigravity-cli")
     os.makedirs(antigravity_dir, exist_ok=True)
 
-    if backup_dir and not pull_mode:
+    if backup_dir:
         Config.backup(backup_dir, [
             os.path.join(antigravity_dir, "settings.json"),
             os.path.join(antigravity_dir, "mcp_config.json"),
         ])
 
-    if not pull_mode:
-        # Establish symlinks
-        Symlinks.ensure(paths["central_skills"], os.path.join(antigravity_dir, "skills"))
-        Symlinks.ensure(paths["central_hooks"], os.path.join(antigravity_dir, "hooks"))
+    # Establish symlinks
+    Symlinks.ensure(paths["central_skills"], os.path.join(antigravity_dir, "skills"))
+    Symlinks.ensure(paths["central_hooks"], os.path.join(antigravity_dir, "hooks"))
 
     ag_mcp = {"mcpServers": mcp_servers}
     ag_mcp_path = os.path.join(antigravity_dir, "mcp_config.json")
-    ag_mcp = PullEngine.handle_json(ag_mcp_path, ag_mcp, "antigravity_mcp.json", pull_mode, ["mcpServers"])
-    if not pull_mode:
-        print("💾 Deploying Antigravity CLI MCP configuration...")
-        Config.merge_json_file(ag_mcp_path, ag_mcp, overwrite_keys=["mcpServers"])
+    ag_mcp = PullEngine.handle_json(ag_mcp_path, ag_mcp, "antigravity_mcp.json", ["mcpServers"])
+    print("💾 Deploying Antigravity CLI MCP configuration...")
+    Config.merge_json_file(ag_mcp_path, ag_mcp, overwrite_keys=["mcpServers"])
 
     ag_settings = {
         "colorScheme":       color_scheme,
@@ -639,27 +726,25 @@ def deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_wo
         "subagents":         custom_subagents,
     }
     ag_settings_path = os.path.join(antigravity_dir, "settings.json")
-    ag_settings = PullEngine.handle_json(ag_settings_path, ag_settings, "antigravity_settings.json", pull_mode, ["permissions", "trustedWorkspaces", "hooks", "subagents", "colorScheme"])
-    if not pull_mode:
-        print("💾 Deploying Antigravity CLI settings...")
-        Config.merge_json_file(ag_settings_path, ag_settings, overwrite_keys=["permissions", "hooks", "subagents"])
+    ag_settings = PullEngine.handle_json(ag_settings_path, ag_settings, "antigravity_settings.json", ["permissions", "trustedWorkspaces", "hooks", "subagents", "colorScheme"])
+    print("💾 Deploying Antigravity CLI settings...")
+    Config.merge_json_file(ag_settings_path, ag_settings, overwrite_keys=["permissions", "hooks", "subagents"])
 
 
-def deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, agent_cfg={}, backup_dir=None, pull_mode=False):
+def deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, agent_cfg={}, backup_dir=None):
     """Deploy Claude Code Settings, MCP configuration, and symlinks."""
     claude_dir = os.path.join(paths["home"], ".claude")
     os.makedirs(claude_dir, exist_ok=True)
 
-    if backup_dir and not pull_mode:
+    if backup_dir:
         Config.backup(backup_dir, [
             os.path.join(claude_dir, "settings.json"),
             os.path.join(paths["home"], ".claude.json"),
         ])
 
-    if not pull_mode:
-        # Establish symlinks
-        Symlinks.ensure(paths["central_skills"], os.path.join(claude_dir, "skills"))
-        Symlinks.ensure(paths["central_hooks"], os.path.join(claude_dir, "hooks"))
+    # Establish symlinks
+    Symlinks.ensure(paths["central_skills"], os.path.join(claude_dir, "skills"))
+    Symlinks.ensure(paths["central_hooks"], os.path.join(claude_dir, "hooks"))
 
     claude_theme = color_scheme
     if "tokyo" in claude_theme.lower():
@@ -672,33 +757,30 @@ def deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, a
         "env":         agent_cfg.get("env", {}),
     }
     c_settings_path = os.path.join(claude_dir, "settings.json")
-    c_settings = PullEngine.handle_json(c_settings_path, c_settings, "claude_settings.json", pull_mode, ["theme", "permissions", "hooks", "env"])
-    if not pull_mode:
-        print("💾 Deploying Claude Code settings...")
-        Config.merge_json_file(c_settings_path, c_settings, overwrite_keys=["permissions", "hooks", "env"])
+    c_settings = PullEngine.handle_json(c_settings_path, c_settings, "claude_settings.json", ["theme", "permissions", "hooks", "env"])
+    print("💾 Deploying Claude Code settings...")
+    Config.merge_json_file(c_settings_path, c_settings, overwrite_keys=["permissions", "hooks", "env"])
 
     c_mcp = {"mcpServers": mcp_servers}
     c_mcp_path = os.path.join(paths["home"], ".claude.json")
-    c_mcp = PullEngine.handle_json(c_mcp_path, c_mcp, "claude_mcp.json", pull_mode, ["mcpServers"])
-    if not pull_mode:
-        print("💾 Deploying Claude Code MCP configuration...")
-        Config.merge_json_file(c_mcp_path, c_mcp, overwrite_keys=["mcpServers"])
+    c_mcp = PullEngine.handle_json(c_mcp_path, c_mcp, "claude_mcp.json", ["mcpServers"])
+    print("💾 Deploying Claude Code MCP configuration...")
+    Config.merge_json_file(c_mcp_path, c_mcp, overwrite_keys=["mcpServers"])
 
 
-def deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents, agent_cfg={}, backup_dir=None, pull_mode=False):
+def deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents, agent_cfg={}, backup_dir=None):
     """Deploy Codex Configuration (TOML) and symlinks."""
     codex_dir = os.path.join(paths["home"], ".codex")
     os.makedirs(codex_dir, exist_ok=True)
 
-    if backup_dir and not pull_mode:
+    if backup_dir:
         Config.backup(backup_dir, [
             os.path.join(codex_dir, "config.toml"),
         ])
 
-    if not pull_mode:
-        # Establish symlinks
-        Symlinks.ensure(paths["central_skills"], os.path.join(codex_dir, "skills"))
-        Symlinks.ensure(paths["central_hooks"], os.path.join(codex_dir, "hooks"))
+    # Establish symlinks
+    Symlinks.ensure(paths["central_skills"], os.path.join(codex_dir, "skills"))
+    Symlinks.ensure(paths["central_hooks"], os.path.join(codex_dir, "hooks"))
 
     codex_cfg = {
         "color_scheme": color_scheme,
@@ -709,31 +791,29 @@ def deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, cu
         "subagents":    custom_subagents,
     }
     codex_cfg_path = os.path.join(codex_dir, "config.toml")
-    codex_cfg = PullEngine.handle_toml(codex_cfg_path, codex_cfg, "codex_config.toml", pull_mode, ["color_scheme", "model", "permissions", "mcp_servers", "hooks", "subagents"])
-    if not pull_mode:
-        print("💾 Deploying Codex config...")
-        Config.merge_toml_file(codex_cfg_path, codex_cfg, overwrite_keys=["permissions", "mcp_servers", "hooks", "subagents", "model"])
+    codex_cfg = PullEngine.handle_toml(codex_cfg_path, codex_cfg, "codex_config.toml", ["color_scheme", "model", "permissions", "mcp_servers", "hooks", "subagents"])
+    print("💾 Deploying Codex config...")
+    Config.merge_toml_file(codex_cfg_path, codex_cfg, overwrite_keys=["permissions", "mcp_servers", "hooks", "subagents", "model"])
 
 
-def deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg={}, backup_dir=None, pull_mode=False):
+def deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg={}, backup_dir=None):
     """Deploy OpenCode Configuration, TUI Config, symlinks, and run obsolete hook cleanup."""
     opencode_dir = os.path.join(paths["home"], ".config", "opencode")
     os.makedirs(opencode_dir, exist_ok=True)
 
-    if backup_dir and not pull_mode:
+    if backup_dir:
         Config.backup(backup_dir, [
             os.path.join(opencode_dir, "opencode.jsonc"),
             os.path.join(opencode_dir, "tui.json"),
         ])
 
-    if not pull_mode:
-        opencode_hooks_path = os.path.join(opencode_dir, "hooks")
-        if os.path.islink(opencode_hooks_path):
-            os.remove(opencode_hooks_path)
-        elif os.path.isdir(opencode_hooks_path):
-            shutil.rmtree(opencode_hooks_path)
-        Symlinks.ensure(paths["central_skills"], os.path.join(opencode_dir, "commands"))
-        Symlinks.ensure(paths["central_subagents"], os.path.join(opencode_dir, "agents"))
+    opencode_hooks_path = os.path.join(opencode_dir, "hooks")
+    if os.path.islink(opencode_hooks_path):
+        os.remove(opencode_hooks_path)
+    elif os.path.isdir(opencode_hooks_path):
+        shutil.rmtree(opencode_hooks_path)
+    Symlinks.ensure(paths["central_skills"], os.path.join(opencode_dir, "commands"))
+    Symlinks.ensure(paths["central_subagents"], os.path.join(opencode_dir, "agents"))
 
     opencode_mcp = OpenCode.compile_mcp(mcp_servers)
     opencode_permission = OpenCode.compile_permission(permissions)
@@ -747,10 +827,9 @@ def deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg={},
         "small_model": agent_cfg.get("small_model", ""),
     }
     oc_path = os.path.join(opencode_dir, "opencode.jsonc")
-    oc_cfg = PullEngine.handle_json(oc_path, oc_cfg, "opencode.json", pull_mode, ["permission", "mcp", "provider", "model", "small_model"])
-    if not pull_mode:
-        print("💾 Deploying OpenCode settings...")
-        Config.merge_json_file(oc_path, oc_cfg, overwrite_keys=["permission", "mcp", "provider", "model", "small_model"])
+    oc_cfg = PullEngine.handle_json(oc_path, oc_cfg, "opencode.json", ["permission", "mcp", "provider", "model", "small_model"])
+    print("💾 Deploying OpenCode settings...")
+    Config.merge_json_file(oc_path, oc_cfg, overwrite_keys=["permission", "mcp", "provider", "model", "small_model"])
 
     theme_name = color_scheme.replace(" ", "")
     oc_tui = {
@@ -758,9 +837,8 @@ def deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg={},
         "theme": theme_name,
     }
     oc_tui_path = os.path.join(opencode_dir, "tui.json")
-    oc_tui = PullEngine.handle_json(oc_tui_path, oc_tui, "opencode_tui.json", pull_mode, ["theme"])
-    if not pull_mode:
-        Config.merge_json_file(oc_tui_path, oc_tui, overwrite_keys=["theme"])
+    oc_tui = PullEngine.handle_json(oc_tui_path, oc_tui, "opencode_tui.json", ["theme"])
+    Config.merge_json_file(oc_tui_path, oc_tui, overwrite_keys=["theme"])
 
 
 
@@ -805,8 +883,7 @@ def main():
 
     for d in ["central_skills", "central_hooks", "central_subagents"]:
         os.makedirs(paths[d], exist_ok=True)
-        if "--pull" not in sys.argv:
-            Files.clean_compiler_owned(paths[d])
+        Files.clean_compiler_owned(paths[d])
 
     # --- 2. Scan and Process Plugins ---
     plugins_dir = os.path.join(script_dir, "plugins")
@@ -824,17 +901,11 @@ def main():
     backup_dir  = os.path.join(home, ".agents", "backups",
                                datetime.datetime.now().strftime("%Y%m%dT%H%M%S"))
 
-    pull_mode = "--pull" in sys.argv
-    
-    # Run the deployments / pulls
-    deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents, agent_cfg=agents_cfg.get("antigravity", {}), backup_dir=backup_dir, pull_mode=pull_mode)
-    deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, agent_cfg=agents_cfg.get("claude", {}), backup_dir=backup_dir, pull_mode=pull_mode)
-    deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents, agent_cfg=agents_cfg.get("codex", {}), backup_dir=backup_dir, pull_mode=pull_mode)
-    deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg=agents_cfg.get("opencode", {}), backup_dir=backup_dir, pull_mode=pull_mode)
-
-    if pull_mode:
-        print("✨ Pull complete! Local additions saved to agent/.local_configs/")
-        return 0
+    # Run the deployments (with auto-sync)
+    deploy_antigravity(paths, color_scheme, permissions, mcp_servers, trusted_workspaces, custom_hooks, custom_subagents, agent_cfg=agents_cfg.get("antigravity", {}), backup_dir=backup_dir)
+    deploy_claude(paths, color_scheme, permissions, mcp_servers, custom_hooks, agent_cfg=agents_cfg.get("claude", {}), backup_dir=backup_dir)
+    deploy_codex(paths, color_scheme, permissions, mcp_servers, custom_hooks, custom_subagents, agent_cfg=agents_cfg.get("codex", {}), backup_dir=backup_dir)
+    deploy_opencode(paths, color_scheme, permissions, mcp_servers, agent_cfg=agents_cfg.get("opencode", {}), backup_dir=backup_dir)
 
     if os.path.isdir(backup_dir):
         backed = os.listdir(backup_dir)
