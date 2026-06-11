@@ -1,6 +1,0 @@
-[general]
-import = [
-  "~/.config/alacritty/linux.toml",
-  "~/.config/alacritty/color_solarized_dark.toml"
-]
-

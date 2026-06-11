@@ -1,0 +1,9 @@
+[general]
+import = [
+{{- if eq .chezmoi.os "linux" }}
+  "~/.config/alacritty/linux.toml",
+{{- else if eq .chezmoi.os "darwin" }}
+  "~/.config/alacritty/macos.toml",
+{{- end }}
+  "~/.config/alacritty/color_solarized_dark.toml"
+]
