@@ -41,6 +41,9 @@ usage = "latest"
 uv = "latest"
 # rust = "latest" # use rustup instead.
 
+# --- AI Tools ---
+"github:ogulcancelik/herdr" = "latest"
+
 [env]
 STARSHIP_CONFIG = '{{env.HOME}}/.config/starship/starship.toml'
 

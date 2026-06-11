@@ -1,0 +1,13 @@
+[theme]
+name = "solarized"
+
+[keys]
+prefix = "ctrl+t"
+
+[ui]
+sidebar_width = 16
+sidebar_min_width = 12
+sidebar_max_width = 24
+
+[ui.toast]
+delivery = "system"
