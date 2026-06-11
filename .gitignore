@@ -2,3 +2,4 @@
 .serena
 agents/plugins/external/
 agents/agent/master_config.local.json
+agents/agent/.local_configs/

@@ -21,6 +21,14 @@ fi
 echo "🚀 Starting Declarative Build & Deployment sequence..."
 echo ""
 
+PULL_FLAG=""
+for arg in "$@"; do
+    if [ "$arg" == "--pull" ]; then
+        PULL_FLAG="--pull"
+    fi
+done
+
+
 # Make compiler executable locally
 chmod +x "${DOTFILES_AGENTS_DIR}/compile_configs.py" || true
 
@@ -52,8 +60,12 @@ fi
 echo ""
 
 # --- Step 2: Run Compile & Deploy Engine ---
-echo "⚙️ [2/3] Compiling and deploying configurations to active paths..."
-python3 "${DOTFILES_AGENTS_DIR}/compile_configs.py"
+if [ -n "${PULL_FLAG}" ]; then
+    echo "📥 [2/3] Pulling active configurations into local overrides..."
+else
+    echo "⚙️ [2/3] Compiling and deploying configurations to active paths..."
+fi
+python3 "${DOTFILES_AGENTS_DIR}/compile_configs.py" ${PULL_FLAG}
 
 # Clean up any lingering symlinks at target folders if they exist
 for folder in ".gemini/antigravity-cli" ".claude" ".codex" ".config/opencode"; do
