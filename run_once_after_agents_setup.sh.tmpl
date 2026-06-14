@@ -1,0 +1,15 @@
+#!/bin/bash
+# run_once_after_agents_setup.sh.tmpl
+# This script is executed by chezmoi exactly once per machine
+
+echo "⚙️ Running one-time system setup tasks..."
+## For context-mode routing rules
+echo "📥 Downloading routing rules (AGENTS.md & GEMINI.md)..."
+mkdir -p ~/.codex ~/.gemini
+curl -sL https://raw.githubusercontent.com/mksglu/context-mode/main/configs/codex/AGENTS.md -o ~/.codex/AGENTS.md
+curl -sL https://raw.githubusercontent.com/mksglu/context-mode/main/configs/antigravity/GEMINI.md -o ~/.gemini/GEMINI.md
+
+if command -v codex &>/dev/null; then
+    echo "🧩 Installing Codex context-mode plugin..."
+    codex plugin marketplace add mksglu/context-mode || true
+fi

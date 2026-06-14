@@ -25,7 +25,7 @@ echo ""
 
 
 # Make compiler executable locally
-chmod +x "${DOTFILES_AGENTS_DIR}/compile_configs.py" || true
+chmod +x "${DOTFILES_AGENTS_DIR}/src/compile_configs.py" || true
 
 # --- Step 1: External Plugin Git Sync ---
 if command -v "${JQ_BIN}" &>/dev/null; then
@@ -56,7 +56,7 @@ echo ""
 
 # --- Step 2: Run Compile & Deploy Engine ---
 echo "⚙️ [2/3] Compiling and deploying configurations (auto-sync enabled)..."
-python3 "${DOTFILES_AGENTS_DIR}/compile_configs.py"
+python3 "${DOTFILES_AGENTS_DIR}/src/compile_configs.py"
 
 # Clean up any lingering symlinks at target folders if they exist
 for folder in ".gemini/antigravity-cli" ".claude" ".codex" ".config/opencode"; do

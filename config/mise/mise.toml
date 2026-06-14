@@ -43,6 +43,13 @@ uv = "latest"
 
 # --- AI Tools ---
 "github:ogulcancelik/herdr" = "latest"
+claude-code  = "latest"
+codex        = "latest"
+copilot-cli  = "latest"
+opencode     = "latest"
+"bun:context-mode" = "latest"
+"uv:serena" = "latest"
+"cargo:lean-ctx" = "latest"
 
 [env]
 STARSHIP_CONFIG = '{{env.HOME}}/.config/starship/starship.toml'
@@ -54,3 +61,18 @@ experimental = true
 verbose = false
 # asdfのプラグインショートカットを使用
 plugin_autoupdate_last_check_duration = "1 week"
+
+[tasks."agents:setup"]
+description = "Fetch routing rules and run platform plugin installations for AI agents"
+run = """
+#!/usr/bin/env bash
+echo "📥 Downloading routing rules (AGENTS.md & GEMINI.md)..."
+mkdir -p ~/.codex ~/.gemini
+curl -sL https://raw.githubusercontent.com/mksglu/context-mode/main/configs/codex/AGENTS.md -o ~/.codex/AGENTS.md
+curl -sL https://raw.githubusercontent.com/mksglu/context-mode/main/configs/antigravity/GEMINI.md -o ~/.gemini/GEMINI.md
+
+if command -v codex &>/dev/null; then
+    echo "🧩 Installing Codex context-mode plugin..."
+    codex plugin marketplace add mksglu/context-mode || true
+fi
+"""

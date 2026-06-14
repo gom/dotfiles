@@ -5,15 +5,17 @@ from deployers.base import AgentDeployer
 from utils.config import Config
 from utils.fs import Symlinks
 
-
 # ---------------------------------------------------------------------------
 # OpenCode-specific config translators
 # ---------------------------------------------------------------------------
 
-def _compile_opencode_mcp(mcp_servers: dict) -> dict:
-    """Translate the unified mcp_servers schema into the OpenCode 'mcp' block."""
+
+def _compile_opencode_mcp(mcp_servers: dict, plugins: list) -> dict:
+    """Translate the unified mcp_servers schema into the OpenCode 'mcp' block, excluding any that are natively handled as plugins."""
     result = {}
     for name, cfg in mcp_servers.items():
+        if name in plugins:
+            continue  # Avoid duplicate loading
         if "serverUrl" in cfg:
             result[name] = {"type": "remote", "url": cfg["serverUrl"], "enabled": True}
         elif "command" in cfg:
@@ -34,7 +36,7 @@ def _compile_opencode_permission(permissions: dict) -> dict:
     for level, action in [("allow", "allow"), ("ask", "ask")]:
         for entry in permissions.get(level, []):
             if entry.startswith("command(") and entry.endswith(")"):
-                cmd = entry[len("command("):-1].strip()
+                cmd = entry[len("command(") : -1].strip()
                 result["bash"][cmd] = action
                 result["bash"][f"{cmd} *"] = action
     return result
@@ -43,6 +45,7 @@ def _compile_opencode_permission(permissions: dict) -> dict:
 # ---------------------------------------------------------------------------
 # Per-agent deployers
 # ---------------------------------------------------------------------------
+
 
 def deploy_antigravity(
     paths: dict[str, Path],
@@ -61,12 +64,17 @@ def deploy_antigravity(
     antigravity_dir.mkdir(parents=True, exist_ok=True)
 
     if backup_dir:
-        Config.backup(backup_dir, [
-            antigravity_dir / "settings.json",
-            antigravity_dir / "mcp_config.json",
-        ])
+        Config.backup(
+            backup_dir,
+            [
+                antigravity_dir / "settings.json",
+                antigravity_dir / "mcp_config.json",
+            ],
+        )
 
-    AgentDeployer.setup_symlinks(antigravity_dir, paths["central_skills"], paths["central_hooks"])
+    AgentDeployer.setup_symlinks(
+        antigravity_dir, paths["central_skills"], paths["central_hooks"]
+    )
 
     AgentDeployer.deploy_json(
         "Antigravity MCP config",
@@ -79,12 +87,12 @@ def deploy_antigravity(
         "Antigravity settings",
         antigravity_dir / "settings.json",
         {
-            "colorScheme":       color_scheme,
-            "permissions":       permissions,
-            "statusLine":        {"type": "", "command": "", "enabled": True},
+            "colorScheme": color_scheme,
+            "permissions": permissions,
+            "statusLine": {"type": "", "command": "", "enabled": True},
             "trustedWorkspaces": trusted_workspaces,
-            "hooks":             custom_hooks,
-            "subagents":         custom_subagents,
+            "hooks": agent_cfg.get("hooks", custom_hooks),
+            "subagents": custom_subagents,
         },
         "antigravity_settings.json",
         ["permissions", "hooks", "subagents"],
@@ -106,12 +114,17 @@ def deploy_claude(
     claude_dir.mkdir(parents=True, exist_ok=True)
 
     if backup_dir:
-        Config.backup(backup_dir, [
-            claude_dir / "settings.json",
-            paths["home"] / ".claude.json",
-        ])
+        Config.backup(
+            backup_dir,
+            [
+                claude_dir / "settings.json",
+                paths["home"] / ".claude.json",
+            ],
+        )
 
-    AgentDeployer.setup_symlinks(claude_dir, paths["central_skills"], paths["central_hooks"])
+    AgentDeployer.setup_symlinks(
+        claude_dir, paths["central_skills"], paths["central_hooks"]
+    )
 
     claude_theme = "dark" if "tokyo" in color_scheme.lower() else color_scheme
 
@@ -119,10 +132,10 @@ def deploy_claude(
         "Claude settings",
         claude_dir / "settings.json",
         {
-            "theme":       claude_theme,
+            "theme": claude_theme,
             "permissions": permissions,
-            "hooks":       custom_hooks,
-            "env":         agent_cfg.get("env", {}),
+            "hooks": custom_hooks,
+            "env": agent_cfg.get("env", {}),
         },
         "claude_settings.json",
         ["permissions", "hooks", "env"],
@@ -154,21 +167,24 @@ def deploy_codex(
     if backup_dir:
         Config.backup(backup_dir, [codex_dir / "config.toml"])
 
-    AgentDeployer.setup_symlinks(codex_dir, paths["central_skills"], paths["central_hooks"])
+    AgentDeployer.setup_symlinks(
+        codex_dir, paths["central_skills"], paths["central_hooks"]
+    )
 
     AgentDeployer.deploy_toml(
         "Codex config",
         codex_dir / "config.toml",
         {
             "color_scheme": color_scheme,
-            "model":        agent_cfg.get("model", ""),
-            "permissions":  permissions,
-            "mcp_servers":  mcp_servers,
-            "hooks":        custom_hooks,
-            "subagents":    custom_subagents,
+            "model": agent_cfg.get("model", ""),
+            "features": agent_cfg.get("features", {}),
+            "permissions": permissions,
+            "mcp_servers": mcp_servers,
+            "hooks": custom_hooks,
+            "subagents": custom_subagents,
         },
         "codex_config.toml",
-        ["permissions", "mcp_servers", "hooks", "subagents", "model"],
+        ["features", "permissions", "mcp_servers", "hooks", "subagents", "model"],
     )
 
 
@@ -186,10 +202,13 @@ def deploy_opencode(
     opencode_dir.mkdir(parents=True, exist_ok=True)
 
     if backup_dir:
-        Config.backup(backup_dir, [
-            opencode_dir / "opencode.json",
-            opencode_dir / "tui.json",
-        ])
+        Config.backup(
+            backup_dir,
+            [
+                opencode_dir / "opencode.json",
+                opencode_dir / "tui.json",
+            ],
+        )
 
     # Remove any stale hooks symlink/dir before setting up the new layout
     hooks_path = opencode_dir / "hooks"
@@ -205,22 +224,23 @@ def deploy_opencode(
         "OpenCode config",
         opencode_dir / "opencode.json",
         {
-            "$schema":     "https://opencode.ai/config.json",
-            "permission":  _compile_opencode_permission(permissions),
-            "mcp":         _compile_opencode_mcp(mcp_servers),
-            "provider":    agent_cfg.get("provider", {}),
-            "model":       agent_cfg.get("model", ""),
+            "$schema": "https://opencode.ai/config.json",
+            "permission": _compile_opencode_permission(permissions),
+            "mcp": _compile_opencode_mcp(mcp_servers, agent_cfg.get("plugins", [])),
+            "plugin": agent_cfg.get("plugins", []),
+            "provider": agent_cfg.get("provider", {}),
+            "model": agent_cfg.get("model", ""),
             "small_model": agent_cfg.get("small_model", ""),
         },
         "opencode.json",
-        ["permission", "mcp", "provider", "model", "small_model"],
+        ["permission", "mcp", "plugin", "provider", "model", "small_model"],
     )
     AgentDeployer.deploy_json(
         "OpenCode TUI config",
         opencode_dir / "tui.json",
         {
             "$schema": "https://opencode.ai/tui.json",
-            "theme":   color_scheme.replace(" ", ""),
+            "theme": color_scheme.replace(" ", ""),
         },
         "opencode_tui.json",
         ["theme"],
