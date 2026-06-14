@@ -1,1 +1,5 @@
-source {{ .chezmoi.sourceDir }}/zsh/zshenv
+{{ include "zsh/zshenv" }}
+
+if [ -f "$HOME/.zshenv.local" ]; then
+    source "$HOME/.zshenv.local"
+fi

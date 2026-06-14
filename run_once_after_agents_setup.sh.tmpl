@@ -9,6 +9,7 @@ mkdir -p ~/.codex ~/.gemini
 curl -sL https://raw.githubusercontent.com/mksglu/context-mode/main/configs/codex/AGENTS.md -o ~/.codex/AGENTS.md
 curl -sL https://raw.githubusercontent.com/mksglu/context-mode/main/configs/antigravity/GEMINI.md -o ~/.gemini/GEMINI.md
 
+## For context-mode plugin installation
 if command -v codex &>/dev/null; then
     echo "🧩 Installing Codex context-mode plugin..."
     codex plugin marketplace add mksglu/context-mode || true

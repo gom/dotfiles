@@ -15,4 +15,3 @@ if (( $+commands[sheldon] )); then
   rehash
 fi
 
-[ -f $HOME/.zshrc.local ] && source $HOME/.zshrc.local
