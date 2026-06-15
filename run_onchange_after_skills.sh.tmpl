@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Hash: {{ include "agents/manifest.json" | sha256sum }}
+set -e
+
+MANIFEST="{{ .chezmoi.sourceDir }}/agents/manifest.json"
+NPX_BIN="${HOME}/.local/share/mise/shims/npx"
+command -v npx &>/dev/null && NPX_BIN="npx"
+
+install_skills() {
+    local source="$1"; shift
+    local flags=()
+    for skill in "$@"; do flags+=(--skill "$skill"); done
+    for agent in antigravity claude-code codex opencode; do
+        "$NPX_BIN" -y skills add "$source" "${flags[@]}" --global --agent "$agent" --yes || true
+    done
+}
+
+# Read global skills from manifest and install
+jq -c '.skills.global[]' "$MANIFEST" | while IFS= read -r entry; do
+    if echo "$entry" | jq -e '.source' &>/dev/null; then
+        src=$(echo "$entry" | jq -r '.source')
+        mapfile -t skills < <(echo "$entry" | jq -r '.skills[]')
+        install_skills "$src" "${skills[@]}"
+    else
+        src=$(echo "$entry" | jq -r '.')
+        install_skills "$src"
+    fi
+done

@@ -1,0 +1,29 @@
+color_scheme = "tokyo night"
+
+[features]
+plugin_hooks = true
+hooks = true
+
+[permissions]
+allow = ["command(ls)", "command(cat)", "command(git status)", "command(git log)", "command(docker compose)", "command(mkdir)", "command(pwd)", "command(find)", "command(git rev-parse)", "command(git remote)", "command(diff)", "command(date)", "command(echo)", "command(git add)"]
+ask = ["command(git commit)", "command(git push)"]
+
+[mcp_servers]
+
+[github]
+command = "/usr/local/bin/github-mcp-server"
+args = ["stdio"]
+env = {"GITHUB_PERSONAL_ACCESS_TOKEN": "$GITHUB_TOKEN"}
+
+[context-mode]
+command = "context-mode"
+
+[drawio]
+serverUrl = "https://mcp.draw.io/mcp"
+
+[tavily]
+serverUrl = "https://mcp.tavily.com/mcp/?tavilyApiKey=$TAVILY_API_KEY"
+
+[serena]
+command = "uvx"
+args = ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "claude-code", "--project-from-cwd"]

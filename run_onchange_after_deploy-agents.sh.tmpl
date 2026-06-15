@@ -1,5 +1,0 @@
-#!/bin/bash
-# Hash of deploy.sh: {{ include "agents/deploy.sh" | sha256sum }}
-# Hash of manifest.json: {{ include "agents/agent/manifest.json" | sha256sum }}
-# Hash of master_config.json: {{ include "agents/agent/master_config.json" | sha256sum }}
-bash {{ .chezmoi.sourceDir }}/agents/deploy.sh

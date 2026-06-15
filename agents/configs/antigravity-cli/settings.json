@@ -1,0 +1,78 @@
+{
+  "colorScheme": "tokyo night",
+  "permissions": {
+    "allow": [
+      "command(ls)",
+      "command(cat)",
+      "command(git status)",
+      "command(git log)",
+      "command(docker compose)",
+      "command(mkdir)",
+      "command(pwd)",
+      "command(find)",
+      "command(git rev-parse)",
+      "command(git remote)",
+      "command(diff)",
+      "command(date)",
+      "command(echo)",
+      "command(git add)"
+    ],
+    "ask": [
+      "command(git commit)",
+      "command(git push)"
+    ]
+  },
+  "statusLine": {
+    "type": "",
+    "command": "",
+    "enabled": true
+  },
+  "trustedWorkspaces": [],
+  "hooks": {
+    "BeforeTool": [
+      {
+        "matcher": "run_shell_command|read_file|read_many_files|grep_search|search_file_content|web_fetch|activate_skill|mcp__plugin_context-mode|mcp__context-mode|mcp__(?!.*context-mode)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "context-mode hook gemini-cli beforetool"
+          }
+        ]
+      }
+    ],
+    "AfterTool": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "context-mode hook gemini-cli aftertool"
+          }
+        ]
+      }
+    ],
+    "PreCompress": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "context-mode hook gemini-cli precompress"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "context-mode hook gemini-cli sessionstart"
+          }
+        ]
+      }
+    ]
+  },
+  "subagents": []
+}

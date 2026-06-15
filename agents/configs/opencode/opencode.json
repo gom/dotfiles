@@ -1,0 +1,105 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "bash": {
+      "*": "ask",
+      "ls": "allow",
+      "ls *": "allow",
+      "cat": "allow",
+      "cat *": "allow",
+      "git status": "allow",
+      "git status *": "allow",
+      "git log": "allow",
+      "git log *": "allow",
+      "docker compose": "allow",
+      "docker compose *": "allow",
+      "mkdir": "allow",
+      "mkdir *": "allow",
+      "pwd": "allow",
+      "pwd *": "allow",
+      "find": "allow",
+      "find *": "allow",
+      "git rev-parse": "allow",
+      "git rev-parse *": "allow",
+      "git remote": "allow",
+      "git remote *": "allow",
+      "diff": "allow",
+      "diff *": "allow",
+      "date": "allow",
+      "date *": "allow",
+      "echo": "allow",
+      "echo *": "allow",
+      "git add": "allow",
+      "git add *": "allow",
+      "git commit": "ask",
+      "git commit *": "ask",
+      "git push": "ask",
+      "git push *": "ask"
+    }
+  },
+  "mcp": {
+    "github": {
+      "type": "local",
+      "command": [
+        "/usr/local/bin/github-mcp-server",
+        "stdio"
+      ],
+      "enabled": true,
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "$GITHUB_TOKEN"
+      }
+    },
+    "drawio": {
+      "type": "remote",
+      "url": "https://mcp.draw.io/mcp",
+      "enabled": true
+    },
+    "tavily": {
+      "type": "remote",
+      "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=$TAVILY_API_KEY",
+      "enabled": true
+    },
+    "serena": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "claude-code",
+        "--project-from-cwd"
+      ],
+      "enabled": true
+    }
+  },
+  "plugin": [
+    "context-mode"
+  ],
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "{env:OLLAMA_BASE_URL}/v1"
+      },
+      "models": {
+        "qwen3.6:27b": {
+          "name": "Qwen 3.6 27B"
+        },
+        "qwen3.6:35b-a3b": {
+          "name": "Qwen 3.6 35B A3B"
+        },
+        "gemma4:26b": {
+          "name": "Gemma 4 26B"
+        },
+        "gemma4:e4b": {
+          "name": "Gemma 4 E4B"
+        }
+      }
+    }
+  },
+  "model": "ollama/qwen3.6:35b-a3b",
+  "small_model": "ollama/gemma4:e4b"
+}

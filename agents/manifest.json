@@ -3,7 +3,11 @@
     "global": [
       {
         "source": "https://github.com/obra/superpowers",
-        "skills": ["brainstorming", "writing-plans", "executing-plans"]
+        "skills": [
+          "brainstorming",
+          "writing-plans",
+          "executing-plans"
+        ]
       },
       {
         "source": "https://github.com/mattpocock/skills",
@@ -26,6 +30,5 @@
         ]
       }
     ]
-  },
-  "plugins": []
+  }
 }
