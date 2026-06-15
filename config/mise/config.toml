@@ -50,6 +50,8 @@ opencode     = "latest"
 "bun:context-mode" = "latest"
 "uv:serena" = "latest"
 "cargo:lean-ctx" = "latest"
+"npm:skills" = "latest"
+
 
 [env]
 STARSHIP_CONFIG = '{{env.HOME}}/.config/starship/starship.toml'

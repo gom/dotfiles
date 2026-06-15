@@ -3,15 +3,13 @@
 set -e
 
 MANIFEST="{{ .chezmoi.sourceDir }}/agents/manifest.json"
-NPX_BIN="${HOME}/.local/share/mise/shims/npx"
-command -v npx &>/dev/null && NPX_BIN="npx"
 
 install_skills() {
     local source="$1"; shift
     local flags=()
     for skill in "$@"; do flags+=(--skill "$skill"); done
     for agent in antigravity claude-code codex opencode; do
-        "$NPX_BIN" -y skills add "$source" "${flags[@]}" --global --agent "$agent" --yes || true
+        skills add "$source" "${flags[@]}" --global --agent "$agent" --yes || true
     done
 }
 

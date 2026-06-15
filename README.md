@@ -8,12 +8,8 @@ Before installing the dotfiles on a new machine, ensure the following core depen
 
 - **git**: Required to clone this repository.
 - **curl**: Required to download `chezmoi` and `mise`.
-- **zsh**: The primary shell configuration used.
-- **Build Tools**: Required by `mise` to compile language runtimes (e.g., Python, Ruby).
-  - macOS: `xcode-select --install`
-  - Arch Linux: `sudo pacman -S base-devel`
-  - Debian/Ubuntu: `sudo apt install build-essential`
-- **bash (macOS only)**: macOS ships with an outdated Bash (v3.2). You must install a modern version (v4.0+) via Homebrew (`brew install bash`) to support the `mapfile` command used in the agent deployment scripts.
+
+*Note: All other dependencies including Zsh, Bash (macOS), build tools, fonts, and language runtimes will be installed automatically during the setup process!*
 
 ## Install
 

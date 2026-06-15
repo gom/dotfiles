@@ -1,0 +1,10 @@
+[system_packages]
+  [system_packages.arch]
+  packages = ["base-devel", "zsh", "ttf-noto-nerd", "noto-fonts-cjk"]
+
+  [system_packages.brew]
+  packages = ["bash", "zsh"]
+  casks = ["font-noto-nerd-font", "font-noto-sans-cjk-jp"]
+
+  [system_packages.apt]
+  packages = ["build-essential", "zsh", "fonts-noto-cjk"]

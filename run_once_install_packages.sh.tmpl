@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -e
+
+CONFIG_DIR=${XDG_CONFIG_HOME:-"${HOME}/.config"}
+LOCAL_BIN_DIR="${HOME}/.local/bin"
+mkdir -p "${CONFIG_DIR}" "${LOCAL_BIN_DIR}"
+
+echo "Checking and installing system dependencies and fonts..."
+
+{{ if eq .chezmoi.os "darwin" -}}
+echo "Using Homebrew..."
+brew install {{ .system_packages.brew.packages | join " " }} || true
+brew install --cask {{ .system_packages.brew.casks | join " " }} || true
+{{ else if eq .chezmoi.osRelease.id "arch" -}}
+echo "Using pacman..."
+sudo pacman -S --needed --noconfirm {{ .system_packages.arch.packages | join " " }}
+{{ else if eq .chezmoi.osRelease.id "ubuntu" "debian" -}}
+echo "Using apt..."
+sudo apt-get update
+sudo apt-get install -y {{ .system_packages.apt.packages | join " " }}
+{{ else -}}
+echo "⚠️ No supported package manager found. Skipping system dependencies."
+{{ end -}}
+
+# Install mise binary if missing (bootstrap)
+MISE_INSTALL_PATH="${LOCAL_BIN_DIR}/mise"
+if [ ! -e "${MISE_INSTALL_PATH}" ]; then
+    echo "Installing mise binary..."
+    mkdir -p "$(dirname "${MISE_INSTALL_PATH}")"
+    curl https://mise.run | sh
+fi

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Hash: {{ include "config/mise/config.toml" | sha256sum }}
+set -e
+
+MISE_INSTALL_PATH="${HOME}/.local/bin/mise"
+
+if [ -e "${MISE_INSTALL_PATH}" ]; then
+    echo "Installing tools via mise..."
+    "${MISE_INSTALL_PATH}" install
+else
+    echo "⚠️ mise binary not found. Please ensure run_once_install_packages.sh.tmpl ran."
+fi
