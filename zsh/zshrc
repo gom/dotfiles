@@ -14,4 +14,3 @@ if (( $+commands[sheldon] )); then
   source "$sheldon_cache"
   rehash
 fi
-

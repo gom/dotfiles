@@ -6,7 +6,6 @@ Managed via [chezmoi](https://chezmoi.io/).
 
 Before installing the dotfiles on a new machine, ensure the following core dependencies are installed on your system:
 
-- **git**: Required to clone this repository.
 - **curl**: Required to download `chezmoi` and `mise`.
 
 *Note: All other dependencies including Zsh, Bash (macOS), build tools, fonts, and language runtimes will be installed automatically during the setup process!*
