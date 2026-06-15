@@ -39,7 +39,7 @@ python = "latest"
 go = "latest"
 usage = "latest"
 uv = "latest"
-# rust = "latest" # use rustup instead.
+bun = "latest"
 
 # --- AI Tools ---
 "github:ogulcancelik/herdr" = "latest"
@@ -47,9 +47,8 @@ claude-code  = "latest"
 codex        = "latest"
 copilot-cli  = "latest"
 opencode     = "latest"
-"bun:context-mode" = "latest"
-"uv:serena" = "latest"
-"cargo:lean-ctx" = "latest"
+"github:yvgude/lean-ctx" = "latest"
+"npm:context-mode" = "latest"
 "npm:skills" = "latest"
 
 
@@ -63,3 +62,5 @@ experimental = true
 verbose = false
 # asdfのプラグインショートカットを使用
 plugin_autoupdate_last_check_duration = "1 week"
+
+npm.package_manager = "bun"
