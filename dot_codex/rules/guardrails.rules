@@ -1,0 +1,62 @@
+# Privileged operations
+prefix_rule(
+    pattern = ["sudo"],
+    decision = "forbidden",
+    justification = "Codex should not run privileged commands. Run sudo commands manually.",
+)
+
+# Destructive filesystem operations
+prefix_rule(
+    pattern = ["rm"],
+    decision = "prompt",
+    justification = "Removing files should be reviewed.",
+)
+
+prefix_rule(
+    pattern = ["rmdir"],
+    decision = "prompt",
+    justification = "Removing directories should be reviewed.",
+)
+
+prefix_rule(
+    pattern = ["mv"],
+    decision = "prompt",
+    justification = "Moving files can overwrite or hide changes.",
+)
+
+prefix_rule(
+    pattern = ["cp"],
+    decision = "prompt",
+    justification = "Copying files can overwrite existing files.",
+)
+
+prefix_rule(
+    pattern = ["chmod"],
+    decision = "prompt",
+    justification = "Changing permissions should be reviewed.",
+)
+
+prefix_rule(
+    pattern = ["chown"],
+    decision = "prompt",
+    justification = "Changing ownership should be reviewed.",
+)
+
+# Shell wrappers: keep these reviewed
+prefix_rule(
+    pattern = ["bash"],
+    decision = "prompt",
+    justification = "Shell commands can hide multiple operations.",
+)
+
+prefix_rule(
+    pattern = ["sh"],
+    decision = "prompt",
+    justification = "Shell commands can hide multiple operations.",
+)
+
+prefix_rule(
+    pattern = ["zsh"],
+    decision = "prompt",
+    justification = "Shell commands can hide multiple operations.",
+)

@@ -1,0 +1,22 @@
+approval_policy = "on-request"
+
+[features]
+plugin_hooks = true
+hooks = true
+
+[mcp_servers]
+
+[github]
+command = "/usr/local/bin/github-mcp-server"
+args = ["stdio"]
+env = {"GITHUB_PERSONAL_ACCESS_TOKEN": "$GITHUB_TOKEN"}
+
+[context-mode]
+command = "context-mode"
+
+[drawio]
+serverUrl = "https://mcp.draw.io/mcp"
+
+[serena]
+command = "uvx"
+args = ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "claude-code", "--project-from-cwd"]
