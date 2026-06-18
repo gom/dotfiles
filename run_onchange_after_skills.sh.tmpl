@@ -4,23 +4,47 @@ set -e
 
 MANIFEST="{{ .chezmoi.sourceDir }}/agents/manifest.json"
 
+JQ_BIN="jq"
+if ! command -v jq &>/dev/null; then
+    for path in "$HOME/.local/share/mise/installs/jq/latest/jq" \
+                "$HOME/.local/share/mise/installs/jq"/*/jq \
+                "$HOME/.local/share/mise/shims/jq"; do
+        if [ -x "$path" ]; then
+            JQ_BIN="$path"
+            break
+        fi
+    done
+fi
+
+SKILLS_BIN="skills"
+if ! command -v skills &>/dev/null; then
+    for path in "$HOME/.local/share/mise/shims/skills" \
+                "$HOME/.local/share/mise/installs/npm-skills/latest/bin/skills" \
+                "$HOME/.local/share/mise/installs/npm-skills"/*/bin/skills; do
+        if [ -x "$path" ]; then
+            SKILLS_BIN="$path"
+            break
+        fi
+    done
+fi
+
 install_skills() {
     local source="$1"; shift
     local flags=()
     for skill in "$@"; do flags+=(--skill "$skill"); done
     for agent in antigravity claude-code codex opencode; do
-        skills add "$source" "${flags[@]}" --global --agent "$agent" --yes || true
+        "$SKILLS_BIN" add "$source" "${flags[@]}" --global --agent "$agent" --yes || true
     done
 }
 
 # Read global skills from manifest and install
-jq -c '.skills.global[]' "$MANIFEST" | while IFS= read -r entry; do
-    if echo "$entry" | jq -e '.source' &>/dev/null; then
-        src=$(echo "$entry" | jq -r '.source')
-        mapfile -t skills < <(echo "$entry" | jq -r '.skills[]')
+while IFS= read -u 3 -r entry; do
+    if echo "$entry" | "$JQ_BIN" -e '.source' &>/dev/null; then
+        src=$(echo "$entry" | "$JQ_BIN" -r '.source')
+        mapfile -t skills < <(echo "$entry" | "$JQ_BIN" -r '.skills[]')
         install_skills "$src" "${skills[@]}"
     else
-        src=$(echo "$entry" | jq -r '.')
+        src=$(echo "$entry" | "$JQ_BIN" -r '.')
         install_skills "$src"
     fi
-done
+done 3< <("$JQ_BIN" -c '.skills.global[]' "$MANIFEST")
