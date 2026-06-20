@@ -1,3 +1,9 @@
+onboarding = false
+
+[terminal]
+default_shell = "zsh"
+shell_mode = "auto"
+
 [theme]
 name = "solarized"
 
