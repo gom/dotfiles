@@ -1,79 +1,68 @@
 update() {
-  # Update all packages and plugins
-  echo -e "\e[32mUpdating system packages...\e[m"
-  if command -v brew &>/dev/null; then
-    brew update
-    brew upgrade
-    brew upgrade --cask
-  elif command -v paru &>/dev/null; then
-    paru -Syu --skipreview
-  elif command -v pacman &>/dev/null; then
-    sudo pacman -Syu --noconfirm
-  elif command -v apt-get &>/dev/null; then
-    sudo apt-get update && sudo apt-get upgrade -y
-  elif command -v dnf &>/dev/null; then
-    sudo dnf upgrade --refresh -y
-  elif command -v yum &>/dev/null; then
-    sudo yum update -y
+  local -a _failed=()
+
+  # ── System packages ──────────────────────────────────────────────
+  print -P "%F{blue}━━ System packages%f"
+  if (( $+commands[brew] )); then
+    brew update && brew upgrade && brew upgrade --cask || _failed+=(brew)
+  elif (( $+commands[paru] )); then
+    paru -Syu --skipreview || _failed+=(paru)
+  elif (( $+commands[pacman] )); then
+    sudo pacman -Syu --noconfirm || _failed+=(pacman)
+  elif (( $+commands[apt-get] )); then
+    sudo apt-get update && sudo apt-get upgrade -y || _failed+=("apt-get")
+  elif (( $+commands[dnf] )); then
+    sudo dnf upgrade --refresh -y || _failed+=(dnf)
+  elif (( $+commands[yum] )); then
+    sudo yum update -y || _failed+=(yum)
   else
-    echo -e "\e[31mNo package manager found. Skipping system update.\e[m"
+    print -P "%F{yellow}No package manager found. Skipping.%f"
   fi
 
-  # Update Flatpak packages
-  if command -v flatpak &>/dev/null; then
-    echo -e "\e[32mUpdating Flatpak packages...\e[m"
-    flatpak update -y
-  else
-    echo -e "\e[31mflatpak is not installed. Skipping Flatpak updates.\e[m"
+  # ── Optional tools (silent skip if absent) ───────────────────────
+  if (( $+commands[flatpak] )); then
+    print -P "%F{blue}━━ Flatpak%f"
+    flatpak update -y || _failed+=(flatpak)
   fi
 
-  # Update mise and its plugins/tools
-  if command -v mise &>/dev/null; then
-    echo -e "\e[32mUpdating mise...\e[m"
-    mise self-update -y
-    echo -e "\e[32mUpdating mise plugins...\e[m"
-    mise plugins update -y
-    echo -e "\e[32mUpgrading mise tools...\e[m"
-    mise upgrade -y
-  else
-    echo -e "\e[31mmise is not installed. Skipping mise updates.\e[m"
+  if (( $+commands[mise] )); then
+    print -P "%F{blue}━━ mise%f"
+    mise self-update -y && mise plugins update -y && mise upgrade -y \
+      || _failed+=(mise)
   fi
 
-  # Update rust toolchain
-  if command -v rustup &>/dev/null; then
-    echo -e "\e[32mUpdating Rust toolchain...\e[m"
-    rustup update
-  else
-    echo -e "\e[31mrustup is not installed. Skipping Rust updates.\e[m"
+  if (( $+commands[rustup] )); then
+    print -P "%F{blue}━━ Rust toolchain%f"
+    rustup update || _failed+=(rustup)
   fi
 
-  # Update sheldon plugins
-  if command -v sheldon &>/dev/null; then
-    echo -e "\e[32mUpdating sheldon plugins...\e[m"
-    sheldon lock --update
-  else
-    echo -e "\e[31msheldon is not installed. Skipping sheldon plugin updates.\e[m"
+  if (( $+commands[sheldon] )); then
+    print -P "%F{blue}━━ sheldon plugins%f"
+    sheldon lock --update || _failed+=(sheldon)
   fi
 
-  # Update NeoVim plugins
-  if command -v nvim &>/dev/null; then
-    echo -e "\e[32mUpdating NeoVim plugins...\e[m"
-    nvim --headless "+Lazy! sync" +qa
-  else
-    echo -e "\e[31mneovim is not installed. Skipping neovim plugin updates.\e[m"
+  if (( $+commands[nvim] )); then
+    print -P "%F{blue}━━ NeoVim plugins%f"
+    nvim --headless "+Lazy! sync" +qa || _failed+=(nvim)
   fi
 
-  # Update tmux plugins
-  if [ -x "${HOME}/.tmux/plugins/tpm/bin/update_plugins" ]; then
-    echo -e "\e[32mUpdating tmux plugins...\e[m"
-    "${HOME}/.tmux/plugins/tpm/bin/update_plugins" all
-  else
-    # Note: Not an error. TPM is naturally absent before the first tmux launch.
-    echo -e "\e[33mTPM updater script not found. It might not be installed yet by tmux.\e[m"
+  if [[ -x "${HOME}/.tmux/plugins/tpm/bin/update_plugins" ]]; then
+    print -P "%F{blue}━━ tmux plugins%f"
+    "${HOME}/.tmux/plugins/tpm/bin/update_plugins" all || _failed+=(tpm)
   fi
 
-  # Update all git repositories in ${HOME}/src
-  if type bulk_pull &>/dev/null; then
-    bulk_pull ${HOME}/src
+  # ── Git repos ────────────────────────────────────────────────────
+  if (( $+functions[bulk_pull] || $+commands[bulk_pull] )); then
+    print -P "%F{blue}━━ Git repos (~/src)%f"
+    bulk_pull "${HOME}/src" || _failed+=("bulk_pull")
+  fi
+
+  # ── Summary ──────────────────────────────────────────────────────
+  print ""
+  if (( ${#_failed} )); then
+    print -P "%F{red}✗ Failed steps: ${(j:, :)_failed}%f"
+    return 1
+  else
+    print -P "%F{green}✓ All updates complete.%f"
   fi
 }
