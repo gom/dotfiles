@@ -1,83 +1,6 @@
 {
   "colorScheme": "tokyo night",
-  "toolPermission": "request-review",
   "enableTerminalSandbox": true,
-  "permissions": {
-    "allow": [
-      "command(ls)",
-      "command(cat)",
-      "command(pwd)",
-      "command(grep)",
-      "command(rg)",
-      "command(head)",
-      "command(tail)",
-      "command(wc)",
-      "command(file)",
-      "command(stat)",
-      "command(realpath)",
-      "command(tree)",
-      "command(jq)",
-      "command(diff)",
-      "command(date)",
-      "command(echo)",
-
-      "command(git status)",
-      "command(git log)",
-      "command(git rev-parse)",
-      "command(git remote)",
-      "command(git diff)",
-      "command(git show)",
-      "command(git ls-files)",
-      "command(git grep)",
-      "command(git branch --show-current)",
-      "command(git branch --list)",
-      "command(git config --get)",
-      "command(git config --list)",
-      "command(git add)"
-    ],
-    "ask": [
-      "command(find)",
-      "command(mkdir)",
-
-      "command(git commit)",
-      "command(git push)",
-      "command(git checkout)",
-      "command(git switch)",
-      "command(git restore)",
-      "command(git reset)",
-      "command(git merge)",
-      "command(git rebase)",
-      "command(git cherry-pick)",
-      "command(git revert)",
-      "command(git fetch)",
-      "command(git pull)",
-
-      "command(rm)",
-      "command(rmdir)",
-      "command(mv)",
-      "command(cp)",
-      "command(chmod)",
-      "command(chown)",
-
-      "command(bash)",
-      "command(sh)",
-      "command(zsh)"
-    ],
-    "deny": [
-      "command(sudo)",
-
-      "command(git reset --hard)",
-      "command(git clean)",
-      "command(git push --force)",
-      "command(git push -f)"
-    ]
-  },
-  "statusLine": {
-    "type": "",
-    "command": "",
-    "enabled": true
-  },
-  "trustedWorkspaces": [],
   "hooks": {
     "BeforeTool": [
       {
@@ -124,5 +47,76 @@
       }
     ]
   },
-  "subagents": []
+  "permissions": {
+    "allow": [
+      "command(ls)",
+      "command(cat)",
+      "command(pwd)",
+      "command(grep)",
+      "command(rg)",
+      "command(head)",
+      "command(tail)",
+      "command(wc)",
+      "command(file)",
+      "command(stat)",
+      "command(realpath)",
+      "command(tree)",
+      "command(jq)",
+      "command(diff)",
+      "command(date)",
+      "command(echo)",
+      "command(git status)",
+      "command(git log)",
+      "command(git rev-parse)",
+      "command(git remote)",
+      "command(git diff)",
+      "command(git show)",
+      "command(git ls-files)",
+      "command(git grep)",
+      "command(git branch --show-current)",
+      "command(git branch --list)",
+      "command(git config --get)",
+      "command(git config --list)",
+      "command(git add)"
+    ],
+    "deny": [
+      "command(sudo)",
+      "command(git reset --hard)",
+      "command(git clean)",
+      "command(git push --force)",
+      "command(git push -f)"
+    ],
+    "ask": [
+      "command(find)",
+      "command(mkdir)",
+      "command(git commit)",
+      "command(git push)",
+      "command(git checkout)",
+      "command(git switch)",
+      "command(git restore)",
+      "command(git reset)",
+      "command(git merge)",
+      "command(git rebase)",
+      "command(git cherry-pick)",
+      "command(git revert)",
+      "command(git fetch)",
+      "command(git pull)",
+      "command(rm)",
+      "command(rmdir)",
+      "command(mv)",
+      "command(cp)",
+      "command(chmod)",
+      "command(chown)",
+      "command(bash)",
+      "command(sh)",
+      "command(zsh)"
+    ]
+  },
+  "statusLine": {
+    "type": "",
+    "command": "",
+    "enabled": true
+  },
+  "subagents": [],
+  "trustedWorkspaces": []
 }

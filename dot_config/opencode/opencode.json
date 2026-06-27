@@ -166,8 +166,62 @@
           "name": "Gemma 4 E4B"
         }
       }
+    },
+    "openrouter" : {
+      "models": {
+        "~z-ai/glm-5.2":{
+          "options": {
+            "provider": {
+              "only": ["z-ai", "novita"],
+              "allow_fallbacks": false
+            }
+          }
+        },
+        "~deepseek/deepseek-v4-pro": {
+          "options": {
+            "provider": {
+              "only": ["deepseek", "baidu"],
+              "allow_fallbacks": false
+            }
+          }
+        },
+        "~moonshotai/kimi-k2.7-code": {
+          "options": {
+            "provider": {
+              "only": ["moonshotai", "novita"],
+              "allow_fallbacks": false
+            }
+          }
+        },
+        "~xiaomi/mimo-v2.5-pro": {
+          "options": {
+            "provider": {
+              "only": ["xiaomi", "novita"],
+              "allow_fallbacks": false
+            }
+          }
+        },
+        "~qwen/qwen3.7-max": {},
+        "~deepseek/deepseek-v4-flash": {
+          "options": {
+            "provider": {
+              "only": ["deepseek", "baidu"],
+              "allow_fallbacks": false
+            }
+          }
+        },
+        "~minimax/minimax-m3": {
+          "options": {
+            "provider": {
+              "only": ["minimax", "novita"],
+              "allow_fallbacks": false
+            }
+          }
+        }
+      }
     }
   },
-  "model": "ollama/qwen3.6:35b-a3b",
-  "small_model": "ollama/gemma4:e4b"
+  "enabled_providers": ["openrouter"],
+  "model": "openrouter/deepseel/deepseek-v4-pro",
+  "small_model": "openrouter/openai/gpt-oss-120b"
 }
