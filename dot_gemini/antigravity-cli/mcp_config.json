@@ -29,6 +29,16 @@
         "claude-code",
         "--project-from-cwd"
       ]
+    },
+    "headroom": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "headroom-ai[mcp]",
+        "headroom",
+        "mcp",
+        "serve"
+      ]
     }
   }
 }

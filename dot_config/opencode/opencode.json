@@ -139,6 +139,17 @@
         "--project-from-cwd"
       ],
       "enabled": true
+    },
+    "headroom": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "--from",
+        "headroom-ai[mcp]",
+        "headroom",
+        "mcp",
+        "serve"
+      ]
     }
   },
   "plugin": ["context-mode"],
