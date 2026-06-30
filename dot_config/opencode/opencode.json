@@ -135,7 +135,7 @@
         "serena",
         "start-mcp-server",
         "--context",
-        "claude-code",
+        "ide",
         "--project-from-cwd"
       ],
       "enabled": true
@@ -183,32 +183,36 @@
         "~z-ai/glm-5.2":{
           "options": {
             "provider": {
-              "only": ["z-ai", "novita"],
-              "allow_fallbacks": false
+              "sort": "price",
+              "data_collection": "deny",
+              "quantizations": ["fp16", "bf16"]
             }
           }
         },
         "~deepseek/deepseek-v4-pro": {
           "options": {
             "provider": {
-              "only": ["deepseek", "baidu"],
-              "allow_fallbacks": false
+              "sort": "price",
+              "data_collection": "deny",
+              "quantizations": ["fp16", "bf16"]
             }
           }
         },
         "~moonshotai/kimi-k2.7-code": {
           "options": {
             "provider": {
-              "only": ["moonshotai", "novita"],
-              "allow_fallbacks": false
+              "sort": "price",
+              "data_collection": "deny",
+              "quantizations": ["fp16", "bf16"]
             }
           }
         },
         "~xiaomi/mimo-v2.5-pro": {
           "options": {
             "provider": {
-              "only": ["xiaomi", "novita"],
-              "allow_fallbacks": false
+              "sort": "price",
+              "data_collection": "deny",
+              "quantizations": ["fp16", "bf16"]
             }
           }
         },
@@ -216,16 +220,18 @@
         "~deepseek/deepseek-v4-flash": {
           "options": {
             "provider": {
-              "only": ["deepseek", "baidu"],
-              "allow_fallbacks": false
+              "sort": "price",
+              "data_collection": "deny",
+              "quantizations": ["fp16", "bf16"]
             }
           }
         },
         "~minimax/minimax-m3": {
           "options": {
             "provider": {
-              "only": ["minimax", "novita"],
-              "allow_fallbacks": false
+              "sort": "price",
+              "data_collection": "deny",
+              "quantizations": ["fp16", "bf16"]
             }
           }
         }
@@ -233,6 +239,5 @@
     }
   },
   "enabled_providers": ["openrouter"],
-  "model": "openrouter/deepseel/deepseek-v4-pro",
-  "small_model": "openrouter/openai/gpt-oss-120b"
+  "small_model": "openrouter/deepseek/deepseek-v4-flash"
 }
