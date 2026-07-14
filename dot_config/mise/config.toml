@@ -49,6 +49,8 @@ opencode     = "latest"
 "github:yvgude/lean-ctx" = "latest"
 "npm:context-mode" = "latest"
 "npm:skills" = "latest"
+rtk = "latest"
+"npm:@tobilu/qmd" = "latest"
 
 
 [env]
