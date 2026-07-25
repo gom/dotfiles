@@ -50,6 +50,7 @@ opencode     = "latest"
 "npm:context-mode" = "latest"
 "npm:skills" = "latest"
 rtk = "latest"
+herdr = "latest"
 "npm:@tobilu/qmd" = "latest"
 
 

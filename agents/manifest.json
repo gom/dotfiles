@@ -6,10 +6,16 @@
         "skills": [
           "grill-me",
           "improve-codebase-architecture",
-          "diagnose",
           "grill-with-docs"
+        ]
+      },
+      {
+        "source": "https://github.com/ogulcancelik/herdr",
+        "skills": [
+          "herdr"
         ]
       }
     ]
   }
 }
+

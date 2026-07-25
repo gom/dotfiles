@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Hash: {{ include "agents/manifest.json" | sha256sum }}
-set -e
+set -ex
 
 MANIFEST="{{ .chezmoi.sourceDir }}/agents/manifest.json"
 

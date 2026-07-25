@@ -1,6 +1,20 @@
 {
   "colorScheme": "tokyo night",
-  "enableTerminalSandbox": true,
+  "enableTerminalSandbox": false,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "rtk hook gemini"
+          }
+        ]
+      }
+    ]
+  },
+  "model": "Claude Sonnet 4.6 (Thinking)",
   "permissions": {
     "allow": [
       "command(ls)",
@@ -31,7 +45,18 @@
       "command(git branch --list)",
       "command(git config --get)",
       "command(git config --list)",
-      "command(git add)"
+      "command(git add)",
+      "mcp(context-mode/ctx_execute)",
+      "mcp(context-mode/ctx_search)",
+      "mcp(context-mode/ctx_execute_file)",
+      "mcp(serena/initial_instructions)",
+      "mcp(serena/get_symbols_overview)",
+      "mcp(serena/find_referencing_symbols)",
+      "mcp(serena/find_symbol)",
+      "mcp(context-mode/ctx_batch_execute)",
+      "unsandboxed(grep)",
+      "unsandboxed(sort)",
+      "unsandboxed(head)"
     ],
     "deny": [
       "command(sudo)",
@@ -72,5 +97,6 @@
     "enabled": true
   },
   "subagents": [],
-  "trustedWorkspaces": []
+  "trustedWorkspaces": [
+  ]
 }
