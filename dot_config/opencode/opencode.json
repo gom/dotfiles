@@ -195,6 +195,26 @@
             }
           }
         },
+        "z-ai/glm-5.3":{
+          "name": "[Manual] GLM 5.3",
+          "options": {
+            "provider": {
+              "order": ["z-ai"],
+              "allow_fallbacks": false,
+              "sort": "price"
+            }
+          }
+        },
+        "deepseek/deepseek-v4-flash-0731": {
+          "name": "[Manual] DeepSeek V4 Flash 0731",
+          "options": {
+            "provider": {
+              "order": ["gmicloud", "deepseek", "deepinfra"],
+              "allow_fallbacks": false,
+              "sort": "price"
+            }
+          }
+        },
         "deepseek/deepseek-v4-pro": {
           "name": "[Manual] DeepSeek V4 Pro",
           "options": {
@@ -209,34 +229,34 @@
           "name": "[Manual] Kimi K2.7 Code",
           "options": {
             "provider": {
-              "sort": "price",
-              "data_collection": "deny",
-              "quantizations": ["fp16", "bf16"]
+              "order": ["moonshotai", "siliconflow"],
+              "allow_fallbacks": false,
+              "sort": "price"
             }
           }
         },
-        "xiaomi/mimo-v2.5-pro": {
-          "name": "[Manual] MiMo v2.5 Pro",
+        "moonshotai/kimi-k3": {
+          "name": "[Manual] Kimi K3",
           "options": {
             "provider": {
-              "sort": "price",
-              "data_collection": "deny",
-              "quantizations": ["fp16", "bf16"]
+              "order": ["moonshotai", "modal"],
+              "allow_fallbacks": false,
+              "sort": "price"
             }
           }
         },
-        "qwen/qwen3.7-max": {
-          "name": "[Manual] Qwen 3.7 Max"
-        },
-        "deepseek/deepseek-v4-flash": {
-          "name": "[Manual] DeepSeek V4 Flash",
+        "tencent/hy3": {
+          "name": "[Manual] Hy3",
           "options": {
             "provider": {
-              "sort": "price",
-              "data_collection": "deny",
-              "quantizations": ["fp16", "bf16"]
+              "order": ["tencent"],
+              "allow_fallbacks": false,
+              "sort": "price"
             }
           }
+        },
+        "qwen/qwen3.8-max": {
+          "name": "[Manual] Qwen 3.8 Max"
         },
         "minimax/minimax-m3": {
           "name": "[Manual] MiniMax M3",
@@ -247,10 +267,30 @@
               "sort": "price"
             }
           }
-        }
+        },
+        "openai/gpt-5.6-luna": {
+          "name": "[Manual] GPT-5.6 Luna",
+          "options": {
+            "provider": {
+              "order": ["openai"],
+              "allow_fallbacks": false,
+              "sort": "price"
+            }
+          }
+        },
+        "anthropic/claude-sonnet-5": {
+          "name": "[Manual] Claude Sonnet 5",
+          "options": {
+            "provider": {
+              "order": ["anthropic"],
+              "allow_fallbacks": false,
+              "sort": "price"
+            }
+          }
+        },
       }
     }
   },
   "enabled_providers": ["openrouter"],
-  "small_model": "openrouter/deepseek/deepseek-v4-flash"
+  "small_model": "openrouter/deepseek/deepseek-v4-flash-0731"
 }
