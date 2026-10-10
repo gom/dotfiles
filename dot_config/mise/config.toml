@@ -52,6 +52,7 @@ opencode     = "latest"
 rtk = "latest"
 herdr = "latest"
 "npm:@tobilu/qmd" = "latest"
+worktrunk = "latest"
 
 
 [env]
@@ -62,7 +63,5 @@ STARSHIP_CONFIG = '{{env.HOME}}/.config/starship/starship.toml'
 experimental = true
 # ツールインストール時の詳細表示
 verbose = false
-# asdfのプラグインショートカットを使用
-plugin_autoupdate_last_check_duration = "1 week"
 
 npm.package_manager = "bun"

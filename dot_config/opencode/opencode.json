@@ -106,7 +106,64 @@
       "git push -f": "deny",
       "git push -f *": "deny",
       "git push * -f": "deny",
-      "git push * -f *": "deny"
+      "git push * -f *": "deny",
+
+      "rtk ls": "allow",
+      "rtk ls *": "allow",
+      "rtk cat *": "allow",
+      "rtk pwd": "allow",
+      "rtk grep *": "allow",
+      "rtk rg *": "allow",
+      "rtk head *": "allow",
+      "rtk tail *": "allow",
+      "rtk wc *": "allow",
+      "rtk file *": "allow",
+      "rtk stat *": "allow",
+      "rtk realpath *": "allow",
+      "rtk tree": "allow",
+      "rtk tree *": "allow",
+      "rtk jq *": "allow",
+      "rtk diff *": "allow",
+      "rtk date": "allow",
+      "rtk date *": "allow",
+      "rtk echo *": "allow",
+
+      "rtk git status": "allow",
+      "rtk git status *": "allow",
+      "rtk git log *": "allow",
+      "rtk git rev-parse *": "allow",
+      "rtk git remote": "allow",
+      "rtk git remote *": "allow",
+      "rtk git diff": "allow",
+      "rtk git diff *": "allow",
+      "rtk git show *": "allow",
+      "rtk git ls-files": "allow",
+      "rtk git ls-files *": "allow",
+      "rtk git grep *": "allow",
+      "rtk git branch": "allow",
+      "rtk git branch --show-current": "allow",
+      "rtk git branch --list": "allow",
+      "rtk git branch --list *": "allow",
+      "rtk git config --get *": "allow",
+      "rtk git config --list": "allow",
+      "rtk git config --list *": "allow",
+      "rtk git add *": "allow",
+      "rtk sudo": "deny",
+      "rtk sudo *": "deny",
+
+      "rtk git reset --hard": "deny",
+      "rtk git reset --hard *": "deny",
+      "rtk git clean": "deny",
+      "rtk git clean *": "deny",
+
+      "rtk git push --force": "deny",
+      "rtk git push --force *": "deny",
+      "rtk git push * --force": "deny",
+      "rtk git push * --force *": "deny",
+      "rtk git push -f": "deny",
+      "rtk git push -f *": "deny",
+      "rtk git push * -f": "deny",
+      "rtk git push * -f *": "deny",
     }
   },
   "mcp": {
@@ -200,6 +257,16 @@
           "options": {
             "provider": {
               "order": ["z-ai"],
+              "allow_fallbacks": false,
+              "sort": "price"
+            }
+          }
+        },
+        "z-ai/glm-5.3-flash":{
+          "name": "[Manual] GLM 5.3 Flash",
+          "options": {
+            "provider": {
+              "order": ["z-ai", "novita", "relace"],
               "allow_fallbacks": false,
               "sort": "price"
             }
