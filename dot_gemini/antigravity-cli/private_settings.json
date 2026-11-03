@@ -1,6 +1,5 @@
 {
   "colorScheme": "tokyo night",
-  "enableTerminalSandbox": false,
   "hooks": {
     "PreToolUse": [
       {
@@ -14,7 +13,7 @@
       }
     ]
   },
-  "model": "Claude Sonnet 4.6 (Thinking)",
+  "model": "Gemini 3.8 Flash (High)",
   "permissions": {
     "allow": [
       "command(ls)",
@@ -53,10 +52,7 @@
       "mcp(serena/get_symbols_overview)",
       "mcp(serena/find_referencing_symbols)",
       "mcp(serena/find_symbol)",
-      "mcp(context-mode/ctx_batch_execute)",
-      "unsandboxed(grep)",
-      "unsandboxed(sort)",
-      "unsandboxed(head)"
+      "mcp(context-mode/ctx_batch_execute)"
     ],
     "deny": [
       "command(sudo)",

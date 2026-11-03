@@ -242,16 +242,6 @@
     },
     "openrouter" : {
       "models": {
-        "z-ai/glm-5.2":{
-          "name": "[Manual] GLM 5.2",
-          "options": {
-            "provider": {
-              "order": ["novita", "streamlake"],
-              "allow_fallbacks": false,
-              "sort": "price"
-            }
-          }
-        },
         "z-ai/glm-5.3":{
           "name": "[Manual] GLM 5.3",
           "options": {
@@ -272,31 +262,11 @@
             }
           }
         },
-        "deepseek/deepseek-v4-flash-0731": {
-          "name": "[Manual] DeepSeek V4 Flash 0731",
+        "deepseek/deepseek-v4.1-flash-1017": {
+          "name": "[Manual] DeepSeek V4.1 Flash 1017",
           "options": {
             "provider": {
-              "order": ["gmicloud", "deepseek", "deepinfra"],
-              "allow_fallbacks": false,
-              "sort": "price"
-            }
-          }
-        },
-        "deepseek/deepseek-v4-pro": {
-          "name": "[Manual] DeepSeek V4 Pro",
-          "options": {
-            "provider": {
-              "order": ["deepseek", "streamlake"],
-              "allow_fallbacks": false,
-              "sort": "price"
-            }
-          }
-        },
-        "moonshotai/kimi-k2.7-code": {
-          "name": "[Manual] Kimi K2.7 Code",
-          "options": {
-            "provider": {
-              "order": ["moonshotai", "siliconflow"],
+              "order": ["deepinfra","inference-net", "relace"],
               "allow_fallbacks": false,
               "sort": "price"
             }
@@ -312,31 +282,51 @@
             }
           }
         },
-        "tencent/hy3": {
-          "name": "[Manual] Hy3",
+        "moonshotai/kimi-k3.1-pro": {
+          "name": "[Manual] Kimi K3.1 Pro",
           "options": {
             "provider": {
-              "order": ["tencent"],
+              "order": ["moonshotai"],
               "allow_fallbacks": false,
               "sort": "price"
             }
           }
         },
-        "qwen/qwen3.8-max": {
-          "name": "[Manual] Qwen 3.8 Max"
+        "qwen/qwen3.8-max-0902": {
+          "name": "[Manual] Qwen 3.8 Max 0902"
         },
-        "minimax/minimax-m3": {
-          "name": "[Manual] MiniMax M3",
+        "minimax/minimax-m3.1-flash": {
+          "name": "[Manual] MiniMax M3.1 Flash",
           "options": {
             "provider": {
-              "order": ["minimax", "novita"],
+              "order": ["minimax", "digitalocean"],
               "allow_fallbacks": false,
               "sort": "price"
             }
           }
         },
-        "openai/gpt-5.6-luna": {
-          "name": "[Manual] GPT-5.6 Luna",
+        "stepfun/step-5-preview": {
+          "name": "[Manual] Step 5 Preview",
+          "options": {
+            "provider": {
+              "order": ["stepfun"],
+              "allow_fallbacks": false,
+              "sort": "price"
+            }
+          }
+        },
+        "tencent/hy4-preview": {
+          "name": "[Manual] Hy4 Preview",
+          "options": {
+            "provider": {
+              "order": ["tencent", "novita", "deepinfra"],
+              "allow_fallbacks": false,
+              "sort": "price"
+            }
+          }
+        },
+        "openai/gpt-6-luna": {
+          "name": "[Manual] GPT-6 Luna",
           "options": {
             "provider": {
               "order": ["openai"],
@@ -345,8 +335,8 @@
             }
           }
         },
-        "anthropic/claude-sonnet-5": {
-          "name": "[Manual] Claude Sonnet 5",
+        "anthropic/claude-sonnet-5.5": {
+          "name": "[Manual] Claude Sonnet 5.5",
           "options": {
             "provider": {
               "order": ["anthropic"],
@@ -359,5 +349,5 @@
     }
   },
   "enabled_providers": ["openrouter"],
-  "small_model": "openrouter/deepseek/deepseek-v4-flash-0731"
+  "small_model": "openrouter/deepseek/deepseek-v4.1-flash"
 }
